@@ -1,4 +1,36 @@
 {
-  "hello": "Hello",
-  "welcome": "Welcome"
+  "title": {
+    "app": "Fakebook",
+    "home": "Home"
+  },
+  "sidebar": {
+    "home": "Home",
+    "search": "Search",
+    "profile": "Profile",
+    "your_pages": "Your Pages",
+    "events": "Events",
+    "upcoming_streams": "Upcoming Streams",
+    "logout_switch": "Logout/Switch Account"
+  },
+  "post": {
+    "read_more": "Read more",
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share",
+    "hide": "Hide post",
+    "report": "Report"
+  },
+  "landing": {
+    "text_1": "Simpler, easier, ...",
+    "text_2": "You can focus more on posts, images, ...",
+    "slogan": "Real comfortability",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up"
+  },
+  "trending_posts": {
+    "trending_post": "Trending Posts",
+    "trending_people": "Maybe You Know",
+    "more": "More",
+    "time": "Now"
+  }
 }
