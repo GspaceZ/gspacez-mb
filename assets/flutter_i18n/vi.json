@@ -1,4 +1,36 @@
 {
-  "hello": "Xin chào",
-  "welcome": "Chào mừng"
+  "title": {
+    "app": "Fakebook",
+    "home": "Trang chủ"
+  },
+  "sidebar": {
+    "home": "Trang chủ",
+    "search": "Tìm kiếm",
+    "profile": "Hồ sơ",
+    "your_pages": "Trang của bạn",
+    "events": "Sự kiện",
+    "upcoming_streams": "Stream sắp tới",
+    "logout_switch": "Đăng xuất/Chuyển tài khoản"
+  },
+  "post": {
+    "read_more": "Đọc thêm",
+    "like": "Thích",
+    "comment": "Bình luận",
+    "share": "Chia sẻ",
+    "hide": "Ẩn bài viết",
+    "report": "Báo cáo"
+  },
+  "landing": {
+    "text_1": "Đơn giản hơn, dễ hơn, ...",
+    "text_2": "Bạn có thể tập trung hơn vào bài viết, các bức ảnh, ...",
+    "slogan": "Real comfortability",
+    "sign_in": "Đăng nhập",
+    "sign_up": "Đăng kí"
+  },
+  "trending_posts": {
+    "trending_post": "Bài viết xu hướng",
+    "trending_people": "Có thể bạn biết",
+    "more": "Thêm",
+    "time": "Bây giờ"
+  }
 }
