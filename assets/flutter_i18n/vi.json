@@ -32,5 +32,35 @@
     "trending_people": "Có thể bạn biết",
     "more": "Thêm",
     "time": "Bây giờ"
+  },
+  "auth": {
+    "sign_up": "Đăng ký",
+    "sign_in": "Đăng nhập",
+    "email": "Email",
+    "first_name": "Tên",
+    "last_name": "Họ",
+    "password": "Mật khẩu",
+    "confirm_password": "Xác nhận mật khẩu",
+    "have_account": "Bạn có tài khoản?",
+    "not_have_account": "Bạn chưa có tài khoản?",
+    "error_messages": {
+      "email": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "first_name": "Tên phải dài từ 1 đến 20 ký tự.",
+      "last_name": "Họ phải dài từ 1 đến 20 ký tự.",
+      "password": {
+        "length": "Mật khẩu phải dài ít nhất 8 ký tự.",
+        "lowercase": "Mật khẩu phải chứa ít nhất một chữ cái thường.",
+        "uppercase": "Mật khẩu phải chứa ít nhất một chữ cái hoa.",
+        "number": "Mật khẩu phải chứa ít nhất một chữ số.",
+        "special": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.",
+        "confirm": "Mật khẩu không khớp. Vui lòng thử lại."
+      }
+    },
+    "activate": {
+      "welcome": "Chào mừng tới Fakebook!",
+      "mail_sent": "Mail kích hoạt đã được gửi! Vui lòng kiểm tra email",
+      "success": "Kích hoạt thành công!",
+      "and_start_now": " và Bắt đầu ngay bây giờ!"
+    }
   }
 }

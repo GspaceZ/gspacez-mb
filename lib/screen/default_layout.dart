@@ -34,33 +34,43 @@ class _DefaultLayoutState extends State<DefaultLayout> {
         Column(
           children: [
             SizedBox(
+              height: screenHeight * 0.02,
+            ),
+            SizedBox(
               //appbar
-              height: screenHeight * 0.1 - 1,
-              child: Padding(
-                padding:  EdgeInsets.only(top: screenHeight * 0.025),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          if (isDialogMenu == false) {
-                            isDialogMenu = true;
-                          } else {
-                            isDialogMenu = false;
-                          }
-                          setState(() {});
-                        },
-                        icon: SvgPicture.asset('assets/svg/sidebar-right.svg')),
-                    SizedBox(
-                      width: screenWidth * 0.3,
-                    ),
-                    Text(
+              height: screenHeight * 0.08 - 1,
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                if (isDialogMenu == false) {
+                                  isDialogMenu = true;
+                                } else {
+                                  isDialogMenu = false;
+                                }
+                                setState(() {});
+                              },
+                              icon: SvgPicture.asset(
+                                  'assets/svg/sidebar-right.svg')),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: Text(
                       FlutterI18n.translate(context, "title.home"),
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 22),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const Divider(
@@ -97,16 +107,12 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                 items: [
                   BottomNavigationBarItem(
                     icon: getIcon("assets/svg/send-2.svg", false),
-                    activeIcon: Badge(
-                      label: const Text("3"),
-                      child: getIcon("assets/svg/send-2.svg", true),
-                    ),
+                    activeIcon: getIcon("assets/svg/send-2.svg", true),
                     label: "",
                   ),
                   BottomNavigationBarItem(
                     icon: getIcon('assets/svg/notification.svg', false),
-                    activeIcon: Badge(
-                        child: getIcon('assets/svg/notification.svg', true)),
+                    activeIcon: getIcon('assets/svg/notification.svg', true),
                     label: "",
                   ),
                   BottomNavigationBarItem(
@@ -161,8 +167,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       visible: isDialogMenu,
       child: Positioned(
           right: 0,
-          child: TextButton(
-            onPressed: () {
+          child: InkWell(
+            onTap: () {
               isDialogMenu = false;
               setState(() {});
             },

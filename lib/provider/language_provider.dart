@@ -11,4 +11,5 @@ class LanguageProvider with ChangeNotifier {
     await FlutterI18n.refresh(context, locale);
     notifyListeners();
   }
+ // context.read<LanguageProvider>().changeLocale(context, const Locale('vi'));
 }
