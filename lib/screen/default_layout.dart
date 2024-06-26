@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
@@ -76,9 +77,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             const Divider(
               height: 1,
             ),
-            SizedBox(
-              //body
-              height: screenHeight * 0.8,
+            Expanded(
+             // height: screenHeight * 0.8,
               child: Stack(
                 children: [
                   <Widget>[
@@ -101,6 +101,9 @@ class _DefaultLayoutState extends State<DefaultLayout> {
               //bottom navigation bar
               height: screenHeight * 0.1,
               child: BottomNavigationBar(
+                enableFeedback: false,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
                 currentIndex: _selectedIndex,
                 selectedItemColor: Colors.amber[800],
                 onTap: _onItemTapped,
