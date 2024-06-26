@@ -49,13 +49,15 @@ class Introduce extends StatelessWidget {
                     ),
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 18, right: 18, top: 5, bottom: 5),
-                    child: Text(
-                        FlutterI18n.translate(context, "landing.sign_in"),
-                        style:
-                            const TextStyle(fontSize: 18, color: Colors.white)),
+                  child: SizedBox(
+                    width: 150,
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                          FlutterI18n.translate(context, "landing.sign_in"),
+                          style:
+                              const TextStyle(fontSize: 18, color: Colors.white)),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -73,15 +75,16 @@ class Introduce extends StatelessWidget {
                     backgroundColor:
                         MaterialStateProperty.all(Colors.grey.shade300),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 5, bottom: 5, left: 16.5, right: 16.5),
-                    child:
-                        Text(FlutterI18n.translate(context, "landing.sign_up"),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xFF006FEE),
-                            )),
+                  child: SizedBox(
+                    width: 150,
+                    height: 50,
+                    child: Center(
+                      child: Text(FlutterI18n.translate(context, "landing.sign_up"),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Color(0xFF006FEE),
+                          )),
+                    ),
                   ),
                 ),
               ],
