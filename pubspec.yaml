@@ -70,6 +70,7 @@ flutter:
   assets:
      - assets/flutter_i18n/
      - assets/svg/
+     - assets/images/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

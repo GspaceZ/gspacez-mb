@@ -61,6 +61,12 @@
       "mail_sent": "Mail kích hoạt đã được gửi! Vui lòng kiểm tra email",
       "success": "Kích hoạt thành công!",
       "and_start_now": " và Bắt đầu ngay bây giờ!"
+    },
+    "trending_sidebar": {
+      "trending_posts": "Bài viết xu hướng",
+      "trending_people": "Có thể bạn biết",
+      "time": "Bây giờ",
+      "more": "Thêm"
     }
   }
 }

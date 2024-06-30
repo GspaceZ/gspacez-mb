@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../components/navigation_bar.dart';
+import '../components/trending_sidebar.dart';
 import 'homePage/home.dart';
 
 class DefaultLayout extends StatefulWidget {
@@ -17,12 +18,19 @@ class DefaultLayout extends StatefulWidget {
 
 class _DefaultLayoutState extends State<DefaultLayout> {
   bool isDialogMenu = false;
+  bool showTrendingSidebar = false;
   int _selectedIndex = 0;
   final GlobalKey _containerKey = GlobalKey();
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (_selectedIndex == index) {
+        showTrendingSidebar = !showTrendingSidebar;
+      } else {
+        _selectedIndex = index;
+        showTrendingSidebar = (index == 3);
+        isDialogMenu = false;
+      }
     });
   }
 
@@ -78,7 +86,6 @@ class _DefaultLayoutState extends State<DefaultLayout> {
               height: 1,
             ),
             Expanded(
-             // height: screenHeight * 0.8,
               child: Stack(
                 children: [
                   <Widget>[
@@ -133,6 +140,17 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             )
           ],
         ),
+        if (showTrendingSidebar)
+          Positioned(
+            top: screenHeight * 0.1,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: screenHeight * 0.8,
+              color: Colors.white,
+              child: TrendingSidebar(),
+            ),
+          ),
         _buildMenu(),
         closeMenu(),
       ]),
