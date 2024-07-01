@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../components/navigation_bar.dart';
@@ -20,19 +22,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   bool isDialogMenu = false;
   bool showTrendingSidebar = false;
   int _selectedIndex = 0;
+  List<int> check = [0, 0, 0, 0, 0];
   final GlobalKey _containerKey = GlobalKey();
-
-  void _onItemTapped(int index) {
-    setState(() {
-      if (_selectedIndex == index) {
-        showTrendingSidebar = !showTrendingSidebar;
-      } else {
-        _selectedIndex = index;
-        showTrendingSidebar = (index == 3);
-        isDialogMenu = false;
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +34,9 @@ class _DefaultLayoutState extends State<DefaultLayout> {
         Column(
           children: [
             SizedBox(
-              height: screenHeight * 0.02,
+              height: screenHeight * 0.04,
             ),
             SizedBox(
-              //appbar
               height: screenHeight * 0.08 - 1,
               child: Stack(
                 children: [
@@ -99,7 +89,14 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                     const Home(),
 
                     /// Activity page
-                    const Home(),
+                    const TrendingSidebar(),
+                    const Center(
+                      child: Text(
+                        "Home Page",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ][_selectedIndex],
                 ],
               ),
@@ -107,32 +104,47 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             SizedBox(
               //bottom navigation bar
               height: screenHeight * 0.1,
-              child: BottomNavigationBar(
-                enableFeedback: false,
-                showSelectedLabels: false,
-                showUnselectedLabels: false,
-                currentIndex: _selectedIndex,
-                selectedItemColor: Colors.amber[800],
-                onTap: _onItemTapped,
-                items: [
-                  BottomNavigationBarItem(
+              child: NavigationBar(
+                overlayColor: WidgetStateProperty.all(Colors.transparent),
+                indicatorShape:RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+
+                indicatorColor: Colors.transparent,
+                onDestinationSelected: (int index) {
+                  if( check[index] == 1){
+                    _selectedIndex = 4;
+                    check = [0, 0, 0, 0, 0];
+                  }
+                  else {
+                    check = [0, 0, 0, 0, 0];
+                    check[index] = 1;
+                    _selectedIndex = index;
+                  }
+                  setState(() {
+                  });
+                },
+                selectedIndex: (_selectedIndex>3) ? 3 : _selectedIndex,
+
+                destinations : [
+                  NavigationDestination(
                     icon: getIcon("assets/svg/send-2.svg", false),
-                    activeIcon: getIcon("assets/svg/send-2.svg", true),
+                    selectedIcon: getIcon("assets/svg/send-2.svg", true),
                     label: "",
                   ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: getIcon('assets/svg/notification.svg', false),
-                    activeIcon: getIcon('assets/svg/notification.svg', true),
+                    selectedIcon: getIcon('assets/svg/notification.svg', true),
                     label: "",
                   ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: getIcon('assets/svg/setting-2.svg', false),
-                    activeIcon: getIcon('assets/svg/setting-2.svg', true),
+                    selectedIcon: getIcon('assets/svg/setting-2.svg', true),
                     label: "",
                   ),
-                  BottomNavigationBarItem(
+                  NavigationDestination(
                     icon: getIcon('assets/svg/activity.svg', false),
-                    activeIcon: getIcon('assets/svg/activity.svg', true),
+                    selectedIcon: (_selectedIndex == 3) ? getIcon('assets/svg/activity.svg', true) : getIcon('assets/svg/activity.svg', false),
                     label: "",
                   ),
                 ],
