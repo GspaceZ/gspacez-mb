@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -20,6 +20,7 @@ class DefaultLayout extends StatefulWidget {
 
 class _DefaultLayoutState extends State<DefaultLayout> {
   bool isDialogMenu = false;
+  bool showTrendingSidebar = false;
   int _selectedIndex = 0;
   List<int> check = [0, 0, 0, 0, 0];
   final GlobalKey _containerKey = GlobalKey();
@@ -151,6 +152,17 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             )
           ],
         ),
+        if (showTrendingSidebar)
+          Positioned(
+            top: screenHeight * 0.1,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: screenHeight * 0.8,
+              color: Colors.white,
+              child: TrendingSidebar(),
+            ),
+          ),
         _buildMenu(),
         closeMenu(),
       ]),
