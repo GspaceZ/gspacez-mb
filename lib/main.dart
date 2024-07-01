@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/screen/default_layout.dart';
 
 import 'provider/language_provider.dart';
 
@@ -43,46 +44,19 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: [
-            const Locale('en'),
-            const Locale('vi'),
+          supportedLocales: const [
+            Locale('en'),
+            Locale('vi'),
           ],
           locale: languageProvider.locale,
-          home: MyHomePage(),
+          theme: ThemeData(
+            fontFamily: 'NotoSans',
+             // Set font chữ mặc định cho app
+          ),
+          home: const DefaultLayout(selectedIndex: 0),
+          debugShowCheckedModeBanner: false,
         );
       },
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(FlutterI18n.translate(context, "hello")),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(FlutterI18n.translate(context, "welcome")),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                context.read<LanguageProvider>().changeLocale(context, const Locale('vi'));
-              },
-              child: const Text("Switch to Vietnamese"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                context.read<LanguageProvider>().changeLocale(context, const Locale('en'));
-              },
-              child: const Text("Switch to English"),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
