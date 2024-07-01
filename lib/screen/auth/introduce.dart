@@ -39,15 +39,16 @@ class Introduce extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                  },
                   style: ButtonStyle(
-                    elevation: MaterialStateProperty.all<double>(2),
-                    shape: MaterialStateProperty.all(
+                    elevation: WidgetStateProperty.all<double>(2),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    backgroundColor: WidgetStateProperty.all(Colors.blue),
                   ),
                   child: SizedBox(
                     width: 150,
@@ -64,16 +65,17 @@ class Introduce extends StatelessWidget {
                   height: 20,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                  },
                   style: ButtonStyle(
-                    elevation: MaterialStateProperty.all<double>(2),
-                    shape: MaterialStateProperty.all(
+                    elevation: WidgetStateProperty.all<double>(2),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                     backgroundColor:
-                        MaterialStateProperty.all(Colors.grey.shade300),
+                        WidgetStateProperty.all(Colors.grey.shade300),
                   ),
                   child: SizedBox(
                     width: 150,
