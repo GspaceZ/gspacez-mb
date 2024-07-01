@@ -33,6 +33,7 @@ class NavigationSidebar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
             decoration: const BoxDecoration(
               border: Border(

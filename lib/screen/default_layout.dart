@@ -2,7 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
+
+import 'package:flutter_svg/flutter_svg.dart';
+
 import '../components/navigation_bar.dart';
+import '../components/trending_sidebar.dart';
 import 'homePage/home.dart';
 
 class DefaultLayout extends StatefulWidget {
@@ -20,7 +24,6 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   List<int> check = [0, 0, 0, 0, 0];
   final GlobalKey _containerKey = GlobalKey();
 
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -30,7 +33,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
         Column(
           children: [
             SizedBox(
-              height: screenHeight * 0.02,
+              height: screenHeight * 0.04,
             ),
             SizedBox(
               height: screenHeight * 0.08 - 1,
@@ -72,7 +75,6 @@ class _DefaultLayoutState extends State<DefaultLayout> {
               height: 1,
             ),
             Expanded(
-             // height: screenHeight * 0.8,
               child: Stack(
                 children: [
                   <Widget>[
@@ -86,7 +88,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                     const Home(),
 
                     /// Activity page
-                    const Home(),
+                    const TrendingSidebar(),
                     const Center(
                       child: Text(
                         "Home Page",
