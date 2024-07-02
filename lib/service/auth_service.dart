@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:untitled/model/user.dart';
 
 Future<http.Response> signIn(String email, String password) async {
-  final url = Uri.parse('http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/identity/auth/login');
+  final url = Uri.parse(
+      'http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/identity/auth/login');
 
   final response = await http.post(
     url,
@@ -32,7 +33,8 @@ Future<http.Response> signIn(String email, String password) async {
 
 Future<http.Response> signUpUser(User user) async {
   final response = await http.post(
-    Uri.parse('http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/identity/users/register'),
+    Uri.parse(
+        'http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/identity/users/register'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -50,26 +52,3 @@ Future<http.Response> signUpUser(User user) async {
   }
 }
 
-Future<http.Response> signUp(String email, String password,String firstName, String lastName) async {
-  final url = Uri.parse('http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/identity/users/register');
-
-  final response = await http.post(
-    url,
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'email': email,
-      'password': password,
-      'lastName': firstName,
-      'firstName': lastName,
-    }),
-  );
-
-  if (response.statusCode == 1000) {
-
-    return response;
-  } else {
-    throw Exception('Failed to sign up');
-  }
-}

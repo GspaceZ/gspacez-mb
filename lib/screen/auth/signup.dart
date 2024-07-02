@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/screen/auth/signin.dart';
-import 'package:untitled/screen/auth/widgets/inputDecoration.dart';
+import 'package:untitled/screen/auth/widgets/input_decoration.dart';
+import 'package:untitled/screen/component/dialog_loading.dart';
+import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
-
-import '../layout_landing.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -18,10 +19,14 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  String email = "";
-  String password = "";
-  String firstName = "";
-  String lastName = "";
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  bool isObscureText = true;
+  bool isConfirmObscureText = true;
+
   User? user;
 
   @override
@@ -45,7 +50,7 @@ class _SignUpState extends State<SignUp> {
               child: Text(
                 FlutterI18n.translate(context, "auth.sign_up"),
                 style:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
             ),
             Padding(
@@ -57,13 +62,11 @@ class _SignUpState extends State<SignUp> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        controller: _emailController,
                         decoration: CusTomInputDecoration(
-                            FlutterI18n.translate(context, "auth.email"))
+                                FlutterI18n.translate(context, "auth.email"))
                             .getInputDecoration(),
                         validator: (value) => EmailValidator.validate(value!),
-                        onSaved: (value) {
-                          email = value!;
-                        },
                       ),
                     ),
                     Row(
@@ -72,15 +75,13 @@ class _SignUpState extends State<SignUp> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
+                              controller: _firstNameController,
                               decoration: CusTomInputDecoration(
-                                  FlutterI18n.translate(
-                                      context, "auth.first_name"))
+                                      FlutterI18n.translate(
+                                          context, "auth.first_name"))
                                   .getInputDecoration(),
                               validator: (value) =>
                                   FirstnameValidator.validate(value!),
-                              onSaved: (value) {
-                                firstName = value!;
-                              },
                             ),
                           ),
                         ),
@@ -90,15 +91,13 @@ class _SignUpState extends State<SignUp> {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
+                              controller: _lastNameController,
                               decoration: CusTomInputDecoration(
-                                  FlutterI18n.translate(
-                                      context, "auth.last_name"))
+                                      FlutterI18n.translate(
+                                          context, "auth.last_name"))
                                   .getInputDecoration(),
                               validator: (value) =>
                                   LastnameValidator.validate(value!),
-                              onSaved: (value) {
-                                lastName = value!;
-                              },
                             ),
                           ),
                         ),
@@ -108,27 +107,57 @@ class _SignUpState extends State<SignUp> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         decoration: CusTomInputDecoration(
-                            FlutterI18n.translate(context, "auth.password"))
-                            .getInputDecoration(),
-                        obscureText: true,
+                                FlutterI18n.translate(context, "auth.password"))
+                            .getInputDecoration()
+                            .copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  isObscureText
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isObscureText = !isObscureText;
+                                  });
+                                },
+                              ),
+                            ),
+                        obscureText: isObscureText,
                         controller: _passwordController,
                         validator: (value) =>
                             PasswordValidator.validate(value!),
-                        onSaved: (value) {
-                          password = value!;
-                        },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        controller: _confirmPasswordController,
                         decoration: CusTomInputDecoration(FlutterI18n.translate(
-                            context, "auth.confirm_password"))
-                            .getInputDecoration(),
-                        obscureText: true,
+                                context, "auth.confirm_password"))
+                            .getInputDecoration()
+                            .copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  isConfirmObscureText
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isConfirmObscureText =
+                                        !isConfirmObscureText;
+                                  });
+                                },
+                              ),
+                            ),
+                        obscureText: isConfirmObscureText,
                         validator: (value) {
                           if (value != _passwordController.text) {
-                            return 'Passwords do not match';
+                            return FlutterI18n.translate(
+                                context, "auth.confirm");
                           }
                           return null;
                         },
@@ -149,7 +178,7 @@ class _SignUpState extends State<SignUp> {
                                   FlutterI18n.translate(
                                       context, "auth.sign_up"),
                                   style:
-                                  const TextStyle(color: Colors.white)))),
+                                      const TextStyle(color: Colors.white)))),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -159,12 +188,15 @@ class _SignUpState extends State<SignUp> {
                             style: const TextStyle(fontSize: 16)),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const LayoutLanding(child: SignIn(),),
+                                builder: (context) => const LayoutLanding(
+                                  child: SignIn(),
+                                ),
                               ),
                             );
+                            // Navigate to the sign in screen
                           },
                           child: Text(
                             FlutterI18n.translate(context, "auth.sign_in"),
@@ -183,20 +215,45 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
+
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      LoadingDialog.showLoadingDialog(context);
       user = User(
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        password: password,
+        email: _emailController.text,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        password: _passwordController.text,
       );
       try {
-        final response = await signUp(email, password, firstName, lastName);
-        print(response.body);
-        // Handle the response here
+        final response = await signUpUser(user!);
+        LoadingDialog.hideLoadingDialog();
+        if(response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.green,
+              content: Text('Signed up successfully'),
+            ),
+          );
+          Future.delayed(
+              const Duration(seconds: 1),
+                  () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LayoutLanding(child:SignIn() ) ));
+              }
+          );
+        }
       } catch (e) {
+        LoadingDialog.hideLoadingDialog();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Sign up failed. Please check your credentials.'),
+          ),
+        );
         print(e.toString());
         // Handle the error here
       }

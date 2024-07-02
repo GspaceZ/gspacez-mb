@@ -17,7 +17,6 @@ class User {
       password: json['password'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
-
     );
   }
 
@@ -27,7 +26,6 @@ class User {
       'password': password,
       'firstName': firstName,
       'lastName': lastName,
-
     };
   }
 

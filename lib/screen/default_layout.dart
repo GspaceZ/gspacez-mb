@@ -30,6 +30,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(children: [
         Column(
           children: [

@@ -11,6 +11,7 @@ class LayoutLanding extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Container(
           color: Colors.white,
           child: Column(

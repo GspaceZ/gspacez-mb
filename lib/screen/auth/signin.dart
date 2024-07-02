@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/screen/auth/signup.dart';
-import 'package:untitled/screen/auth/widgets/inputDecoration.dart';
+import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
@@ -138,7 +138,7 @@ class _SignInState extends State<SignIn> {
                               style: const TextStyle(fontSize: 16)),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const LayoutLanding(child: SignUp(),),
@@ -174,6 +174,7 @@ class _SignInState extends State<SignIn> {
         if (response.statusCode == 200) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
+              backgroundColor: Colors.green,
               content: Text('Signed in successfully'),
             ),
           );
