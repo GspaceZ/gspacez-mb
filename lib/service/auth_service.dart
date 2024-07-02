@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:untitled/api/api.dart';
-import 'package:untitled/model/User.dart';
+import 'package:untitled/model/user.dart';
 
 Future<Map<String, dynamic>> signIn(String email, String password) async {
   final url = Uri.parse(

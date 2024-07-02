@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:untitled/model/User.dart';
+import 'package:untitled/model/user.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/component/dialog_loading.dart';

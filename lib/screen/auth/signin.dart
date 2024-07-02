@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:untitled/model/User.dart';
+import 'package:untitled/model/user.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/default_layout.dart';

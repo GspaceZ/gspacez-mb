@@ -35,3 +35,4 @@ class LoadingDialog {
     Navigator.pop(_dialogContext);
   }
 }
+
