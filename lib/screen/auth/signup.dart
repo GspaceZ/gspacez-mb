@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:untitled/model/user.dart';
+import 'package:untitled/model/User.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/component/dialog_loading.dart';
@@ -157,7 +156,7 @@ class _SignUpState extends State<SignUp> {
                         validator: (value) {
                           if (value != _passwordController.text) {
                             return FlutterI18n.translate(
-                                context, "auth.confirm");
+                                context, "auth.error_messages.password.confirm");
                           }
                           return null;
                         },
@@ -226,36 +225,54 @@ class _SignUpState extends State<SignUp> {
         lastName: _lastNameController.text,
         password: _passwordController.text,
       );
-      try {
-        final response = await signUpUser(user!);
-        LoadingDialog.hideLoadingDialog();
-        if(response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('Signed up successfully'),
-            ),
-          );
-          Future.delayed(
-              const Duration(seconds: 1),
-                  () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LayoutLanding(child:SignIn() ) ));
-              }
-          );
-        }
-      } catch (e) {
-        LoadingDialog.hideLoadingDialog();
+
+      final response = await signUpUser(user!);
+
+      // Kiểm tra xem widget có còn được gắn hay không
+      if (!mounted) return;
+
+      LoadingDialog.hideLoadingDialog();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).unfocus();
+      });
+
+      if (response['code'] == 1000) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Sign up failed. Please check your credentials.'),
+          SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+                FlutterI18n.translate(context, "auth.sign_up_messages.success")),
           ),
         );
-        print(e.toString());
-        // Handle the error here
+        // Điều hướng ngay lập tức mà không cần chờ
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LayoutLanding(
+              child: SignIn(),
+            ),
+          ),
+        );
+        return;
+      }
+      if (response['code'] == 1002) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+                FlutterI18n.translate(context, "auth.sign_up_messages.email_exist")),
+          ),
+        );
+        return;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content:
+            Text(FlutterI18n.translate(context, "auth.sign_up_messages.fail")),
+          ),
+        );
+        return;
       }
     }
   }

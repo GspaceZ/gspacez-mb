@@ -4,14 +4,16 @@ import 'package:flutter_svg/svg.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/utils/style.dart';
 
+import '../screen/auth/introduce.dart';
+
 class NavigationSidebar extends StatelessWidget {
   const NavigationSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
     final ButtonStyle buttonStyle = ButtonStyle(
-      backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      backgroundColor: WidgetStateProperty.all<Color>(Colors.white),
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0),
         ),
@@ -33,7 +35,6 @@ class NavigationSidebar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -177,19 +178,15 @@ class NavigationSidebar extends StatelessWidget {
           TextButton(
             style: buttonStyle,
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LayoutLanding()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  const LayoutLanding(child: Introduce())));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: FittedBox(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 12, bottom: 12),
-                      child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
-                          style: text_bold),
-                    ),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 12),
+                  child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
+                      style: text_bold),
                 ),
               ],
             ),
