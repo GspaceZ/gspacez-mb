@@ -42,7 +42,8 @@
     "password": "Password",
     "confirm_password": "Confirm password",
     "have_account": "You have account?",
-    "not_have_account": "You don't have any account?",
+    "not_have_account": "Don't have any account?",
+    "forgot_password": "Forgot password?",
     "error_messages": {
       "email": "Please enter a valid email address.",
       "first_name": "First name must be between 1 and 20 characters.",

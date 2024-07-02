@@ -43,6 +43,7 @@
     "confirm_password": "Xác nhận mật khẩu",
     "have_account": "Bạn có tài khoản?",
     "not_have_account": "Bạn chưa có tài khoản?",
+    "forgot_password": "Quên mật khẩu?",
     "error_messages": {
       "email": "Vui lòng nhập địa chỉ email hợp lệ.",
       "first_name": "Tên phải dài từ 1 đến 20 ký tự.",

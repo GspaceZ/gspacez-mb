@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:untitled/screen/auth/signin.dart';
+import 'package:untitled/screen/auth/signup.dart';
+import 'package:untitled/screen/layout_landing.dart';
 
 class Introduce extends StatelessWidget {
   const Introduce({super.key});
@@ -40,6 +43,11 @@ class Introduce extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(
+                            builder: (context) => const LayoutLanding(child: SignIn())
+                        )
+                    );
                   },
                   style: ButtonStyle(
                     elevation: WidgetStateProperty.all<double>(2),
@@ -66,6 +74,12 @@ class Introduce extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LayoutLanding(child: SignUp()),
+                      ),
+                    );
                   },
                   style: ButtonStyle(
                     elevation: WidgetStateProperty.all<double>(2),
