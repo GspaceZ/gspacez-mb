@@ -42,12 +42,17 @@
     "password": "Password",
     "confirm_password": "Confirm password",
     "have_account": "You have account?",
-    "not_have_account": "You don't have any account?",
+    "not_have_account": "Don't have any account?",
+    "forgot_password": "Forgot password?",
     "error_messages": {
       "email": "Please enter a valid email address.",
+      "email_empty": "Please enter your email",
       "first_name": "First name must be between 1 and 20 characters.",
+      "first_name_empty": "First name can't be empty",
       "last_name": "Last name must be between 1 and 20 characters.",
+      "last_name_empty": "Last name can't be empty",
       "password": {
+        "empty": "Password can't be empty.",
         "length": "Password must be at least 8 characters long.",
         "lowercase": "Password must contain at least one lowercase letter.",
         "uppercase": "Password must contain at least one uppercase letter.",
@@ -55,6 +60,12 @@
         "special": "Password must contain at least one special character.",
         "confirm": "Those passwords don't match. Please try again."
       }
+    },
+    "sign_in_messages": {
+      "success": "Signed in successfully",
+      "user": "User not existed",
+      "password": "Password incorrect",
+      "fail": "Failed to sign in"
     },
     "activate": {
       "welcome": "Welcome to Fakebook!",
