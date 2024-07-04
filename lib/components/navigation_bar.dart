@@ -175,20 +175,24 @@ class NavigationSidebar extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          TextButton(
-            style: buttonStyle,
-            onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  const LayoutLanding(child: Introduce())));
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 12, bottom: 12),
-                  child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
-                      style: text_bold),
-                ),
-              ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: TextButton(
+              style: buttonStyle,
+              onPressed: () {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  const LayoutLanding(child: Introduce())));
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 12),
+                    child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
+                        overflow: TextOverflow.ellipsis,
+                        style: text_bold),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
