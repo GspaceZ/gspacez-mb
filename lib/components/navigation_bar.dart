@@ -182,10 +182,14 @@ class NavigationSidebar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 12, bottom: 12),
-                  child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
-                      style: text_bold),
+                Expanded(
+                  child: FittedBox(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 12),
+                      child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
+                          style: text_bold),
+                    ),
+                  ),
                 ),
               ],
             ),
