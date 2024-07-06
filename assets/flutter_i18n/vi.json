@@ -43,11 +43,16 @@
     "confirm_password": "Xác nhận mật khẩu",
     "have_account": "Bạn có tài khoản?",
     "not_have_account": "Bạn chưa có tài khoản?",
+    "forgot_password": "Quên mật khẩu?",
     "error_messages": {
       "email": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "email_empty": "Vui lòng nhập địa chỉ email.",
       "first_name": "Tên phải dài từ 1 đến 20 ký tự.",
+      "first_name_empty": "Vui lòng nhập tên.",
       "last_name": "Họ phải dài từ 1 đến 20 ký tự.",
+      "last_name_empty": "Vui lòng nhập họ.",
       "password": {
+        "empty": "Vui lòng nhập mật khẩu.",
         "length": "Mật khẩu phải dài ít nhất 8 ký tự.",
         "lowercase": "Mật khẩu phải chứa ít nhất một chữ cái thường.",
         "uppercase": "Mật khẩu phải chứa ít nhất một chữ cái hoa.",
@@ -55,6 +60,12 @@
         "special": "Mật khẩu phải chứa ít nhất một ký tự đặc biệt.",
         "confirm": "Mật khẩu không khớp. Vui lòng thử lại."
       }
+    },
+    "sign_in_messages": {
+      "success_message": "Đăng nhập thành công",
+      "user": "Người dùng không tồn tại",
+      "password": "Mật khẩu không đúng",
+      "fail_message": "Đăng nhập thất bại"
     },
     "activate": {
       "welcome": "Chào mừng tới Fakebook!",
