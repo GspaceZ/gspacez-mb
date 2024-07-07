@@ -56,4 +56,3 @@ Future<Map<String, dynamic>> signUpUser(User user) async {
   }
 
 }
-
