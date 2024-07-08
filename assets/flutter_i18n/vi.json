@@ -67,6 +67,11 @@
       "password": "Mật khẩu không đúng",
       "fail_message": "Đăng nhập thất bại"
     },
+    "sign_up_messages": {
+      "success": "Đăng ký thành công",
+      "fail": "Đăng ký thất bại. Vui lòng thử lại sau",
+      "email_exist": "Email đã tồn tại"
+    },
     "activate": {
       "welcome": "Chào mừng tới Fakebook!",
       "mail_sent": "Mail kích hoạt đã được gửi! Vui lòng kiểm tra email",

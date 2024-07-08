@@ -12,3 +12,10 @@ Color hintColor = const Color(0xFF323232);
 
 TextStyle text_bold = const TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.black);
 TextStyle text_normal = const TextStyle(fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+
+
+
+
+
+
+

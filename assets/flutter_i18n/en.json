@@ -67,6 +67,11 @@
       "password": "Password incorrect",
       "fail": "Failed to sign in"
     },
+    "sign_up_messages": {
+      "success": "Signed up successfully",
+      "fail": "Sign up failed. Please check your credentials.",
+      "email_exist": "Email already exists"
+    },
     "activate": {
       "welcome": "Welcome to Fakebook!",
       "mail_sent": "Activation Mail is sent! Please check your email!",

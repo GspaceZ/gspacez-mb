@@ -7,7 +7,6 @@ CusTomInputDecoration(this.labelText);
   InputDecoration getInputDecoration() {
     return InputDecoration(
       fillColor: Colors.grey.shade200,
-      errorStyle: const TextStyle(color: Colors.red, fontSize: 11),
       filled: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16), // Set the border radius
