@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/screen/auth/forgot_password.dart';
+import 'package:untitled/screen/auth/introduce.dart';
+import 'package:untitled/screen/auth/otp_screen.dart';
 import 'package:untitled/screen/default_layout.dart';
+import 'package:untitled/screen/layout_landing.dart';
 
 import 'provider/language_provider.dart';
 
@@ -53,7 +57,7 @@ class MyApp extends StatelessWidget {
             fontFamily: 'NotoSans',
              // Set font chữ mặc định cho app
           ),
-          home: const DefaultLayout(selectedIndex: 0),
+          home: LayoutLanding(child: Introduce(),),
           debugShowCheckedModeBanner: false,
         );
       },
