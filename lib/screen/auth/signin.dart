@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/model/user.dart';
+import 'package:untitled/screen/auth/forgot_password.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/default_layout.dart';
@@ -48,7 +47,7 @@ class _SignInState extends State<SignIn> {
               child: Text(
                 FlutterI18n.translate(context, "auth.sign_in"),
                 style:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
               ),
             ),
             Padding(
@@ -61,7 +60,7 @@ class _SignInState extends State<SignIn> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         decoration: CusTomInputDecoration(
-                            FlutterI18n.translate(context, "auth.email"))
+                                FlutterI18n.translate(context, "auth.email"))
                             .getInputDecoration(),
                         validator: (value) => EmailValidator.validate(value!),
                         onSaved: (value) {
@@ -69,25 +68,27 @@ class _SignInState extends State<SignIn> {
                         },
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         decoration: CusTomInputDecoration(
-                            FlutterI18n.translate(context, "auth.password")
-                        ).getInputDecoration().copyWith(
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                              color: Colors.grey,
+                                FlutterI18n.translate(context, "auth.password"))
+                            .getInputDecoration()
+                            .copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isPasswordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isPasswordVisible = !_isPasswordVisible;
+                                  });
+                                },
+                              ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                          ),
-                        ),
                         obscureText: !_isPasswordVisible,
                         controller: _passwordController,
                         onSaved: (value) {
@@ -100,14 +101,21 @@ class _SignInState extends State<SignIn> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            // Navigate to the forgot password page
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    LayoutLanding(child: ForgotPassword()),
+                              ),
+                            );
                           },
-                          child: Text(FlutterI18n.translate(context, "auth.forgot_password"),
+                          child: Text(
+                            FlutterI18n.translate(
+                                context, "auth.forgot_password"),
                             style: const TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16
-                            ),
+                                fontSize: 16),
                           ),
                         ),
                       ],
@@ -127,7 +135,7 @@ class _SignInState extends State<SignIn> {
                                   FlutterI18n.translate(
                                       context, "auth.sign_in"),
                                   style:
-                                  const TextStyle(color: Colors.white)))),
+                                      const TextStyle(color: Colors.white)))),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 24.0),
@@ -135,21 +143,26 @@ class _SignInState extends State<SignIn> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                              FlutterI18n.translate(context, "auth.not_have_account"),
+                              FlutterI18n.translate(
+                                  context, "auth.not_have_account"),
                               style: const TextStyle(fontSize: 16)),
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const LayoutLanding(child: SignUp(),),
+                                  builder: (context) => const LayoutLanding(
+                                    child: SignUp(),
+                                  ),
                                 ),
                               );
                             },
                             child: Text(
                               FlutterI18n.translate(context, "auth.sign_up"),
                               style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
                             ),
                           )
                         ],
@@ -178,7 +191,8 @@ class _SignInState extends State<SignIn> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green,
-              content: Text(FlutterI18n.translate(context, 'auth.sign_in_messages.success')),
+              content: Text(FlutterI18n.translate(
+                  context, 'auth.sign_in_messages.success')),
             ),
           );
           await Future.delayed(const Duration(seconds: 2));
@@ -191,11 +205,13 @@ class _SignInState extends State<SignIn> {
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
-        print(e.toString());
-        final errorMessage = FlutterI18n.translate(
+        var errorMessage = FlutterI18n.translate(
           context,
           e.toString().replaceAll('Exception: ', ''),
         );
+        if(errorMessage.length>30) {
+          errorMessage = FlutterI18n.translate(context, "auth.sign_in_messages.fail");
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: Colors.red,

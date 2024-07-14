@@ -9,9 +9,7 @@ class LayoutLanding extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           child: Container(
             color: Colors.white,

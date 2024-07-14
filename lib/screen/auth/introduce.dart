@@ -52,13 +52,13 @@ class Introduce extends StatelessWidget {
                                 const LayoutLanding(child: SignIn())));
                   },
                   style: ButtonStyle(
-                    elevation: MaterialStateProperty.all<double>(2),
-                    shape: MaterialStateProperty.all(
+                    elevation: WidgetStateProperty.all<double>(2),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    backgroundColor: WidgetStateProperty.all(Colors.blue),
                   ),
                   child: SizedBox(
                     width: 150,
@@ -85,14 +85,14 @@ class Introduce extends StatelessWidget {
                     );
                   },
                   style: ButtonStyle(
-                    elevation: MaterialStateProperty.all<double>(2),
-                    shape: MaterialStateProperty.all(
+                    elevation: WidgetStateProperty.all<double>(2),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                     backgroundColor:
-                        MaterialStateProperty.all(Colors.grey.shade300),
+                        WidgetStateProperty.all(Colors.grey.shade300),
                   ),
                   child: SizedBox(
                     width: 150,

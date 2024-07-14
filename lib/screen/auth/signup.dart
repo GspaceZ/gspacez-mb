@@ -225,55 +225,75 @@ class _SignUpState extends State<SignUp> {
         lastName: _lastNameController.text,
         password: _passwordController.text,
       );
+try {
+  final response = await signUpUser(user!);
+  LoadingDialog.hideLoadingDialog();
+  // Kiểm tra xem widget có còn được gắn hay không
+  if (!mounted) return;
 
-      final response = await signUpUser(user!);
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    FocusScope.of(context).unfocus();
+  });
 
-      // Kiểm tra xem widget có còn được gắn hay không
-      if (!mounted) return;
+  if (response['code'] == 1000) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green,
+        content: Text(
+            FlutterI18n.translate(context, "auth.sign_up_messages.success")),
+      ),
+    );
+    // Điều hướng ngay lập tức mà không cần chờ
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+        const LayoutLanding(
+          child: SignIn(),
+        ),
+      ),
+    );
+    return;
+  }
+  if (response['code'] == 1002) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(
+            FlutterI18n.translate(
+                context, "auth.sign_up_messages.email_exist")),
+      ),
+    );
+    return;
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content:
+        Text(FlutterI18n.translate(context, "auth.sign_up_messages.fail")),
+      ),
+    );
+    return;
+  }
+} catch (e) {
+  LoadingDialog.hideLoadingDialog();
+  var errorMessage = FlutterI18n.translate(
+    context,
+    e.toString().replaceAll('Exception: ', ''),
+  );
+  if (errorMessage.length > 30) {
+    errorMessage =
+    FlutterI18n.translate(context, "auth.sign_up_messages.fail");
+  }
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.red,
+      content: Text(errorMessage),
+    ),
+  );
+  return;
 
-      LoadingDialog.hideLoadingDialog();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).unfocus();
-      });
-
-      if (response['code'] == 1000) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-                FlutterI18n.translate(context, "auth.sign_up_messages.success")),
-          ),
-        );
-        // Điều hướng ngay lập tức mà không cần chờ
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LayoutLanding(
-              child: SignIn(),
-            ),
-          ),
-        );
-        return;
-      }
-      if (response['code'] == 1002) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(
-                FlutterI18n.translate(context, "auth.sign_up_messages.email_exist")),
-          ),
-        );
-        return;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content:
-            Text(FlutterI18n.translate(context, "auth.sign_up_messages.fail")),
-          ),
-        );
-        return;
-      }
+}
     }
   }
 }
