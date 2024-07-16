@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/screen/auth/change_password.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
-import 'package:untitled/screen/component/dialog_loading.dart';
+import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/service/auth_service.dart';
 

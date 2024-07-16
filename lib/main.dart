@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/screen/auth/forgot_password.dart';
-import 'package:untitled/screen/auth/introduce.dart';
-import 'package:untitled/screen/auth/otp_screen.dart';
-import 'package:untitled/screen/default_layout.dart';
-import 'package:untitled/screen/layout_landing.dart';
-
+import 'package:untitled/router/app_router.dart';
 import 'provider/language_provider.dart';
 
 
@@ -42,6 +37,8 @@ class MyApp extends StatelessWidget {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
+          initialRoute: AppRoutes.splash_screen,
+          onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
             i18nDelegate,
             GlobalMaterialLocalizations.delegate,
@@ -57,7 +54,6 @@ class MyApp extends StatelessWidget {
             fontFamily: 'NotoSans',
              // Set font chữ mặc định cho app
           ),
-          home: LayoutLanding(child: Introduce(),),
           debugShowCheckedModeBanner: false,
         );
       },

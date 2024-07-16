@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/model/user.dart';
+import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/forgot_password.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
@@ -8,7 +10,7 @@ import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
 
-import '../component/dialog_loading.dart';
+import '../../components/dialog_loading.dart';
 import '../layout_landing.dart';
 
 class SignIn extends StatefulWidget {
@@ -19,6 +21,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final TokenDataSource _tokenDataSource = TokenDataSource();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   String email = "";
@@ -101,13 +104,9 @@ class _SignInState extends State<SignIn> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    LayoutLanding(child: ForgotPassword()),
-                              ),
-                            );
+                            Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.forgot_password);
                           },
                           child: Text(
                             FlutterI18n.translate(
@@ -148,14 +147,9 @@ class _SignInState extends State<SignIn> {
                               style: const TextStyle(fontSize: 16)),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LayoutLanding(
-                                    child: SignUp(),
-                                  ),
-                                ),
-                              );
+                              Navigator.pushReplacementNamed(
+                                  context,
+                                  AppRoutes.sign_up);
                             },
                             child: Text(
                               FlutterI18n.translate(context, "auth.sign_up"),
@@ -188,6 +182,7 @@ class _SignInState extends State<SignIn> {
         print(response);
 
         if (response['code'] == 1000) {
+           _tokenDataSource.saveToken(response['result']['token']);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.green,
@@ -196,12 +191,9 @@ class _SignInState extends State<SignIn> {
             ),
           );
           await Future.delayed(const Duration(seconds: 2));
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const DefaultLayout(selectedIndex: 0),
-            ),
-          );
+           Navigator.pushReplacementNamed(
+               context,
+               AppRoutes.home);
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();

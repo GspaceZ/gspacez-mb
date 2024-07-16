@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/model/user.dart';
+import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
-import 'package:untitled/screen/component/dialog_loading.dart';
+import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
@@ -244,15 +245,9 @@ try {
       ),
     );
     // Điều hướng ngay lập tức mà không cần chờ
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-        const LayoutLanding(
-          child: SignIn(),
-        ),
-      ),
-    );
+    Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.sign_in);
     return;
   }
   if (response['code'] == 1002) {
