@@ -7,15 +7,16 @@ import 'homePage/home.dart';
 
 class DefaultLayout extends StatefulWidget {
   final int selectedIndex;
+  final Widget? child;
 
-  const DefaultLayout({super.key, required this.selectedIndex});
+  const DefaultLayout({super.key, required this.selectedIndex, this.child});
 
   @override
   State<DefaultLayout> createState() => _DefaultLayoutState();
 }
 
 class _DefaultLayoutState extends State<DefaultLayout> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 4;
   List<int> check = [0, 0, 0, 0, 0];
 
   @override
@@ -63,13 +64,10 @@ class _DefaultLayoutState extends State<DefaultLayout> {
 
                   /// Activity page
                   const TrendingSidebar(),
-                  const Center(
-                    child: Text(
-                      "Home Page",
-                      style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  widget.child ??
+                      const Center(
+                        child: Text('HomePage'),
+                      ),
                 ][_selectedIndex],
               ],
             ),

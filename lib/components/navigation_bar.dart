@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:untitled/router/app_router.dart';
+import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
+import 'package:untitled/screen/profile/update_profile.dart';
 import 'package:untitled/utils/style.dart';
 
 import '../screen/auth/introduce.dart';
@@ -109,7 +112,11 @@ class NavigationSidebar extends StatelessWidget {
                   size: 30,
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(
+                    context,
+                    AppRoutes.update_profile);
+              },
             ),
           ),
           Container(

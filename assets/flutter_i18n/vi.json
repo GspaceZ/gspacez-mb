@@ -47,7 +47,7 @@
     "not_have_account": "Bạn chưa có tài khoản?",
     "forgot_password": "Quên mật khẩu?",
     "confirm": "Xác nhận",
-    "recover_account" : "Khôi phục tài khoản",
+    "recover_account": "Khôi phục tài khoản",
     "send_recovery_email": "Gửi email khôi phục",
     "description_otp": "Nhập mã OTP đã được gửi đến email của bạn",
     "error_messages": {
@@ -83,6 +83,31 @@
       "mail_sent": "Mail kích hoạt đã được gửi! Vui lòng kiểm tra email",
       "success": "Kích hoạt thành công!",
       "and_start_now": " và Bắt đầu ngay bây giờ!"
+    }
+  },
+  "profile": {
+    "choose_avatar": "Chọn ảnh đại diện khác",
+    "first_name": "Tên",
+    "last_name": "Họ",
+    "country": "Quốc gia",
+    "city": "Thành phố",
+    "address": "Địa chỉ",
+    "dob": "Ngày sinh",
+    "save": "Lưu hồ sơ",
+    "cancel": "Hủy",
+    "error_messages": {
+      "first_name": "Tên phải có từ 1 đến 20 ký tự.",
+      "last_name": "Họ phải có từ 1 đến 20 ký tự."
+    },
+    "avatar": {
+      "save": "Lưu ảnh đại diện",
+      "cancel": "Hủy",
+      "choose_avatar": "Chọn ảnh đại diện từ thiết bị",
+      "toast": {
+        "success": "Cập nhật ảnh đại diện thành công!",
+        "unauthenticated": "Bạn không có quyền cập nhật ảnh đại diện cho tài khoản này!",
+        "unknown": "Có lỗi xảy ra! Hãy thử lại sau!"
+      }
     }
   }
 }
