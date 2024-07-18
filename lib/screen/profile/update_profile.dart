@@ -6,6 +6,7 @@ import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/user_service.dart';
+import '../../router/app_router.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({super.key});
@@ -47,7 +48,9 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                   ),
                   TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.update_avatar);
+                      },
                       child: Text(
                         FlutterI18n.translate(context, "profile.choose_avatar"),
                         style: const TextStyle(color: Colors.blue),

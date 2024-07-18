@@ -9,6 +9,7 @@ import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
+import '../screen/profile/update_avatar.dart';
 
 class AppRoutes {
   static const String splash_screen = '/';
@@ -17,7 +18,7 @@ class AppRoutes {
   static const String sign_up = '/sign_up';
   static const String home = '/home';
   static const String update_profile = '/update_profile';
-
+  static const String update_avatar = '/update_avatar';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -35,6 +36,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) =>  const LayoutLanding(child: SignUp()));
       case update_profile:
         return MaterialPageRoute(builder: (_) => const DefaultLayout(selectedIndex: 4, child: UpdateProfile(),));
+      case update_avatar:
+        return MaterialPageRoute(builder: (_) => const DefaultLayout(selectedIndex: 4, child: UpdateAvatar(),));
       default:
         return MaterialPageRoute(builder: (_) => const LayoutLanding(child: Introduce()));
     }

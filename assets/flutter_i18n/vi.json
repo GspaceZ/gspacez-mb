@@ -100,9 +100,10 @@
       "last_name": "Họ phải có từ 1 đến 20 ký tự."
     },
     "avatar": {
-      "save": "Lưu ảnh đại diện",
+      "save": "Lưu",
       "cancel": "Hủy",
-      "choose_avatar": "Chọn ảnh đại diện từ thiết bị",
+      "choose_avatar": "Chọn từ thiết bị",
+      "content": "Hãy chọn ảnh có kích thước tròn hoặc vuông \nđể hiển thị tốt nhất!",
       "toast": {
         "success": "Cập nhật ảnh đại diện thành công!",
         "unauthenticated": "Bạn không có quyền cập nhật ảnh đại diện cho tài khoản này!",
