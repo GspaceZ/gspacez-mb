@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:untitled/model/user.dart';
+import 'package:untitled/service/config_api/network_constant.dart';
 
 import 'config_api/config_api.dart';
 
@@ -87,4 +88,26 @@ Future<http.Response> resetPassword(String email, String password) async {
     },
   );
   return response;
+}
+Future<Map<String, dynamic>> sendMailActive( String email) async {
+  try {
+    final response = await callApi(
+      "identity/auth/send-active",
+      'POST',
+      data: {
+        'email': email,
+        'url': NetworkConstant.BASE_URI_ACTIVE
+      },
+    );
+    if(response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print(response.body);
+      throw Exception('Failed to send mail active');
+    }
+  }
+  catch (error) {
+    print('Error: $error');
+    rethrow;
+  }
 }

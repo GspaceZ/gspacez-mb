@@ -3,15 +3,11 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/router/app_router.dart';
-import 'package:untitled/screen/auth/forgot_password.dart';
-import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
-import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
-
 import '../../components/dialog_loading.dart';
-import '../layout_landing.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -193,7 +189,7 @@ class _SignInState extends State<SignIn> {
           await Future.delayed(const Duration(seconds: 2));
            Navigator.pushReplacementNamed(
                context,
-               AppRoutes.home);
+               AppRoutes.waiting_active);
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
