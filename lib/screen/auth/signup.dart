@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:provider/provider.dart';
 import 'package:untitled/model/user.dart';
+import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
@@ -31,6 +33,7 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    final userInfo = context.read<UserInfoProvider>();
     return Padding(
       padding: const EdgeInsets.only(left: 24.0, right: 24.0),
       child: Container(
@@ -165,6 +168,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     TextButton(
                       onPressed: () {
+                        userInfo.setEmail(_emailController.text);
                         _submit();
                       },
                       child: Container(
@@ -217,78 +221,78 @@ class _SignUpState extends State<SignUp> {
   }
 
   Future<void> _submit() async {
+    if (validateForm()) {
+      LoadingDialog.showLoadingDialog(context);
+      createUser();
+      try {
+        final response = await signUpUser(user!);
+        LoadingDialog.hideLoadingDialog();
+        handleResponse(response);
+      } on Exception catch (e) {
+        handleError(e);
+      }
+    }
+  }
+
+  bool validateForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      LoadingDialog.showLoadingDialog(context);
-      user = User(
-        email: _emailController.text,
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
-        password: _passwordController.text,
-      );
-try {
-  final response = await signUpUser(user!);
-  LoadingDialog.hideLoadingDialog();
-  // Kiểm tra xem widget có còn được gắn hay không
-  if (!mounted) return;
+      return true;
+    }
+    return false;
+  }
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    FocusScope.of(context).unfocus();
-  });
+  void createUser() {
+    user = User(
+      email: _emailController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      password: _passwordController.text,
+    );
+  }
 
-  if (response['code'] == 1000) {
+  void handleResponse(Map<String, dynamic> response) {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).unfocus();
+    });
+    if (response['code'] == 1000) {
+      showSuccessSnackBar();
+      Navigator.pushReplacementNamed(context, AppRoutes.waiting_active);
+    } else if (response['code'] == 1002) {
+      showErrorSnackBar("auth.sign_up_messages.email_exist");
+    } else {
+      showErrorSnackBar("auth.sign_up_messages.fail");
+    }
+  }
+
+  void handleError(Exception e) {
+    LoadingDialog.hideLoadingDialog();
+    var errorMessage = FlutterI18n.translate(
+      context,
+      e.toString().replaceAll('Exception: ', ''),
+    );
+    if (errorMessage.length > 30) {
+      errorMessage = FlutterI18n.translate(context, "auth.sign_up_messages.fail");
+    }
+    showErrorSnackBar(errorMessage);
+  }
+
+  void showSuccessSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,
-        content: Text(
-            FlutterI18n.translate(context, "auth.sign_up_messages.success")),
+        content: Text(FlutterI18n.translate(context, "auth.sign_up_messages.success")),
       ),
     );
-    // Điều hướng ngay lập tức mà không cần chờ
-    Navigator.pushReplacementNamed(
-        context,
-        AppRoutes.sign_in);
-    return;
   }
-  if (response['code'] == 1002) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content: Text(
-            FlutterI18n.translate(
-                context, "auth.sign_up_messages.email_exist")),
-      ),
-    );
-    return;
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.red,
-        content:
-        Text(FlutterI18n.translate(context, "auth.sign_up_messages.fail")),
-      ),
-    );
-    return;
-  }
-} catch (e) {
-  LoadingDialog.hideLoadingDialog();
-  var errorMessage = FlutterI18n.translate(
-    context,
-    e.toString().replaceAll('Exception: ', ''),
-  );
-  if (errorMessage.length > 30) {
-    errorMessage =
-    FlutterI18n.translate(context, "auth.sign_up_messages.fail");
-  }
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      backgroundColor: Colors.red,
-      content: Text(errorMessage),
-    ),
-  );
-  return;
 
-}
-    }
+  void showErrorSnackBar(String messageKey) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(FlutterI18n.translate(context, messageKey)),
+      ),
+    );
   }
 }

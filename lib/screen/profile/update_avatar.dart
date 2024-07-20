@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:untitled/service/user_service.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import '../../components/dialog_loading.dart';
-import '../../router/app_router.dart';
 import '../../service/cloudinary_config.dart';
 
 class UpdateAvatar extends StatefulWidget {
@@ -69,11 +68,11 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               Container(
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Color(0xFFAAAAAA),
+                    color: const Color(0xFFAAAAAA),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(140),
@@ -86,7 +85,7 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
                       ? TextButton(
                     onPressed: _chooseAvatar,
                     style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Color(0xFFE6F1FE)),
+                      backgroundColor: WidgetStateProperty.all(const Color(0xFFE6F1FE)),
                     ),
                     child: Text(
                       FlutterI18n.translate(context, "profile.avatar.choose_avatar"),
@@ -97,13 +96,13 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
                       : null,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
                 FlutterI18n.translate(context, "profile.avatar.content"),
                 style: const TextStyle(color: Color(0xFF666666)),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -167,7 +166,7 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
             content: Text(FlutterI18n.translate(context, "profile.avatar.toast.success")),
           ),
         );
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         Navigator.pop(context);
       } else {
         LoadingDialog.hideLoadingDialog();

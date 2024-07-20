@@ -50,3 +50,4 @@ Future<Map<String, dynamic>> updateAvatar(String avatarUrl, String token) async 
     rethrow;
   }
 }
+
