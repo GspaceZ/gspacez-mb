@@ -40,14 +40,25 @@
     "first_name": "Tên",
     "last_name": "Họ",
     "password": "Mật khẩu",
+    "new_password": "Mật khẩu mới",
+    "change_password": "Đổi mật khẩu",
     "confirm_password": "Xác nhận mật khẩu",
     "have_account": "Bạn có tài khoản?",
     "not_have_account": "Bạn chưa có tài khoản?",
+    "forgot_password": "Quên mật khẩu?",
+    "confirm": "Xác nhận",
+    "recover_account": "Khôi phục tài khoản",
+    "send_recovery_email": "Gửi email khôi phục",
+    "description_otp": "Nhập mã OTP đã được gửi đến email của bạn",
     "error_messages": {
       "email": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "email_empty": "Vui lòng nhập địa chỉ email.",
       "first_name": "Tên phải dài từ 1 đến 20 ký tự.",
+      "first_name_empty": "Vui lòng nhập tên.",
       "last_name": "Họ phải dài từ 1 đến 20 ký tự.",
+      "last_name_empty": "Vui lòng nhập họ.",
       "password": {
+        "empty": "Vui lòng nhập mật khẩu.",
         "length": "Mật khẩu phải dài ít nhất 8 ký tự.",
         "lowercase": "Mật khẩu phải chứa ít nhất một chữ cái thường.",
         "uppercase": "Mật khẩu phải chứa ít nhất một chữ cái hoa.",
@@ -56,17 +67,48 @@
         "confirm": "Mật khẩu không khớp. Vui lòng thử lại."
       }
     },
+    "sign_in_messages": {
+      "success_message": "Đăng nhập thành công",
+      "user": "Người dùng không tồn tại",
+      "password": "Mật khẩu không đúng",
+      "fail_message": "Đăng nhập thất bại. Vui lòng kiểm tra kết nối ineternet"
+    },
+    "sign_up_messages": {
+      "success": "Đăng ký thành công",
+      "fail": "Đăng ký thất bại. Vui lòng kiểm tra kết nối ineternet",
+      "email_exist": "Email đã tồn tại"
+    },
     "activate": {
       "welcome": "Chào mừng tới Fakebook!",
       "mail_sent": "Mail kích hoạt đã được gửi! Vui lòng kiểm tra email",
       "success": "Kích hoạt thành công!",
       "and_start_now": " và Bắt đầu ngay bây giờ!"
+    }
+  },
+  "profile": {
+    "choose_avatar": "Chọn ảnh đại diện khác",
+    "first_name": "Tên",
+    "last_name": "Họ",
+    "country": "Quốc gia",
+    "city": "Thành phố",
+    "address": "Địa chỉ",
+    "dob": "Ngày sinh",
+    "save": "Lưu hồ sơ",
+    "cancel": "Hủy",
+    "error_messages": {
+      "first_name": "Tên phải có từ 1 đến 20 ký tự.",
+      "last_name": "Họ phải có từ 1 đến 20 ký tự."
     },
-    "trending_sidebar": {
-      "trending_posts": "Bài viết xu hướng",
-      "trending_people": "Có thể bạn biết",
-      "time": "Bây giờ",
-      "more": "Thêm"
+    "avatar": {
+      "save": "Lưu",
+      "cancel": "Hủy",
+      "choose_avatar": "Chọn từ thiết bị",
+      "content": "Hãy chọn ảnh có kích thước tròn hoặc vuông \nđể hiển thị tốt nhất!",
+      "toast": {
+        "success": "Cập nhật ảnh đại diện thành công!",
+        "unauthenticated": "Bạn không có quyền cập nhật ảnh đại diện cho tài khoản này!",
+        "unknown": "Có lỗi xảy ra! Hãy thử lại sau!"
+      }
     }
   }
 }

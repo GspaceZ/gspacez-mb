@@ -1,9 +1,9 @@
-class FirstnameValidator {
+class InputDefaultValidator {
   static String? validate(String value) {
     if (value.isEmpty) {
-      return 'First name can\'t be empty';
+      return 'Input can\'t be empty';
     } else if (value.length > 20) {
-      return 'First name must be between 1 and 20 characters';
+      return 'Input must be between 1 and 20 characters';
     }
     return null;
   }

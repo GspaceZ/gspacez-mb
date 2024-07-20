@@ -1,11 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/screen/default_layout.dart';
-
+import 'package:untitled/provider/user_info_provider.dart';
+import 'package:untitled/router/app_router.dart';
 import 'provider/language_provider.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,28 +18,43 @@ void main() async {
     ),
   );
 
-  await i18nDelegate.load(const Locale('en')); // Load initial translations with non-null locale
+  await i18nDelegate.load(
+      const Locale('en')); // Load initial translations with non-null locale
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => LanguageProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => LanguageProvider()),
+        ChangeNotifierProvider(create: (context) => UserInfoProvider()),
+      ],
       child: MyApp(i18nDelegate),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+class MyApp extends StatefulWidget {
   final FlutterI18nDelegate i18nDelegate;
 
-  MyApp(this.i18nDelegate);
+  const MyApp(this.i18nDelegate, {super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
+          navigatorKey: navigatorKey,
+          initialRoute: AppRoutes.splash_screen,
+          onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
-            i18nDelegate,
+            widget.i18nDelegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
@@ -51,12 +66,12 @@ class MyApp extends StatelessWidget {
           locale: languageProvider.locale,
           theme: ThemeData(
             fontFamily: 'NotoSans',
-             // Set font chữ mặc định cho app
+            // Set font chữ mặc định cho app
           ),
-          home: const DefaultLayout(selectedIndex: 0),
           debugShowCheckedModeBanner: false,
         );
       },
     );
   }
+
 }

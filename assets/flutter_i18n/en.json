@@ -40,14 +40,25 @@
     "first_name": "First name",
     "last_name": "Last name",
     "password": "Password",
+    "new_password": "New password",
+    "change_password": "Change password",
     "confirm_password": "Confirm password",
     "have_account": "You have account?",
-    "not_have_account": "You don't have any account?",
+    "not_have_account": "Don't have any account?",
+    "forgot_password": "Forgot password?",
+    "confirm": "Confirm",
+    "recover_account": "Recover Account",
+    "send_recovery_email": "Send Recovery Email",
+    "description_otp": "Please enter the OTP code sent to your email",
     "error_messages": {
       "email": "Please enter a valid email address.",
+      "email_empty": "Please enter your email",
       "first_name": "First name must be between 1 and 20 characters.",
+      "first_name_empty": "First name can't be empty",
       "last_name": "Last name must be between 1 and 20 characters.",
+      "last_name_empty": "Last name can't be empty",
       "password": {
+        "empty": "Password can't be empty.",
         "length": "Password must be at least 8 characters long.",
         "lowercase": "Password must contain at least one lowercase letter.",
         "uppercase": "Password must contain at least one uppercase letter.",
@@ -56,11 +67,48 @@
         "confirm": "Those passwords don't match. Please try again."
       }
     },
+    "sign_in_messages": {
+      "success": "Signed in successfully",
+      "user": "User not existed",
+      "password": "Password incorrect",
+      "fail": "Failed to sign in. Please check your internet."
+    },
+    "sign_up_messages": {
+      "success": "Signed up successfully",
+      "fail": "Sign up failed. Please check your internet.",
+      "email_exist": "Email already exists"
+    },
     "activate": {
       "welcome": "Welcome to Fakebook!",
       "mail_sent": "Activation Mail is sent! Please check your email!",
       "success": "Activated Successfully!",
       "and_start_now": " and Start now!"
+    }
+  },
+  "profile": {
+    "choose_avatar": "Choose another avatar",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "country": "Country",
+    "city": "City",
+    "address": "Address",
+    "dob": "Date of birth",
+    "save": "Save profile",
+    "cancel": "Cancel",
+    "error_messages": {
+      "first_name": "First name must be between 1 and 20 characters.",
+      "last_name": "Last name must be between 1 and 20 characters."
+    },
+    "avatar": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "choose_avatar": "Choose from your device",
+      "content": "Please choose a circle or square image \nfor best quality",
+      "toast": {
+        "success": "Upload avatar successfully!",
+        "unauthenticated": "You are not authorized to update avatar for this account!",
+        "unknown": "Something happen! Try it later!"
+      }
     }
   }
 }
