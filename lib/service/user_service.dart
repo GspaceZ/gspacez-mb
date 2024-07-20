@@ -29,5 +29,24 @@ Future<Map<String, dynamic>> updateProfile(String firstName, String lastName,
     print('Error: $error');
     rethrow;
   }
+}
 
+Future<Map<String, dynamic>> updateAvatar(String avatarUrl, String token) async {
+  try {
+    final response = await callApi(
+      "profile/users/avatar",
+      'POST',
+      data: {'avatarUrl': avatarUrl},
+      token: token,
+    );
+    if(response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      print(response.body);
+      throw Exception('Failed to update avatar');
+    }
+  } catch (error) {
+    print('Error: $error');
+    rethrow;
+  }
 }

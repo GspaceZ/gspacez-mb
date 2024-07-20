@@ -100,9 +100,10 @@
       "last_name": "Last name must be between 1 and 20 characters."
     },
     "avatar": {
-      "save": "Save avatar",
+      "save": "Save",
       "cancel": "Cancel",
-      "choose_avatar": "Choose an avatar from your device",
+      "choose_avatar": "Choose from your device",
+      "content": "Please choose a circle or square image \nfor best quality",
       "toast": {
         "success": "Upload avatar successfully!",
         "unauthenticated": "You are not authorized to update avatar for this account!",
