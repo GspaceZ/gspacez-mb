@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/screen/validators/index.dart';
@@ -28,6 +30,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   @override
   Widget build(BuildContext context) {
+    UserInfoProvider _userInfoProvider = context.watch<UserInfoProvider>();
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -44,7 +48,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     child: SizedBox(
                       width: 60,
                       height: 60,
-                      child: SvgPicture.asset(pathAvatar),
+                      child: Image.network(_userInfoProvider.urlAvatar),
                     ),
                   ),
                   TextButton(

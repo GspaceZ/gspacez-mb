@@ -189,7 +189,7 @@ class _SignInState extends State<SignIn> {
           await Future.delayed(const Duration(seconds: 2));
            Navigator.pushReplacementNamed(
                context,
-               AppRoutes.waiting_active);
+               AppRoutes.home);
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
