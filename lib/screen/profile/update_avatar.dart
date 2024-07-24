@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
@@ -90,7 +91,7 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
                 child: CircleAvatar(
                   radius: 140,
                   backgroundColor: Colors.white54,
-                  backgroundImage: _uploadedImageUrl.isNotEmpty ? NetworkImage(_uploadedImageUrl) : null,
+                  backgroundImage: _uploadedImageUrl.isNotEmpty ? CachedNetworkImageProvider(_uploadedImageUrl) : null,
                   child: _uploadedImageUrl.isEmpty
                       ? TextButton(
                     onPressed: _chooseAvatar,

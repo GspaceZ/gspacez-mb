@@ -14,10 +14,12 @@
   },
   "post": {
     "read_more": "Đọc thêm",
+    "read_less": "Rút gọn",
     "like": "Thích",
     "comment": "Bình luận",
     "share": "Chia sẻ",
     "hide": "Ẩn bài viết",
+    "privacy": "Chỉ mình tôi",
     "report": "Báo cáo"
   },
   "landing": {
@@ -110,5 +112,8 @@
         "unknown": "Có lỗi xảy ra! Hãy thử lại sau!"
       }
     }
+  },
+  "home": {
+    "title_create_post": "Bạn đang nghĩ gì?"
   }
 }

@@ -6,6 +6,7 @@ import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/default_layout.dart';
+import 'package:untitled/screen/homePage/home.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../screen/profile/update_avatar.dart';
@@ -25,7 +26,10 @@ class AppRoutes {
     switch (settings.name) {
       case home:
         return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(selectedIndex: 4));
+            builder: (_) => const DefaultLayout(
+                  selectedIndex: 4,
+                  child: Home(),
+                ));
       case splash_screen:
         return MaterialPageRoute(
           builder: (_) => const LayoutLanding(child: Introduce()),
@@ -40,9 +44,17 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: SignUp()));
       case update_profile:
-        return MaterialPageRoute(builder: (_) => const DefaultLayout(selectedIndex: 4, child: UpdateProfile(),));
+        return MaterialPageRoute(
+            builder: (_) => const DefaultLayout(
+                  selectedIndex: 4,
+                  child: UpdateProfile(),
+                ));
       case update_avatar:
-        return MaterialPageRoute(builder: (_) => const DefaultLayout(selectedIndex: 4, child: UpdateAvatar(),));
+        return MaterialPageRoute(
+            builder: (_) => const DefaultLayout(
+                  selectedIndex: 4,
+                  child: UpdateAvatar(),
+                ));
       case active_success:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: ActiveSuccess()));
