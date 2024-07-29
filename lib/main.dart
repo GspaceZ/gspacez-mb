@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          initialRoute: AppRoutes.splash_screen,
+          initialRoute: AppRoutes.home,
           onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
             widget.i18nDelegate,
@@ -65,6 +65,12 @@ class _MyAppState extends State<MyApp> {
           ],
           locale: languageProvider.locale,
           theme: ThemeData(
+            popupMenuTheme: PopupMenuThemeData(
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(color: Colors.grey, width: 0.5), // Set border color and width
+                borderRadius: BorderRadius.circular(10.0), // Set border radius if needed
+              ),
+            ),
             fontFamily: 'NotoSans',
             // Set font chữ mặc định cho app
           ),

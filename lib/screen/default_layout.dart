@@ -66,7 +66,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                   const TrendingSidebar(),
                   widget.child ??
                       const Center(
-                        child: Text('HomePage'),
+                        child: Text('Page not found!'),
                       ),
                 ][_selectedIndex],
               ],
@@ -92,8 +92,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
         selectedIndex: (_selectedIndex > 3) ? 3 : _selectedIndex,
         destinations: [
           NavigationDestination(
-            icon: getIcon("assets/svg/send-2.svg", false),
-            selectedIcon: getIcon("assets/svg/send-2.svg", true),
+            icon: getIcon("assets/svg/ic_share.svg", false),
+            selectedIcon: getIcon("assets/svg/ic_share.svg", true),
             label: "",
           ),
           NavigationDestination(

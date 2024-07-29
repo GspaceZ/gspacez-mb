@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:untitled/router/app_router.dart';
-import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
-import 'package:untitled/screen/profile/update_profile.dart';
 import 'package:untitled/utils/style.dart';
 
 import '../screen/auth/introduce.dart';
@@ -38,6 +36,11 @@ class NavigationSidebar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          const SizedBox(height: 50,),
+          Container(
+            height: 0.5,
+            color: Colors.grey,
+          ),
           Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -47,27 +50,19 @@ class NavigationSidebar extends StatelessWidget {
                 ),
               ),
             ),
-            child: Container(
-              decoration: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey,
-                    width: 0.5,
-                  ),
+            child: TextButton(
+              style: buttonStyle,
+              child: getOptions(
+                FlutterI18n.translate(context, "sidebar.home"),
+                const Icon(
+                  Icons.home_outlined,
+                  color: Colors.black,
+                  size: 30,
                 ),
               ),
-              child: TextButton(
-                style: buttonStyle,
-                child: getOptions(
-                  FlutterI18n.translate(context, "sidebar.home"),
-                  const Icon(
-                    Icons.home_outlined,
-                    color: Colors.black,
-                    size: 30,
-                  ),
-                ),
-                onPressed: () {},
-              ),
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, AppRoutes.home);
+              },
             ),
           ),
           Container(
@@ -113,7 +108,7 @@ class NavigationSidebar extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                Navigator.pushNamed(
+                Navigator.pushReplacementNamed(
                     context,
                     AppRoutes.update_profile);
               },

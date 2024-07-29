@@ -14,10 +14,12 @@
   },
   "post": {
     "read_more": "Read more",
+    "read_less": "Read less",
     "like": "Like",
     "comment": "Comment",
     "share": "Share",
     "hide": "Hide post",
+    "privacy": "Privacy",
     "report": "Report"
   },
   "landing": {
@@ -110,5 +112,8 @@
         "unknown": "Something happen! Try it later!"
       }
     }
+  },
+  "home": {
+    "title_create_post": "What are you thinking?"
   }
 }
