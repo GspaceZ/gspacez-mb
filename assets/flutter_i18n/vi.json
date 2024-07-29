@@ -20,7 +20,11 @@
     "share": "Chia sẻ",
     "hide": "Ẩn bài viết",
     "privacy": "Chỉ mình tôi",
-    "report": "Báo cáo"
+    "report": "Báo cáo",
+    "toggle": {
+      "hide": "Bài đăng đã bị ẩn.",
+      "restore": "Khôi phục?"
+    }
   },
   "landing": {
     "text_1": "Đơn giản hơn, dễ hơn, ...",

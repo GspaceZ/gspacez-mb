@@ -20,7 +20,11 @@
     "share": "Share",
     "hide": "Hide post",
     "privacy": "Privacy",
-    "report": "Report"
+    "report": "Report",
+    "toggle": {
+      "hide": "Post is hidden.",
+      "restore": "Restore?"
+    }
   },
   "landing": {
     "text_1": "Simpler, easier, ...",
