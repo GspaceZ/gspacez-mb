@@ -60,25 +60,23 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
       Stack(
         children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (int page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              itemCount: widget.images.length,
-              itemBuilder: (context, index) {
-                return CachedNetworkImage(
-                  imageUrl: widget.images[index],
-                  placeholder: (context,
-                      url) => const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) =>
-                  const Icon(Icons.error),
-                );
-              },
-            ),
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (int page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            itemCount: widget.images.length,
+            itemBuilder: (context, index) {
+              return CachedNetworkImage(
+                imageUrl: widget.images[index],
+                placeholder: (context,
+                    url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.error),
+              );
+            },
           ),
           Positioned(
             left: 0,
