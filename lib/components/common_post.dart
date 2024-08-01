@@ -100,7 +100,7 @@ class _CommonPostState extends State<CommonPost> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        InkWell(
+                        GestureDetector(
                             onTap: () {
                               _isLiked = !_isLiked;
                               setState(() {});
