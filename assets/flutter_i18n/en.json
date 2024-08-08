@@ -19,7 +19,17 @@
     "comment": "Comment",
     "share": "Share",
     "hide": "Hide post",
-    "privacy": "Privacy",
+    "privacy": {
+      "privacy_btn": "Privacy",
+      "title": "Who can see your post?",
+      "done": "Done",
+      "public_title": "Public",
+      "public_subtitle": "Anyone on or off Fakebook",
+      "friends_title": "Friends",
+      "friends_subtitle": "Your friends on Fakebook",
+      "private_title": "Private",
+      "private_subtitle": "Private"
+    },
     "report": "Report",
     "toggle": {
       "hide": "Post is hidden.",

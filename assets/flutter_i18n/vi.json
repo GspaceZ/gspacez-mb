@@ -19,7 +19,17 @@
     "comment": "Bình luận",
     "share": "Chia sẻ",
     "hide": "Ẩn bài viết",
-    "privacy": "Chỉ mình tôi",
+    "privacy": {
+      "privacy_btn": "Quyền riêng tư",
+      "title": "Who can see your post?",
+      "done": "Xong",
+      "public_title": "Công khai",
+      "public_subtitle": "Bất kỳ ai ở trên hoặc ngoài Fakebook",
+      "friends_title": "Bạn bè",
+      "friends_subtitle": "Bạn bè của bạn trên Fakebook",
+      "private_title": "Riêng tư",
+      "private_subtitle": "Riêng tư"
+    },
     "report": "Báo cáo",
     "toggle": {
       "hide": "Bài đăng đã bị ẩn.",
