@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CusTomInputDecoration  {
-  final String labelText;
+  final String? labelText;
 
 CusTomInputDecoration(this.labelText);
   InputDecoration getInputDecoration() {
