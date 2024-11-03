@@ -34,6 +34,16 @@
     "toggle": {
       "hide": "Bài đăng đã bị ẩn.",
       "restore": "Khôi phục?"
+    },
+    "modal": {
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "post": "Tạo",
+      "tags": "Gắn thẻ",
+      "location": "Vị trí",
+      "feeling": "Cảm xúc",
+      "privacy": "Quyền riêng tư",
+      "placeholder": "Bạn đang nghĩ gì?"
     }
   },
   "landing": {

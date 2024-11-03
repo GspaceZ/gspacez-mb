@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled/components/common_post.dart';
 import 'package:untitled/model/post_model.dart';
 import 'package:untitled/provider/user_info_provider.dart';
+import 'package:untitled/screen/homePage/widgets/create_post.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,7 +24,8 @@ class _HomeState extends State<Home> {
           CommonPost(
             post: PostModel(
                 author: "Mạc Bùi",
-                urlAvatar: 'https://res.cloudinary.com/dszkt92jr/image/upload/v1721463934/fgcnetakyb8nibeqr9do.png',
+                urlAvatar:
+                    'https://res.cloudinary.com/dszkt92jr/image/upload/v1721463934/fgcnetakyb8nibeqr9do.png',
                 content: 'Content 1'),
           ),
           CommonPost(
@@ -56,13 +58,13 @@ class _HomeState extends State<Home> {
                     " o ra các lớp PageRouteInfo tùy chỉnh như BookListRoute trong v"
                     " í dụ của bạn."),
           ),
-
           CommonPost(
             post: PostModel(
               author: "Author 4",
               urlAvatar: 'https://picsum.photos/250?image=11',
               content: 'Content 4',
-              urlVideo: 'https://res.cloudinary.com/dszkt92jr/video/upload/v1721473062/Screencast_from_18-07-2024_15_42_45_nxip2u.mp4',
+              urlVideo:
+                  'https://res.cloudinary.com/dszkt92jr/video/upload/v1721473062/Screencast_from_18-07-2024_15_42_45_nxip2u.mp4',
             ),
           ),
         ],
@@ -82,28 +84,45 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 12.0),
-                    child: Text(
-                        FlutterI18n.translate(
-                            context, "home.title_create_post"),
-                        style: const TextStyle(color: Colors.grey)),
-                  ),
-                ],
+            child: InkWell(
+              onTap: () {
+                _showCreatePostDialog();
+              },
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0),
+                      child: Text(
+                          FlutterI18n.translate(
+                              context, "home.title_create_post"),
+                          style: const TextStyle(color: Colors.grey)),
+                    ),
+                  ],
+                ),
               ),
             ),
           )
         ],
       ),
+    );
+  }
+
+  void _showCreatePostDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const FractionallySizedBox(
+          widthFactor: 1.1,
+          child: CreatePostDialog(),
+        );
+      },
     );
   }
 }

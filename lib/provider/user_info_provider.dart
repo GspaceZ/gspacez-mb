@@ -1,12 +1,12 @@
-
 import 'package:flutter/material.dart';
 
 class UserInfoProvider extends ChangeNotifier {
-  String _name = '';
+  String _name = 'Mạc Bùi';
   String _email = '';
   String _phone = '';
   String _address = '';
-  String _urlAvatar = 'https://res.cloudinary.com/dszkt92jr/image/upload/v1719943637/vcbhui3dxeusphkgvycg.png';
+  String _urlAvatar =
+      'https://res.cloudinary.com/dszkt92jr/image/upload/v1719943637/vcbhui3dxeusphkgvycg.png';
 
   String get name => _name;
   String get email => _email;
