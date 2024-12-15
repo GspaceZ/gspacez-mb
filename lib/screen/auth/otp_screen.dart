@@ -9,6 +9,7 @@ import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/service/auth_service.dart';
 
 class OtpScreen extends StatelessWidget {
+  final AuthService _authService = AuthService.instance;
   final String email;
 
   OtpScreen({super.key, required this.email});
@@ -120,41 +121,49 @@ class OtpScreen extends StatelessWidget {
       return;
     } else {
       try {
-        final response = await verifyOtp(email, otp);
+        final response = await _authService.verifyOtp(email, otp);
         LoadingDialog.hideLoadingDialog();
         final data = jsonDecode(response.body);
         if (data['code'] == 1000) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('OTP verified successfully'),
-            ),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LayoutLanding(
-                child: ChangePassword(
-                  email: email,
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.green,
+                content: Text('OTP verified successfully'),
+              ),
+            );
+          }
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutLanding(
+                  child: ChangePassword(
+                    email: email,
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.red,
-              content: Text('OTP verification failed'),
-            ),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('OTP verification failed'),
+              ),
+            );
+          }
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              backgroundColor: Colors.red,
-              content: Text('Please check your internet connection')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('Please check your internet connection')),
+          );
+        }
       }
     }
     // Navigate to the next screen

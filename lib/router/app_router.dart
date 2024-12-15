@@ -12,15 +12,15 @@ import 'package:untitled/screen/profile/update_profile.dart';
 import '../screen/profile/update_avatar.dart';
 
 class AppRoutes {
-  static const String splash_screen = '/';
-  static const String sign_in = '/sign_in';
-  static const String forgot_password = '/sign_in/forgot_password';
-  static const String sign_up = '/sign_up';
+  static const String splashScreen = '/';
+  static const String signIn = '/sign_in';
+  static const String forgotPassword = '/sign_in/forgot_password';
+  static const String signUp = '/sign_up';
   static const String home = '/home';
-  static const String update_profile = '/update_profile';
-  static const String update_avatar = '/update_avatar';
-  static const String active_success = '/active_success';
-  static const String waiting_active = '/waiting_active';
+  static const String updateProfile = '/update_profile';
+  static const String updateAvatar = '/update_avatar';
+  static const String activeSuccess = '/active_success';
+  static const String waitingActive = '/waiting_active';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -30,35 +30,35 @@ class AppRoutes {
                   selectedIndex: 4,
                   child: Home(),
                 ));
-      case splash_screen:
+      case splashScreen:
         return MaterialPageRoute(
           builder: (_) => const LayoutLanding(child: Introduce()),
         );
-      case sign_in:
+      case signIn:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: SignIn()));
-      case forgot_password:
+      case forgotPassword:
         return MaterialPageRoute(
             builder: (_) => LayoutLanding(child: ForgotPassword()));
-      case sign_up:
+      case signUp:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: SignUp()));
-      case update_profile:
+      case updateProfile:
         return MaterialPageRoute(
             builder: (_) => const DefaultLayout(
                   selectedIndex: 4,
                   child: UpdateProfile(),
                 ));
-      case update_avatar:
+      case updateAvatar:
         return MaterialPageRoute(
             builder: (_) => const DefaultLayout(
                   selectedIndex: 4,
                   child: UpdateAvatar(),
                 ));
-      case active_success:
+      case activeSuccess:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: ActiveSuccess()));
-      case waiting_active:
+      case waitingActive:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: WaitingActive()));
       default:

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/components/dialog_loading.dart';
@@ -18,7 +18,8 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  final TokenDataSource _tokenDataSource = TokenDataSource();
+  final TokenDataSource _tokenDataSource = TokenDataSource.instance;
+  final UserService _userService = UserService.instance;
   String pathAvatar = 'assets/svg/ic_avatar.svg';
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _firstNameController = TextEditingController();
@@ -30,7 +31,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   @override
   Widget build(BuildContext context) {
-    UserInfoProvider _userInfoProvider = context.watch<UserInfoProvider>();
+    UserInfoProvider userInfoProvider = context.watch<UserInfoProvider>();
 
     return SingleChildScrollView(
       child: Padding(
@@ -48,12 +49,12 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     child: SizedBox(
                       width: 60,
                       height: 60,
-                      child: Image.network(_userInfoProvider.urlAvatar),
+                      child: Image.network(userInfoProvider.urlAvatar),
                     ),
                   ),
                   TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, AppRoutes.update_avatar);
+                        Navigator.pushNamed(context, AppRoutes.updateAvatar);
                       },
                       child: Text(
                         FlutterI18n.translate(context, "profile.choose_avatar"),
@@ -211,9 +212,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       final String? token = await _tokenDataSource.getToken();
-      LoadingDialog.showLoadingDialog(context);
+      if (mounted) {
+        LoadingDialog.showLoadingDialog(context);
+      }
       try {
-        final response = await updateProfile(
+        final response = await _userService.updateProfile(
           _firstNameController.text,
           _lastNameController.text,
           _nationController.text,
@@ -222,27 +225,31 @@ class _UpdateProfileState extends State<UpdateProfile> {
           _addressController.text,
           token!,
         );
-        print(response);
+        Log.debug(response.toString());
         if (response['code'] == 1000) {
           LoadingDialog.hideLoadingDialog();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('Update profile successfully'),
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.green,
+                content: Text('Update profile successfully'),
+              ),
+            );
+          }
         } else {
           LoadingDialog.hideLoadingDialog();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Colors.red,
-              content: Text('Failed to update profile'),
-            ),
-          );
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('Failed to update profile'),
+              ),
+            );
+          }
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
-        print(e);
+        Log.debug(e.toString());
       }
     }
   }
