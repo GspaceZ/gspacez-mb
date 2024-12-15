@@ -1,6 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenDataSource {
+  TokenDataSource._privateConstructor();
+
+  static final TokenDataSource _instance =
+      TokenDataSource._privateConstructor();
+
+  static TokenDataSource get instance => _instance;
+
   static const _tokenKey = 'userToken';
 
   Future<void> saveToken(String token) async {

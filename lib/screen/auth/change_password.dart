@@ -12,7 +12,7 @@ import 'package:untitled/service/auth_service.dart';
 class ChangePassword extends StatelessWidget {
   final String email;
   ChangePassword({super.key, required this.email});
-
+  final AuthService _authService = AuthService.instance;
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController passwordController = TextEditingController();
@@ -115,41 +115,49 @@ class ChangePassword extends StatelessWidget {
     if (_formKey.currentState!.validate()) {
       LoadingDialog.showLoadingDialog(context);
       try {
-      final response = await resetPassword(
-          email, confirmPasswordController.text);
-      final data = jsonDecode(response.body);
-      if (data['code'] == 1000) {
+        final response = await _authService.resetPassword(
+            email, confirmPasswordController.text);
+        final data = jsonDecode(response.body);
+        if (data['code'] == 1000) {
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.green,
+                content: Text('Password changed successfully. Please sign in.'),
+              ),
+            );
+          }
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const LayoutLanding(child: SignIn()),
+              ),
+            );
+          }
+        } else {
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('Failed to change password. Please try again.'),
+              ),
+            );
+          }
+        }
+      } catch (error) {
         LoadingDialog.hideLoadingDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Password changed successfully. Please sign in.'),
-          ),
-        );
-        LoadingDialog.hideLoadingDialog();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LayoutLanding(child: SignIn()),
-          ),
-        );
-      } else {
-        LoadingDialog.hideLoadingDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Failed to change password. Please try again.'),
-          ),
-        );
-      }
-    } catch (error) {
-      LoadingDialog.hideLoadingDialog();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Failed to change password. Please try again.'),
-        ),
-      );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.red,
+              content: Text('Failed to change password. Please try again.'),
+            ),
+          );
+        }
       }
     }
   }

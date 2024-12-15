@@ -110,7 +110,7 @@ class NavigationSidebar extends StatelessWidget {
                 ),
                 onPressed: () {
                   Navigator.pushReplacementNamed(
-                      context, AppRoutes.update_profile);
+                      context, AppRoutes.updateProfile);
                 },
               ),
             ),

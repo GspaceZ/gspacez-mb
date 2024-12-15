@@ -13,7 +13,7 @@ class ForgotPassword extends StatelessWidget {
   ForgotPassword({super.key});
 
   final _formKey = GlobalKey<FormState>();
-
+  final AuthService _authService = AuthService.instance;
   final TextEditingController emailController = TextEditingController();
 
   @override
@@ -92,43 +92,53 @@ class ForgotPassword extends StatelessWidget {
     if (_formKey.currentState!.validate()) {
       LoadingDialog.showLoadingDialog(context);
       try {
-      final response = await forgetPassword(emailController.text);
-      final data = jsonDecode(response.body);
-      if (data['code'] == 1000) {
+        final response =
+            await _authService.forgetPassword(emailController.text);
+        final data = jsonDecode(response.body);
+        if (data['code'] == 1000) {
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.green,
+                content: Text('Email sent successfully'),
+              ),
+            );
+          }
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LayoutLanding(
+                    child: OtpScreen(
+                  email: emailController.text,
+                )),
+              ),
+            );
+          }
+        } else {
+          LoadingDialog.hideLoadingDialog();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                backgroundColor: Colors.red,
+                content: Text('Email not found'),
+              ),
+            );
+          }
+        }
+      } catch (error) {
         LoadingDialog.hideLoadingDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Email sent successfully'),
-          ),
-        );
-        LoadingDialog.hideLoadingDialog();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LayoutLanding(
-                child: OtpScreen(
-              email: emailController.text,
-            )),
-          ),
-        );
-      } else {
-        LoadingDialog.hideLoadingDialog();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text('Email not found'),
-          ),
-        );
-      }
-    } catch (error) {
-      LoadingDialog.hideLoadingDialog();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Failed to send email. Please check your internet connection.'),
-        ),
-      );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(
+                  'Failed to send email. Please check your internet connection.'),
+            ),
+          );
+        }
       }
     }
   }

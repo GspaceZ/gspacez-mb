@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/validators/index.dart';
 import 'package:untitled/service/auth_service.dart';
 import '../../components/dialog_loading.dart';
-
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -17,7 +17,8 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final TokenDataSource _tokenDataSource = TokenDataSource();
+  final AuthService _authService = AuthService.instance;
+  final TokenDataSource _tokenDataSource = TokenDataSource.instance;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   String email = "";
@@ -101,8 +102,7 @@ class _SignInState extends State<SignIn> {
                         TextButton(
                           onPressed: () {
                             Navigator.pushReplacementNamed(
-                                context,
-                                AppRoutes.forgot_password);
+                                context, AppRoutes.forgotPassword);
                           },
                           child: Text(
                             FlutterI18n.translate(
@@ -144,8 +144,7 @@ class _SignInState extends State<SignIn> {
                           TextButton(
                             onPressed: () {
                               Navigator.pushReplacementNamed(
-                                  context,
-                                  AppRoutes.sign_up);
+                                  context, AppRoutes.signUp);
                             },
                             child: Text(
                               FlutterI18n.translate(context, "auth.sign_up"),
@@ -173,39 +172,44 @@ class _SignInState extends State<SignIn> {
       _formKey.currentState!.save();
       LoadingDialog.showLoadingDialog(context);
       try {
-        final response = await signIn(email, password);
+        final response = await _authService.signIn(email, password);
         LoadingDialog.hideLoadingDialog();
-        print(response);
+        Log.debug(response.toString());
 
         if (response['code'] == 1000) {
-           _tokenDataSource.saveToken(response['result']['token']);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.green,
-              content: Text(FlutterI18n.translate(
-                  context, 'auth.sign_in_messages.success')),
-            ),
-          );
+          _tokenDataSource.saveToken(response['result']['token']);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.green,
+                content: Text(FlutterI18n.translate(
+                    context, 'auth.sign_in_messages.success')),
+              ),
+            );
+          }
           await Future.delayed(const Duration(seconds: 2));
-           Navigator.pushReplacementNamed(
-               context,
-               AppRoutes.home);
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          }
         }
       } catch (e) {
         LoadingDialog.hideLoadingDialog();
-        var errorMessage = FlutterI18n.translate(
-          context,
-          e.toString().replaceAll('Exception: ', ''),
-        );
-        if(errorMessage.length>30) {
-          errorMessage = FlutterI18n.translate(context, "auth.sign_in_messages.fail");
+        if (mounted) {
+          var errorMessage = FlutterI18n.translate(
+            context,
+            e.toString().replaceAll('Exception: ', ''),
+          );
+          if (errorMessage.length > 30) {
+            errorMessage =
+                FlutterI18n.translate(context, "auth.sign_in_messages.fail");
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(errorMessage),
+            ),
+          );
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(errorMessage),
-          ),
-        );
       }
     }
   }
