@@ -76,6 +76,10 @@
     "recover_account": "Khôi phục tài khoản",
     "send_recovery_email": "Gửi email khôi phục",
     "description_otp": "Nhập mã OTP đã được gửi đến email của bạn",
+    "sign_in_with_google": "Đăng nhập với Google",
+    "create_password": "Tạo mật khẩu",
+    "create_password_success": "Tạo mật khẩu thành công",
+    "create_password_fail": "Tạo mật khẩu thất bại",
     "error_messages": {
       "email": "Vui lòng nhập địa chỉ email hợp lệ.",
       "email_empty": "Vui lòng nhập địa chỉ email.",

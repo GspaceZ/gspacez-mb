@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/main.dart';
 
 class LoadingDialog {
   static late BuildContext _dialogContext;
 
-  static Future<void> showLoadingDialog(BuildContext context) async {
+  static Future<void> showLoadingDialog(BuildContext? context) async {
     return showDialog(
-      context: context,
+      context: context ?? navigatorKey.currentContext!,
       barrierDismissible: false,
       builder: (BuildContext context) {
         _dialogContext = context;
-        return  Dialog(
+        return Dialog(
           child: Container(
             width: 100,
             height: 100,
@@ -35,4 +36,3 @@ class LoadingDialog {
     Navigator.pop(_dialogContext);
   }
 }
-

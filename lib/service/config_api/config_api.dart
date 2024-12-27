@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/service/config_api/network_constant.dart';
 
@@ -8,17 +10,19 @@ Future<http.Response> callApi<T>(
   String url,
   String method, {
   Map<String, dynamic>? data,
-  String? token,
+  bool? isToken,
+  String? contentType,
 }) async {
   try {
-    Log.debug("Data: $data");
-    final Uri fullUrl = Uri.parse('${NetworkConstant.BASE_URL}' '$url');
+    final token = await TokenDataSource.instance.getToken();
+    final Uri fullUrl = Uri.parse('${NetworkConstant.baseURL}$url');
     final headers = <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      if (token != null) 'Authorization': 'Bearer $token',
+      'Content-Type': contentType ?? AppConstants.json,
+      if (token != null && isToken != null && isToken)
+        'Authorization': 'Bearer $token',
     };
     late http.Response response;
-
+    Log.info('request: "$fullUrl" \n$headers \n${jsonEncode(data)}');
     switch (method.toUpperCase()) {
       case 'POST':
         response =
@@ -41,7 +45,7 @@ Future<http.Response> callApi<T>(
         response = await http.get(fullUrl, headers: headers);
         break;
     }
-    Log.debug('Response: ${response.body}');
+    Log.info('Response: ${response.body}');
     return response;
   } catch (error) {
     Log.error('Error: $error');

@@ -71,6 +71,7 @@ class _SignUpState extends State<SignUp> {
                                 FlutterI18n.translate(context, "auth.email"))
                             .getInputDecoration(),
                         validator: (value) => EmailValidator.validate(value!),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
                     Row(
@@ -102,6 +103,8 @@ class _SignUpState extends State<SignUp> {
                                   .getInputDecoration(),
                               validator: (value) =>
                                   LastnameValidator.validate(value!),
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                             ),
                           ),
                         ),
@@ -132,6 +135,7 @@ class _SignUpState extends State<SignUp> {
                         controller: _passwordController,
                         validator: (value) =>
                             PasswordValidator.validate(value!),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
                     Padding(
