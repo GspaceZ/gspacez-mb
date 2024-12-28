@@ -1,21 +1,29 @@
-import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 class Log {
-  static void info(String message) {
-    debugPrint("INFO: $message");
+  static final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 1,
+      errorMethodCount: 5,
+      lineLength: 80,
+      colors: true,
+      printEmojis: true,
+    ),
+  );
+
+  static void info(message) {
+    _logger.i(message);
   }
 
-  static void warning(String message) {
-    debugPrint("WARNING: $message");
+  static void warning(message) {
+    _logger.w(message);
   }
 
-  static void error(String message) {
-    debugPrint("ERROR: $message");
+  static void error(message) {
+    _logger.e(message);
   }
 
-  static void debug(String message) {
-    if (kDebugMode) {
-      debugPrint("DEBUG: $message");
-    }
+  static void debug(message) {
+    _logger.d(message);
   }
 }

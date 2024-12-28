@@ -76,6 +76,10 @@
     "recover_account": "Recover Account",
     "send_recovery_email": "Send Recovery Email",
     "description_otp": "Please enter the OTP code sent to your email",
+    "sign_in_with_google": "Sign in with Google",
+    "create_password": "Create password",
+    "create_password_success": "Create password successfully",
+    "create_password_fail": "Create password failed",
     "error_messages": {
       "email": "Please enter a valid email address.",
       "email_empty": "Please enter your email",

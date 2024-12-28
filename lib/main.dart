@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ void main() async {
       forcedLocale: const Locale('en'),
     ),
   );
-
+  await dotenv.load(fileName: ".env");
   await i18nDelegate.load(
       const Locale('en')); // Load initial translations with non-null locale
 
@@ -44,14 +44,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          initialRoute: AppRoutes.home,
+          initialRoute: AppRoutes.signIn,
           onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
             widget.i18nDelegate,
@@ -67,8 +66,11 @@ class _MyAppState extends State<MyApp> {
           theme: ThemeData(
             popupMenuTheme: PopupMenuThemeData(
               shape: RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.grey, width: 0.5), // Set border color and width
-                borderRadius: BorderRadius.circular(10.0), // Set border radius if needed
+                side: const BorderSide(
+                    color: Colors.grey,
+                    width: 0.5), // Set border color and width
+                borderRadius:
+                    BorderRadius.circular(10.0), // Set border radius if needed
               ),
             ),
             fontFamily: 'NotoSans',
@@ -79,5 +81,4 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
-
 }

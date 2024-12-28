@@ -5,7 +5,7 @@ class PrivacyModal extends StatefulWidget {
   const PrivacyModal({super.key});
 
   @override
-  _PrivacyModalState createState() => _PrivacyModalState();
+  State<PrivacyModal> createState() => _PrivacyModalState();
 }
 
 class _PrivacyModalState extends State<PrivacyModal> {
@@ -57,7 +57,10 @@ class _PrivacyModalState extends State<PrivacyModal> {
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
                   FlutterI18n.translate(context, 'post.privacy.done'),
-                  style: const TextStyle(color: Colors.blue, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -67,26 +70,39 @@ class _PrivacyModalState extends State<PrivacyModal> {
             child: ListView(
               children: privacyOptions.map((option) {
                 return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+                  margin: const EdgeInsets.symmetric(
+                      vertical: 16.0, horizontal: 24.0),
                   child: Row(
                     children: [
                       Expanded(
                         child: Row(
                           children: [
-                            Icon(option['icon'], color: Colors.black, size: 30,),
+                            Icon(
+                              option['icon'],
+                              color: Colors.black,
+                              size: 30,
+                            ),
                             const SizedBox(width: 20.0),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    FlutterI18n.translate(context, option['title']),
-                                    style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+                                    FlutterI18n.translate(
+                                        context, option['title']),
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  if (FlutterI18n.translate(context, option['subtitle']).isNotEmpty)
+                                  if (FlutterI18n.translate(
+                                          context, option['subtitle'])
+                                      .isNotEmpty)
                                     Text(
-                                      FlutterI18n.translate(context, option['subtitle']),
-                                      style: const TextStyle(color: Colors.grey),
+                                      FlutterI18n.translate(
+                                          context, option['subtitle']),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
                                     ),
                                 ],
                               ),

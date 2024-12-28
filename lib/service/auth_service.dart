@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/service/config_api/network_constant.dart';
@@ -106,7 +108,7 @@ class AuthService {
       final response = await callApi(
         "identity/auth/send-active",
         'POST',
-        data: {'email': email, 'url': NetworkConstant.BASE_URI_ACTIVE},
+        data: {'email': email, 'url': NetworkConstant.baseURIActive},
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -117,6 +119,23 @@ class AuthService {
     } catch (error) {
       Log.debug('Error: $error');
       rethrow;
+    }
+  }
+
+  Future<bool> sendCodeToServer(String code) async {
+    final uri = "identity/auth/oauth2" "?code=$code";
+    final response = await callApi(uri, 'POST',
+        data: {
+          'code': code,
+        },
+        contentType: AppConstants.formUrlEncoded);
+    Log.info("response ${response.body}");
+    if (response.statusCode == 200) {
+      TokenDataSource.instance
+          .saveToken(jsonDecode(response.body)['result']['token']);
+      return true;
+    } else {
+      return false;
     }
   }
 }

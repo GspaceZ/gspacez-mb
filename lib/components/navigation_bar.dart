@@ -197,7 +197,7 @@ class NavigationSidebar extends StatelessWidget {
                           FlutterI18n.translate(
                               context, "sidebar.logout_switch"),
                           overflow: TextOverflow.ellipsis,
-                          style: text_bold),
+                          style: textBold),
                     ),
                   ],
                 ),
@@ -215,7 +215,7 @@ class NavigationSidebar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: text_bold),
+          Text(title, style: textBold),
           icon,
         ],
       ),

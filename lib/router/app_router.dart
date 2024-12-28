@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/screen/auth/active_success.dart';
+import 'package:untitled/screen/auth/create_password_view.dart';
 import 'package:untitled/screen/auth/forgot_password.dart';
 import 'package:untitled/screen/auth/introduce.dart';
 import 'package:untitled/screen/auth/signin.dart';
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String updateAvatar = '/update_avatar';
   static const String activeSuccess = '/active_success';
   static const String waitingActive = '/waiting_active';
+  static const String createNewPassword = '/create_password';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -61,6 +63,9 @@ class AppRoutes {
       case waitingActive:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: WaitingActive()));
+      case createNewPassword:
+        return MaterialPageRoute(
+            builder: (_) => const LayoutLanding(child: CreatePasswordView()));
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

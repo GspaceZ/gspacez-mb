@@ -32,7 +32,7 @@ class UserService {
           'dob': dob,
           'address': address,
         },
-        token: token,
+        isToken: true,
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -50,16 +50,58 @@ class UserService {
       String avatarUrl, String token) async {
     try {
       final response = await callApi(
-        "profile/users/avatar",
+        "profile-service/info/avatar",
         'POST',
         data: {'avatarUrl': avatarUrl},
-        token: token,
+        isToken: true,
       );
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
         Log.debug(response.body);
         throw Exception('Failed to update avatar');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<void> createNewPassword(String password) async {
+    try {
+      final response = await callApi(
+        "identity/users/create-password",
+        'POST',
+        data: {
+          'password': password,
+        },
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to create new password');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<bool> isNeededCreatePassword() async {
+    try {
+      final response = await callApi(
+        "identity/users/my-info",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['result']['noPassword'];
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to check needed create password');
       }
     } catch (error) {
       Log.debug('Error: $error');

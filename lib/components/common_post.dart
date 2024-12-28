@@ -27,10 +27,10 @@ class _CommonPostState extends State<CommonPost> {
     super.initState();
     if (widget.post.urlVideo != null) {
       _controller =
-      VideoPlayerController.networkUrl(Uri.parse(widget.post.urlVideo!))
-        ..initialize().then((_) {
-          setState(() {});
-        });
+          VideoPlayerController.networkUrl(Uri.parse(widget.post.urlVideo!))
+            ..initialize().then((_) {
+              setState(() {});
+            });
     }
   }
 
@@ -54,68 +54,68 @@ class _CommonPostState extends State<CommonPost> {
         ),
         child: (!_isHide)
             ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: CircleAvatar(
-                          backgroundImage: CachedNetworkImageProvider(
-                              widget.post.urlAvatar),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(
+                                    widget.post.urlAvatar),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.post.author,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                ),
+                                const Text(
+                                  "Now",
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w200),
+                                )
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.post.author,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 17),
-                          ),
-                          const Text(
-                            "Now",
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w200),
-                          )
-                        ],
-                      ),
+                      _buildPopupMenu(),
                     ],
                   ),
-                ),
-                _buildPopupMenu(),
-              ],
-            ),
-            _buildTextContent(),
-            if (widget.post.urlVideo != null) _buildVideoPlayer(),
-            if (widget.post.urlImages != null) _buildImagePost(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                      onTap: () {
-                        _isLiked = !_isLiked;
-                        setState(() {});
-                      },
-                      child: SvgPicture.asset("assets/svg/ic_like.svg",
-                          color:
-                          _isLiked ? Colors.orange : Colors.black)),
-                  SvgPicture.asset("assets/svg/ic_comment.svg"),
-                  SvgPicture.asset("assets/svg/ic_share.svg"),
+                  _buildTextContent(),
+                  if (widget.post.urlVideo != null) _buildVideoPlayer(),
+                  if (widget.post.urlImages != null) _buildImagePost(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                            onTap: () {
+                              _isLiked = !_isLiked;
+                              setState(() {});
+                            },
+                            child: SvgPicture.asset("assets/svg/ic_like.svg",
+                                color:
+                                    _isLiked ? Colors.orange : Colors.black)),
+                        SvgPicture.asset("assets/svg/ic_comment.svg"),
+                        SvgPicture.asset("assets/svg/ic_share.svg"),
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ],
-        )
+              )
             : _buildHidePost(),
       ),
     );
@@ -129,7 +129,7 @@ class _CommonPostState extends State<CommonPost> {
           const style = TextStyle(fontSize: 17);
           final textSpan = TextSpan(text: widget.post.content, style: style);
           final textPainter =
-          TextPainter(text: textSpan, textDirection: TextDirection.ltr);
+              TextPainter(text: textSpan, textDirection: TextDirection.ltr);
           textPainter.layout(maxWidth: constraints.maxWidth);
 
           final lines = textPainter.computeLineMetrics().length;
@@ -155,7 +155,7 @@ class _CommonPostState extends State<CommonPost> {
           if (lines > 5 && !_showFullText) {
             final endPosition = textPainter
                 .getPositionForOffset(
-                Offset(constraints.maxWidth, fontSize * 5))
+                    Offset(constraints.maxWidth, fontSize * 5))
                 .offset;
             displayText = '${widget.post.content.substring(0, endPosition)}...';
           }
@@ -273,7 +273,7 @@ class _CommonPostState extends State<CommonPost> {
               showModalBottomSheet(
                 context: context,
                 builder: (BuildContext context) {
-                  return PrivacyModal();
+                  return const PrivacyModal();
                 },
               );
               break;
@@ -296,7 +296,8 @@ class _CommonPostState extends State<CommonPost> {
               padding: EdgeInsets.zero,
               value: "privacy",
               child: Center(
-                  child: Text(FlutterI18n.translate(context, "post.privacy.privacy_btn"))),
+                  child: Text(FlutterI18n.translate(
+                      context, "post.privacy.privacy_btn"))),
             ),
             PopupMenuItem<String>(
               padding: EdgeInsets.zero,
