@@ -3,7 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:usesCleartextTraffic="true" tools:targetApi="m"
-        android:label="fakebook_mobile"
+        android:label="Gspacez"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
