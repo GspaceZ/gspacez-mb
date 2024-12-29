@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/model/user.dart';
+import 'package:untitled/provider/language_provider.dart';
 import 'package:untitled/service/config_api/network_constant.dart';
 
 import 'config_api/config_api.dart';
@@ -123,13 +127,19 @@ class AuthService {
   }
 
   Future<bool> sendCodeToServer(String code) async {
+    BuildContext context = navigatorKey.currentContext!;
+    Locale currentLocale = context.read<LanguageProvider>().locale;
+    String locale = currentLocale.languageCode;
     final uri = "identity/auth/oauth2" "?code=$code";
     final response = await callApi(uri, 'POST',
         data: {
           'code': code,
         },
+        customHeaders: {
+          'locale': locale,
+          'origin': 'https://gspacez.blog',
+        },
         contentType: AppConstants.formUrlEncoded);
-    Log.info("response ${response.body}");
     if (response.statusCode == 200) {
       TokenDataSource.instance
           .saveToken(jsonDecode(response.body)['result']['token']);
