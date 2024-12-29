@@ -12,6 +12,7 @@ Future<http.Response> callApi<T>(
   Map<String, dynamic>? data,
   bool? isToken,
   String? contentType,
+  Map<String, dynamic>? customHeaders,
 }) async {
   try {
     final token = await TokenDataSource.instance.getToken();
@@ -20,6 +21,7 @@ Future<http.Response> callApi<T>(
       'Content-Type': contentType ?? AppConstants.json,
       if (token != null && isToken != null && isToken)
         'Authorization': 'Bearer $token',
+      if (customHeaders != null) ...customHeaders,
     };
     late http.Response response;
     Log.info('request: "$fullUrl" \n$headers \n${jsonEncode(data)}');

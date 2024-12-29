@@ -28,7 +28,7 @@ class NavigationSidebar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withAlpha((0.3 * 255).toInt()),
               blurRadius: 6,
               spreadRadius: 3,
             ),
