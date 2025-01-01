@@ -3,11 +3,15 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/components/dialog_loading.dart';
+import 'package:untitled/model/post_model.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 
 class CreatePostDialog extends StatefulWidget {
-  const CreatePostDialog({super.key});
+  final Future<void> Function(PostModel) onCreatePost;
+
+  const CreatePostDialog({super.key, required this.onCreatePost});
 
   @override
   State<CreatePostDialog> createState() => _CreatePostDialogState();
@@ -377,8 +381,17 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
     );
   }
 
-  _onClickPost() {
-    // Handle post creation here
-    Navigator.of(context).pop();
+  _onClickPost() async {
+    final post = PostModel(
+        author: 'Mạc Bùi',
+        content: contentController.text,
+        urlAvatar:
+            'https://res.cloudinary.com/dszkt92jr/image/upload/v1721463934/fgcnetakyb8nibeqr9do.png');
+    LoadingDialog.showLoadingDialog(context);
+    await widget.onCreatePost(post);
+    LoadingDialog.hideLoadingDialog();
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
   }
 }
