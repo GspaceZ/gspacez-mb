@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
@@ -185,23 +186,31 @@ class _SignInState extends State<SignIn> {
   }
 
   _buildLoginWithGoogleButton({required VoidCallback onPressed}) {
-    return TextButton(
-      onPressed: onPressed,
-      child: Container(
-          height: 50,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.blue),
-              color: Colors.white),
-          child: Center(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.g_mobiledata, color: Colors.blue),
-              Text(FlutterI18n.translate(context, "auth.sign_in_with_google"),
-                  style: const TextStyle(color: Colors.blue)),
-            ],
-          ))),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextButton(
+        onPressed: onPressed,
+        child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.blue),
+                color: Colors.white),
+            child: Center(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  "assets/svg/ic_google.svg",
+                  width: 24,
+                  height: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(FlutterI18n.translate(context, "auth.sign_in_with_google"),
+                    style: const TextStyle(color: Colors.blue)),
+              ],
+            ))),
+      ),
     );
   }
 
