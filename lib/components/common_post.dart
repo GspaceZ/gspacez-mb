@@ -4,7 +4,9 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
-import 'package:untitled/model/post_model.dart';
+import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/extensions/log.dart';
+import 'package:untitled/model/post_model_response.dart';
 import 'package:video_player/video_player.dart';
 
 class CommonPost extends StatefulWidget {
@@ -25,12 +27,12 @@ class _CommonPostState extends State<CommonPost> {
   @override
   void initState() {
     super.initState();
-    if (widget.post.urlVideo != null) {
-      _controller =
-          VideoPlayerController.networkUrl(Uri.parse(widget.post.urlVideo!))
-            ..initialize().then((_) {
-              setState(() {});
-            });
+    if (widget.post.content.videoUrls.isNotEmpty) {
+      _controller = VideoPlayerController.networkUrl(
+          Uri.parse(widget.post.content.videoUrls.first))
+        ..initialize().then((_) {
+          setState(() {});
+        });
     }
   }
 
@@ -67,21 +69,27 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                    widget.post.urlAvatar),
+                                  widget.post.avatarUrl ??
+                                      AppConstants.urlImageDefault,
+                                  errorListener: (_) {
+                                    Log.error(
+                                        'Error loading image ${widget.post.avatarUrl}');
+                                  },
+                                ),
                               ),
                             ),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.post.author,
+                                  widget.post.profileName,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17),
                                 ),
-                                const Text(
-                                  "Now",
-                                  style: TextStyle(
+                                Text(
+                                  _formatTime(widget.post.createdAt),
+                                  style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w200),
                                 )
@@ -94,8 +102,10 @@ class _CommonPostState extends State<CommonPost> {
                     ],
                   ),
                   _buildTextContent(),
-                  if (widget.post.urlVideo != null) _buildVideoPlayer(),
-                  if (widget.post.urlImages != null) _buildImagePost(),
+                  if (widget.post.content.videoUrls.isNotEmpty)
+                    _buildVideoPlayer(),
+                  if (widget.post.content.imageUrls.isNotEmpty)
+                    _buildImagePost(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
@@ -127,7 +137,8 @@ class _CommonPostState extends State<CommonPost> {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           const style = TextStyle(fontSize: 17);
-          final textSpan = TextSpan(text: widget.post.content, style: style);
+          final textSpan =
+              TextSpan(text: widget.post.content.text, style: style);
           final textPainter =
               TextPainter(text: textSpan, textDirection: TextDirection.ltr);
           textPainter.layout(maxWidth: constraints.maxWidth);
@@ -136,7 +147,7 @@ class _CommonPostState extends State<CommonPost> {
 
           TextStyle styleContent;
           double fontSize = 17;
-          if (lines == 1 && widget.post.urlImages == null) {
+          if (lines == 1 && widget.post.content.imageUrls.isEmpty) {
             fontSize = 30;
             styleContent = const TextStyle(
                 fontSize: 30,
@@ -151,13 +162,14 @@ class _CommonPostState extends State<CommonPost> {
                 fontSize: 16); // Font size for more than three lines
           }
 
-          String displayText = widget.post.content;
+          String displayText = widget.post.content.text ?? "";
           if (lines > 5 && !_showFullText) {
             final endPosition = textPainter
                 .getPositionForOffset(
                     Offset(constraints.maxWidth, fontSize * 5))
                 .offset;
-            displayText = '${widget.post.content.substring(0, endPosition)}...';
+            displayText =
+                '${widget.post.content.text?.substring(0, endPosition)}...';
           }
 
           return Column(
@@ -193,7 +205,7 @@ class _CommonPostState extends State<CommonPost> {
     return SizedBox(
       height: MediaQuery.sizeOf(context).width,
       child: ImageCarousel(
-        images: widget.post.urlImages!,
+        images: widget.post.content.imageUrls,
       ),
     );
   }
@@ -353,5 +365,23 @@ class _CommonPostState extends State<CommonPost> {
     // xử lý api hide post
     _isHide = true;
     setState(() {});
+  }
+
+  String _formatTime(DateTime createAt) {
+    final now = DateTime.now();
+    final difference = now.difference(createAt);
+    if (difference.inDays > 365) {
+      return "${difference.inDays ~/ 365} years ago";
+    } else if (difference.inDays > 30) {
+      return "${difference.inDays ~/ 30} months ago";
+    } else if (difference.inDays > 0) {
+      return "${difference.inDays} days ago";
+    } else if (difference.inHours > 0) {
+      return "${difference.inHours} hours ago";
+    } else if (difference.inMinutes > 0) {
+      return "${difference.inMinutes} minutes ago";
+    } else {
+      return "Now";
+    }
   }
 }

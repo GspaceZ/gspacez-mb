@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/router/app_router.dart';
 import 'provider/language_provider.dart';
@@ -20,14 +21,17 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await i18nDelegate.load(
       const Locale('en')); // Load initial translations with non-null locale
-
+  final isAuth = await TokenDataSource.instance.getToken() != null;
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => LanguageProvider()),
         ChangeNotifierProvider(create: (context) => UserInfoProvider()),
       ],
-      child: MyApp(i18nDelegate),
+      child: MyApp(
+        i18nDelegate,
+        isAuth: isAuth,
+      ),
     ),
   );
 }
@@ -36,8 +40,9 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatefulWidget {
   final FlutterI18nDelegate i18nDelegate;
+  final bool isAuth;
 
-  const MyApp(this.i18nDelegate, {super.key});
+  const MyApp(this.i18nDelegate, {super.key, required this.isAuth});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -50,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          initialRoute: AppRoutes.home,
+          initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.signIn,
           onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
             widget.i18nDelegate,

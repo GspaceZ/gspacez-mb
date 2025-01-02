@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/main.dart';
@@ -143,6 +144,8 @@ class AuthService {
     if (response.statusCode == 200) {
       TokenDataSource.instance
           .saveToken(jsonDecode(response.body)['result']['token']);
+      LocalStorage.instance.saveUserRefreshToken(
+          jsonDecode(response.body)['result']['refreshToken']);
       return true;
     } else {
       return false;
