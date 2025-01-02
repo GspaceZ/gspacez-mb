@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:untitled/data/local/local_storage.dart';
+import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/utils/style.dart';
@@ -181,13 +183,7 @@ class NavigationSidebar extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: TextButton(
                 style: buttonStyle,
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const LayoutLanding(child: Introduce())));
-                },
+                onPressed: () => _logOut(context),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -221,4 +217,13 @@ class NavigationSidebar extends StatelessWidget {
       ),
     );
   }
+}
+
+_logOut(BuildContext context) {
+  LocalStorage.instance.removeUserData();
+  TokenDataSource.instance.deleteToken();
+  Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => const LayoutLanding(child: Introduce())));
 }

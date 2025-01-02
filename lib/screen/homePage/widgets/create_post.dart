@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/dialog_loading.dart';
-import 'package:untitled/model/post_model.dart';
+import 'package:untitled/model/content_post_model.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 
 class CreatePostDialog extends StatefulWidget {
-  final Future<void> Function(PostModel) onCreatePost;
+  final Future<void> Function(ContentPostModel) onCreatePost;
 
   const CreatePostDialog({super.key, required this.onCreatePost});
 
@@ -382,11 +382,14 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   }
 
   _onClickPost() async {
-    final post = PostModel(
-        author: 'Mạc Bùi',
-        content: contentController.text,
-        urlAvatar:
-            'https://res.cloudinary.com/dszkt92jr/image/upload/v1721463934/fgcnetakyb8nibeqr9do.png');
+    final post = ContentPostModel(
+      text: contentController.text,
+      imageUrls: _selectedFiles.map((e) => e.path).toList(),
+      videoUrls: [],
+      location: locationController.text,
+      feeling: feelingController.text,
+      tag: _tags.join(' '),
+    );
     LoadingDialog.showLoadingDialog(context);
     await widget.onCreatePost(post);
     LoadingDialog.hideLoadingDialog();
