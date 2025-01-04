@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/create_post_request.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/post_service.dart';
 
@@ -16,25 +17,11 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createPost(ContentPostModel contentPost) async {
+  Future<void> createPost(CreatePostRequest post) async {
+    final response = await PostService.instance.createPost(post);
     // create post from api
-    await Future.delayed(const Duration(seconds: 1)); // delay 1s
-    final postModel = PostModel(
-      id: '1',
-      type: 'text',
-      privacy: 'public',
-      content: contentPost,
-      profileId: '1',
-      profileName: 'profileName',
-      avatarUrl:
-          'https://res.cloudinary.com/dszkt92jr/image/upload/v1719943637/vcbhui3dxeusphkgvycg.png',
-      hashTags: ['hashTag'],
-      trendingPoint: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      hidden: false,
-    );
-    posts.insert(0, postModel);
+
+    // posts.insert(0, postModel);
     notifyListeners();
   }
 }

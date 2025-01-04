@@ -3,6 +3,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/common_post.dart';
 import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/create_post_request.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/view_model/home_view_model.dart';
@@ -40,7 +41,7 @@ class _HomeState extends State<Home> {
                     ),
                   if (homeViewModel.posts.isEmpty)
                     const Center(
-                      child: Text('No posts available'),
+                      child: CircularProgressIndicator(),
                     ),
                 ],
               ),
@@ -52,7 +53,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildSearchBar(
-      String urlAvatar, Future<void> Function(ContentPostModel) onCreatePost) {
+      String urlAvatar, Future<void> Function(CreatePostRequest) onCreatePost) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -95,7 +96,7 @@ class _HomeState extends State<Home> {
   }
 
   void _showCreatePostDialog(
-      {required Future<void> Function(ContentPostModel) onCreatePost}) {
+      {required Future<void> Function(CreatePostRequest) onCreatePost}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/base_response_api.dart';
+import 'package:untitled/model/create_post_request.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
@@ -34,6 +36,26 @@ class PostService {
       return posts;
     } else {
       throw Exception('Failed to get new feed');
+    }
+  }
+
+  Future<void> createPost(CreatePostRequest post) async {
+    final response = await callApi(
+      "post-service/posts/create",
+      'POST',
+      data: post.toJson(),
+      contentType: AppConstants.json,
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+    } else {
+      throw Exception('Failed to create post');
     }
   }
 }

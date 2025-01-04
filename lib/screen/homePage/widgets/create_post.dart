@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/dialog_loading.dart';
-import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/create_post_request.dart';
 import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 
 class CreatePostDialog extends StatefulWidget {
-  final Future<void> Function(ContentPostModel) onCreatePost;
+  final Future<void> Function(CreatePostRequest) onCreatePost;
 
   const CreatePostDialog({super.key, required this.onCreatePost});
 
@@ -382,16 +382,29 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   }
 
   _onClickPost() async {
-    final post = ContentPostModel(
+    final post = CreatePostRequest(
       text: contentController.text,
-      imageUrls: _selectedFiles.map((e) => e.path).toList(),
+      imageUrls: _selectedFiles.map((file) => file.path).toList(),
       videoUrls: [],
-      location: locationController.text,
       feeling: feelingController.text,
-      tag: _tags.join(' '),
+      hashTags: _tags,
+      privacy: _selectedPrivacy,
+      location: locationController.text,
     );
     LoadingDialog.showLoadingDialog(context);
-    await widget.onCreatePost(post);
+    try {
+      await widget.onCreatePost(post);
+    } catch (e) {
+      LoadingDialog.hideLoadingDialog();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      }
+    }
+    await Future.delayed(const Duration(seconds: 1));
     LoadingDialog.hideLoadingDialog();
     if (mounted) {
       Navigator.of(context).pop();
