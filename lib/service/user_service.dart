@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:untitled/extensions/log.dart';
+import 'package:untitled/model/base_response_api.dart';
+import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 class UserService {
@@ -102,6 +104,32 @@ class UserService {
       } else {
         Log.debug(response.body);
         throw Exception('Failed to check needed create password');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<ProfileResponse> getProfile() async {
+    try {
+      final response = await callApi(
+        "profile-service/info",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final profile = ProfileResponse.fromJson(baseResponse.result);
+        return profile;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get profile');
       }
     } catch (error) {
       Log.debug('Error: $error');

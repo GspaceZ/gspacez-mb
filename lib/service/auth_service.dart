@@ -7,6 +7,7 @@ import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/main.dart';
+import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/user.dart';
 import 'package:untitled/provider/language_provider.dart';
 import 'package:untitled/service/config_api/network_constant.dart';
@@ -36,6 +37,10 @@ class AuthService {
     final responseData = jsonDecode(response.body);
 
     if (responseData['code'] == 1000) {
+      TokenDataSource.instance // Save token to local storage
+          .saveToken(jsonDecode(response.body)['result']['token']);
+      LocalStorage.instance.saveUserRefreshToken(
+          jsonDecode(response.body)['result']['refreshToken']);
       // Success
       return responseData;
     } else if (responseData['code'] == 1005) {
@@ -149,6 +154,25 @@ class AuthService {
       return true;
     } else {
       return false;
+    }
+  }
+
+  Future<void> refreshToken() async {
+    final refreshToken = await LocalStorage.instance.userRefreshToken;
+    final accessTokenExpired = await TokenDataSource.instance.getToken();
+    final response = await callApi("identity/auth/refresh", 'POST', data: {
+      'refreshToken': refreshToken,
+      'accessTokenExpired': accessTokenExpired,
+    });
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code == 1000) {
+        TokenDataSource.instance.saveToken(baseResponse.result['token']);
+        LocalStorage.instance
+            .saveUserRefreshToken(baseResponse.result['refreshToken']);
+      }
     }
   }
 }

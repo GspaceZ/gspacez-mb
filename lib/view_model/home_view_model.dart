@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/content_post_model.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/post_service.dart';
@@ -6,13 +8,20 @@ import 'package:untitled/service/post_service.dart';
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel() {
     fetchPost();
+    _init();
   }
 
   final List<PostModel> posts = [];
-
+  String urlAvatar = AppConstants.urlImageDefault;
   Future<void> fetchPost() async {
     final response = await PostService.instance.getNewFeed();
     posts.addAll(response);
+    notifyListeners();
+  }
+
+  _init() async {
+    urlAvatar = await LocalStorage.instance.userUrlAvatar ??
+        AppConstants.urlImageDefault;
     notifyListeners();
   }
 
