@@ -2,32 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/data/local/token_data_source.dart';
-import 'package:untitled/extensions/log.dart';
-import 'package:untitled/model/user.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/validators/index.dart';
-import 'package:untitled/service/auth_service.dart';
 import 'package:untitled/view_model/signin_view_model.dart';
-import '../../components/dialog_loading.dart';
 
-class SignIn extends StatefulWidget {
+class SignIn extends StatelessWidget {
   const SignIn({super.key});
-
-  @override
-  State<SignIn> createState() => _SignInState();
-}
-
-class _SignInState extends State<SignIn> {
-  final AuthService _authService = AuthService.instance;
-  final TokenDataSource _tokenDataSource = TokenDataSource.instance;
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _passwordController = TextEditingController();
-  String email = "";
-  String password = "";
-  User? user;
-  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +43,19 @@ class _SignInState extends State<SignIn> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Form(
-                      key: _formKey,
+                      key: viewModel.formKey,
                       child: Column(
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
+                              controller: viewModel.emailController,
                               decoration: CusTomInputDecoration(
                                       FlutterI18n.translate(
                                           context, "auth.email"))
                                   .getInputDecoration(),
                               validator: (value) =>
                                   EmailValidator.validate(value!),
-                              onSaved: (value) {
-                                email = value!;
-                              },
                             ),
                           ),
                           Padding(
@@ -88,24 +68,17 @@ class _SignInState extends State<SignIn> {
                                   .copyWith(
                                     suffixIcon: IconButton(
                                       icon: Icon(
-                                        _isPasswordVisible
+                                        viewModel.isPasswordVisible
                                             ? Icons.visibility
                                             : Icons.visibility_off,
                                         color: Colors.grey,
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _isPasswordVisible =
-                                              !_isPasswordVisible;
-                                        });
-                                      },
+                                      onPressed:
+                                          viewModel.changeIsPasswordVisible,
                                     ),
                                   ),
-                              obscureText: !_isPasswordVisible,
-                              controller: _passwordController,
-                              onSaved: (value) {
-                                password = value!;
-                              },
+                              obscureText: !viewModel.isPasswordVisible,
+                              controller: viewModel.passwordController,
                             ),
                           ),
                           Row(
@@ -128,9 +101,7 @@ class _SignInState extends State<SignIn> {
                             ],
                           ),
                           TextButton(
-                            onPressed: () {
-                              _submit();
-                            },
+                            onPressed: viewModel.submit,
                             child: Container(
                                 width: 130,
                                 height: 50,
@@ -186,6 +157,7 @@ class _SignInState extends State<SignIn> {
   }
 
   _buildLoginWithGoogleButton({required VoidCallback onPressed}) {
+    final context = navigatorKey.currentContext!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextButton(
@@ -212,52 +184,5 @@ class _SignInState extends State<SignIn> {
             ))),
       ),
     );
-  }
-
-  Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      LoadingDialog.showLoadingDialog(context);
-      try {
-        final response = await _authService.signIn(email, password);
-        LoadingDialog.hideLoadingDialog();
-        Log.debug(response.toString());
-
-        if (response['code'] == 1000) {
-          _tokenDataSource.saveToken(response['result']['token']);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Colors.green,
-                content: Text(FlutterI18n.translate(
-                    context, 'auth.sign_in_messages.success')),
-              ),
-            );
-          }
-          await Future.delayed(const Duration(seconds: 2));
-          if (mounted) {
-            Navigator.pushReplacementNamed(context, AppRoutes.home);
-          }
-        }
-      } catch (e) {
-        LoadingDialog.hideLoadingDialog();
-        if (mounted) {
-          var errorMessage = FlutterI18n.translate(
-            context,
-            e.toString().replaceAll('Exception: ', ''),
-          );
-          if (errorMessage.length > 30) {
-            errorMessage =
-                FlutterI18n.translate(context, "auth.sign_in_messages.fail");
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red,
-              content: Text(errorMessage),
-            ),
-          );
-        }
-      }
-    }
   }
 }

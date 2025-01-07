@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:untitled/components/dialog_loading.dart';
+import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/content_post_model.dart';
-import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 
 class CreatePostDialog extends StatefulWidget {
@@ -18,6 +18,8 @@ class CreatePostDialog extends StatefulWidget {
 }
 
 class _CreatePostDialogState extends State<CreatePostDialog> {
+  String avatarUrl = AppConstants.urlImageDefault;
+  String userName = '';
   bool isShowLocation = false;
   bool isShowFeeling = false;
   bool isShowTag = false;
@@ -52,20 +54,27 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   void initState() {
     super.initState();
     tagController.text = "#";
+    _getUserInfo();
+  }
+
+  _getUserInfo() async {
+    avatarUrl = await LocalStorage.instance.userUrlAvatar ??
+        AppConstants.urlImageDefault;
+    userName = await LocalStorage.instance.userName ?? '';
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<UserInfoProvider>();
     return AlertDialog(
       title: Row(
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(user.urlAvatar),
+            backgroundImage: NetworkImage(avatarUrl),
           ),
           const SizedBox(width: 8),
           Text(
-            user.name,
+            userName,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ],

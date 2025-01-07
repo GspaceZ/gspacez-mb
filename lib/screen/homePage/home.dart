@@ -3,7 +3,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/common_post.dart';
 import 'package:untitled/model/content_post_model.dart';
-import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/view_model/home_view_model.dart';
 
@@ -17,7 +16,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<UserInfoProvider>();
     return ChangeNotifierProvider(
       create: (BuildContext context) => HomeViewModel(),
       child: Consumer<HomeViewModel>(
@@ -27,7 +25,8 @@ class _HomeState extends State<Home> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildSearchBar(user.urlAvatar, homeViewModel.createPost),
+                  _buildSearchBar(
+                      homeViewModel.urlAvatar, homeViewModel.createPost),
                   if (homeViewModel.posts.isNotEmpty)
                     ListView.builder(
                       shrinkWrap: true,

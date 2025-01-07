@@ -3,14 +3,34 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/components/dialog_loading.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/main.dart';
+import 'package:untitled/model/user.dart';
 import 'package:untitled/service/auth_service.dart';
 import 'package:untitled/service/user_service.dart';
 
 import '../router/app_router.dart';
 
 class SigninViewModel extends ChangeNotifier {
+  final AuthService _authService = AuthService.instance;
+  final formKey = GlobalKey<FormState>();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  User? user;
+  bool isPasswordVisible = false;
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void changeIsPasswordVisible() {
+    isPasswordVisible = !isPasswordVisible;
+    notifyListeners();
+  }
+
   static final clientId = dotenv.env['CLIENT_ID'] ?? 'Client ID not found';
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: clientId,
@@ -52,6 +72,7 @@ class SigninViewModel extends ChangeNotifier {
         final isSuccess = await AuthService.instance.sendCodeToServer(authCode);
         if (isSuccess) {
           Log.info("Sign in successfully");
+          _saveUserInLocal();
           await _googleSignIn.signOut();
           LoadingDialog.hideLoadingDialog();
           ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
@@ -100,5 +121,63 @@ class SigninViewModel extends ChangeNotifier {
     } catch (error) {
       Log.error("Error signing out: $error");
     }
+  }
+
+  Future<void> submit() async {
+    final context = navigatorKey.currentContext!;
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      LoadingDialog.showLoadingDialog(context);
+      try {
+        final response = await _authService.signIn(
+            emailController.text, passwordController.text);
+        LoadingDialog.hideLoadingDialog();
+        Log.debug(response.toString());
+
+        if (response['code'] == 1000) {
+          _saveUserInLocal();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Colors.green,
+                content: Text(FlutterI18n.translate(
+                    context, 'auth.sign_in_messages.success')),
+              ),
+            );
+          }
+          await Future.delayed(const Duration(seconds: 2));
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          }
+        }
+      } catch (e) {
+        LoadingDialog.hideLoadingDialog();
+        if (context.mounted) {
+          var errorMessage = FlutterI18n.translate(
+            context,
+            e.toString().replaceAll('Exception: ', ''),
+          );
+          if (errorMessage.length > 30) {
+            errorMessage =
+                FlutterI18n.translate(context, "auth.sign_in_messages.fail");
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red,
+              content: Text(errorMessage),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _saveUserInLocal() async {
+    final profile = await UserService.instance.getProfile();
+    final localStorage = LocalStorage.instance;
+    localStorage.saveUserEmail(emailController.text);
+    localStorage.saveUserName('${profile.firstName} ${profile.lastName}');
+    localStorage.saveUserUrlAvatar(profile.avatarUrl);
+    localStorage.saveUserId(profile.id);
   }
 }

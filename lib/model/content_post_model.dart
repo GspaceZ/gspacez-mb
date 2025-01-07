@@ -20,8 +20,10 @@ class ContentPostModel {
   factory ContentPostModel.fromJson(Map<String, dynamic> json) {
     return ContentPostModel(
       text: json['text'],
-      imageUrls: List<String>.from(json['imageUrls']),
-      videoUrls: List<String>.from(json['videoUrls']),
+      imageUrls:
+          json['imageUrls'] != null ? List<String>.from(json['imageUrls']) : [],
+      videoUrls:
+          json['videoUrls'] != null ? List<String>.from(json['videoUrls']) : [],
       location: json['location'],
       feeling: json['feeling'],
       activity: json['activity'],
