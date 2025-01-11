@@ -21,7 +21,8 @@ class PostService {
       isToken: true,
     );
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
           BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {

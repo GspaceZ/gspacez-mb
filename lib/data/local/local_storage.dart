@@ -8,6 +8,11 @@ class LocalStorage {
   static const String _kUserEmail = 'user_email';
   static const String _kUserName = 'user_name';
   static const String _kUserUrlAvatar = 'url_avatar';
+  static const String _kFirstName = 'first_name';
+  static const String _kLastName = 'last_name';
+  static const String _kNation = 'nation';
+  static const String _kCity = 'city';
+  static const String _kAddress = 'address';
 
   final _secureStorage = const FlutterSecureStorage();
 
@@ -71,6 +76,66 @@ class LocalStorage {
 
   Future<void> removeUserName() {
     return secureStorage.delete(key: _kUserName);
+  }
+
+  Future<String?> get firstName {
+    return secureStorage.read(key: _kFirstName);
+  }
+
+  Future<void> saveFirstName(String firstName) {
+    return secureStorage.write(key: _kFirstName, value: firstName);
+  }
+
+  Future<void> removeFirstName() {
+    return secureStorage.delete(key: _kFirstName);
+  }
+
+  Future<String?> get lastName {
+    return secureStorage.read(key: _kLastName);
+  }
+
+  Future<void> saveLastName(String lastName) {
+    return secureStorage.write(key: _kLastName, value: lastName);
+  }
+
+  Future<void> removeLastName() {
+    return secureStorage.delete(key: _kLastName);
+  }
+
+  Future<String?> get nation {
+    return secureStorage.read(key: _kNation);
+  }
+
+  Future<void> saveNation(String nation) {
+    return secureStorage.write(key: _kNation, value: nation);
+  }
+
+  Future<void> removeNation() {
+    return secureStorage.delete(key: _kNation);
+  }
+
+  Future<String?> get city {
+    return secureStorage.read(key: _kCity);
+  }
+
+  Future<void> saveCity(String city) {
+    return secureStorage.write(key: _kCity, value: city);
+  }
+
+  Future<void> removeCity() {
+    return secureStorage.delete(key: _kCity);
+  }
+
+  Future<String?> get address {
+    return secureStorage.read(key: _kAddress);
+  }
+
+  Future<void> saveAddress(String address) {
+    return secureStorage.write(key: _kAddress, value: address);
+  }
+
+  Future<void> removeAddress() {
+    return secureStorage.delete(key: _kAddress);
   }
 
   // User url avatar

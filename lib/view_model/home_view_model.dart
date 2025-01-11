@@ -15,6 +15,7 @@ class HomeViewModel extends ChangeNotifier {
   String urlAvatar = AppConstants.urlImageDefault;
   Future<void> fetchPost() async {
     final response = await PostService.instance.getNewFeed();
+    posts.clear();
     posts.addAll(response);
     notifyListeners();
   }

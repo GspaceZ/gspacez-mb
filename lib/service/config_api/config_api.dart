@@ -48,17 +48,15 @@ Future<http.Response> callApi<T>(
       response = await http.get(fullUrl, headers: headers);
       break;
   }
-  Log.info('Response: ${response.body}');
-  if (response.statusCode == 200) {
-    Map<String, dynamic> responseMap = jsonDecode(response.body);
-    final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
-    if (baseResponse.code == 1401) {
-      // Token expired
-      await AuthService.instance.refreshToken();
-      return callApi(url, method,
-          data: data, isToken: isToken, contentType: contentType);
-    }
-    return response;
+  Log.info('Response: ${utf8.decode(response.bodyBytes)}');
+  Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+  final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+  if (baseResponse.code == 1401) {
+    // Token expired
+    await AuthService.instance.refreshToken();
+    return callApi(url, method,
+        data: data, isToken: isToken, contentType: contentType);
   }
   return response;
 }

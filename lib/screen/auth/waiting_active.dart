@@ -1,27 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:provider/provider.dart';
-import 'package:untitled/extensions/log.dart';
-import 'package:untitled/provider/user_info_provider.dart';
-import 'package:untitled/service/auth_service.dart';
 
-class WaitingActive extends StatefulWidget {
+class WaitingActive extends StatelessWidget {
   const WaitingActive({super.key});
-
-  @override
-  State<WaitingActive> createState() => _WaitingActiveState();
-}
-
-class _WaitingActiveState extends State<WaitingActive> {
-  late UserInfoProvider userInfo;
-  final AuthService _authService = AuthService.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    userInfo = context.read<UserInfoProvider>();
-    sendMail();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,20 +40,5 @@ class _WaitingActiveState extends State<WaitingActive> {
         ),
       ),
     );
-  }
-
-  Future<void> sendMail() async {
-    try {
-      final response = await _authService.sendMailActive(userInfo.email);
-      if (response['code'] == 1000) {
-        final uriActive = response['result']['urlEncoded'];
-        Log.debug('Send mail success $uriActive');
-      } else {
-        Log.debug('Send mail failed');
-      }
-    } catch (error) {
-      Log.debug('Error: $error');
-      rethrow;
-    }
   }
 }
