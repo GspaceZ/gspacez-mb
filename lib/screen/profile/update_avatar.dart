@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
-import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/service/user_service.dart';
 import '../../components/dialog_loading.dart';
@@ -21,14 +20,12 @@ class UpdateAvatar extends StatefulWidget {
 class _UpdateAvatarState extends State<UpdateAvatar> {
   String _uploadedImageUrl = '';
   final TokenDataSource _tokenDataSource = TokenDataSource.instance;
-  late final UserInfoProvider _userInfoProvider;
   final _userService = UserService.instance;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _userInfoProvider = context.read<UserInfoProvider>();
   }
 
   Future<String> pickAndUploadImage() async {
@@ -185,8 +182,8 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
     try {
       final response =
           await _userService.updateAvatar(_uploadedImageUrl, token!);
-      _userInfoProvider.setUrlAvatar(_uploadedImageUrl);
       if (response['code'] == 1000) {
+        LocalStorage.instance.saveUserUrlAvatar(_uploadedImageUrl);
         LoadingDialog.hideLoadingDialog();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

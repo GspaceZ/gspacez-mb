@@ -179,5 +179,10 @@ class SigninViewModel extends ChangeNotifier {
     localStorage.saveUserName('${profile.firstName} ${profile.lastName}');
     localStorage.saveUserUrlAvatar(profile.avatarUrl);
     localStorage.saveUserId(profile.id);
+    localStorage.saveFirstName(profile.firstName);
+    localStorage.saveLastName(profile.lastName);
+    localStorage.saveNation(profile.country ?? '');
+    localStorage.saveCity(profile.city ?? '');
+    localStorage.saveAddress(profile.address ?? '');
   }
 }

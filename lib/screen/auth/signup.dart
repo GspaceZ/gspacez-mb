@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:provider/provider.dart';
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/user.dart';
-import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
@@ -34,7 +33,6 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = context.read<UserInfoProvider>();
     return Padding(
       padding: const EdgeInsets.only(left: 24.0, right: 24.0),
       child: Container(
@@ -173,7 +171,6 @@ class _SignUpState extends State<SignUp> {
                     ),
                     TextButton(
                       onPressed: () {
-                        userInfo.setEmail(_emailController.text);
                         _submit();
                       },
                       child: Container(
@@ -262,8 +259,12 @@ class _SignUpState extends State<SignUp> {
       FocusScope.of(context).unfocus();
     });
     if (response['code'] == 1000) {
+      sendMail();
       showSuccessSnackBar();
-      Navigator.pushReplacementNamed(context, AppRoutes.waitingActive);
+      Navigator.pushReplacementNamed(context, AppRoutes.waitingActive,
+          arguments: {
+            'email': _emailController.text,
+          });
     } else if (response['code'] == 1002) {
       showErrorSnackBar("auth.sign_up_messages.email_exist");
     } else {
@@ -301,5 +302,21 @@ class _SignUpState extends State<SignUp> {
         content: Text(FlutterI18n.translate(context, messageKey)),
       ),
     );
+  }
+
+  Future<void> sendMail() async {
+    try {
+      Log.info('Send mail to $_emailController.text');
+      final response = await _authService.sendMailActive(_emailController.text);
+      if (response['code'] == 1000) {
+        final uriActive = response['result']['urlEncoded'];
+        Log.debug('Send mail success $uriActive');
+      } else {
+        Log.debug('Send mail failed');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
   }
 }

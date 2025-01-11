@@ -14,17 +14,11 @@ class UserService {
   // Static getter for the instance
   static UserService get instance => _instance;
 
-  Future<Map<String, dynamic>> updateProfile(
-      String firstName,
-      String lastName,
-      String country,
-      String city,
-      String dob,
-      String address,
-      String token) async {
+  Future<Map<String, dynamic>> updateProfile(String firstName, String lastName,
+      String country, String city, String dob, String address) async {
     try {
       final response = await callApi(
-        "profile/users",
+        "profile-service/info",
         'PUT',
         data: {
           'firstName': firstName,

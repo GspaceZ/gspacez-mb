@@ -4,7 +4,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/data/local/token_data_source.dart';
-import 'package:untitled/provider/user_info_provider.dart';
 import 'package:untitled/router/app_router.dart';
 import 'provider/language_provider.dart';
 
@@ -26,7 +25,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => LanguageProvider()),
-        ChangeNotifierProvider(create: (context) => UserInfoProvider()),
       ],
       child: MyApp(
         i18nDelegate,
