@@ -42,8 +42,7 @@ class UserService {
     }
   }
 
-  Future<Map<String, dynamic>> updateAvatar(
-      String avatarUrl, String token) async {
+  Future<Map<String, dynamic>> updateAvatar(String avatarUrl) async {
     try {
       final response = await callApi(
         "profile-service/info/avatar",

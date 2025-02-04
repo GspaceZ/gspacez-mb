@@ -34,7 +34,12 @@ class _HomeState extends State<Home> {
                       itemCount: homeViewModel.posts.length,
                       itemBuilder: (context, index) {
                         final post = homeViewModel.posts[index];
-                        return CommonPost(post: post);
+                        return CommonPost(
+                          post: post,
+                          onGetComment: () async {
+                            return await homeViewModel.getComment(post);
+                          },
+                        );
                       },
                     ),
                   if (homeViewModel.posts.isEmpty)

@@ -1,14 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
-import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/service/cloudinary_service.dart';
 import 'package:untitled/service/user_service.dart';
 import '../../components/dialog_loading.dart';
-import '../../service/cloudinary_config.dart';
 
 class UpdateAvatar extends StatefulWidget {
   const UpdateAvatar({super.key});
@@ -19,7 +17,6 @@ class UpdateAvatar extends StatefulWidget {
 
 class _UpdateAvatarState extends State<UpdateAvatar> {
   String _uploadedImageUrl = '';
-  final TokenDataSource _tokenDataSource = TokenDataSource.instance;
   final _userService = UserService.instance;
 
   @override
@@ -38,25 +35,10 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
     if (mounted) {
       LoadingDialog.showLoadingDialog(context);
     }
-
-    try {
-      final cloudinary = CloudinaryPublic(
-        CloudinaryConfig.cloudName,
-        CloudinaryConfig.uploadPreset,
-        cache: false,
-      );
-
-      final response = await cloudinary.uploadFile(
-        CloudinaryFile.fromFile(pickedFile.path,
-            resourceType: CloudinaryResourceType.Image),
-      );
-
-      LoadingDialog.hideLoadingDialog();
-      return response.secureUrl;
-    } catch (e) {
-      LoadingDialog.hideLoadingDialog();
-      throw Exception('Failed to upload image: $e');
-    }
+    final response =
+        await CloudinaryService.instance.uploadImage(pickedFile.path);
+    LoadingDialog.hideLoadingDialog();
+    return response;
   }
 
   void _chooseAvatar() async {
@@ -174,14 +156,12 @@ class _UpdateAvatarState extends State<UpdateAvatar> {
   }
 
   Future<void> _submit() async {
-    final String? token = await _tokenDataSource.getToken();
     if (mounted) {
       LoadingDialog.showLoadingDialog(context);
     }
 
     try {
-      final response =
-          await _userService.updateAvatar(_uploadedImageUrl, token!);
+      final response = await _userService.updateAvatar(_uploadedImageUrl);
       if (response['code'] == 1000) {
         LocalStorage.instance.saveUserUrlAvatar(_uploadedImageUrl);
         LoadingDialog.hideLoadingDialog();
