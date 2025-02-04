@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
 import 'package:untitled/constants/appconstants.dart';
@@ -11,8 +12,16 @@ import 'package:video_player/video_player.dart';
 
 class CommonPost extends StatefulWidget {
   final PostModel post;
+  final VoidCallback? onLike;
+  final Function()? onComment;
+  final Function() onGetComment;
 
-  const CommonPost({required this.post, super.key});
+  const CommonPost(
+      {required this.post,
+      super.key,
+      this.onLike,
+      this.onComment,
+      required this.onGetComment});
 
   @override
   State<CommonPost> createState() => _CommonPostState();
@@ -119,7 +128,24 @@ class _CommonPostState extends State<CommonPost> {
                             child: SvgPicture.asset("assets/svg/ic_like.svg",
                                 color:
                                     _isLiked ? Colors.orange : Colors.black)),
-                        SvgPicture.asset("assets/svg/ic_comment.svg"),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              useSafeArea: true,
+                              context: context,
+                              builder: (context) => SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                child: CommonComment(
+                                  onCreateComment: widget.onComment,
+                                  onGetComment: widget.onGetComment,
+                                ),
+                              ),
+                            );
+                          },
+                          child: SvgPicture.asset("assets/svg/ic_comment.svg"),
+                        ),
                         SvgPicture.asset("assets/svg/ic_share.svg"),
                       ],
                     ),

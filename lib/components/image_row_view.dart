@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-
 class ImageCarousel extends StatefulWidget {
   const ImageCarousel({super.key, required this.images});
 
@@ -14,7 +13,6 @@ class ImageCarousel extends StatefulWidget {
 class _ImageCarouselState extends State<ImageCarousel> {
   late PageController _pageController;
   int _currentPage = 0;
-
 
   @override
   void initState() {
@@ -56,52 +54,48 @@ class _ImageCarouselState extends State<ImageCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return
-
-      Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
-            },
-            itemCount: widget.images.length,
-            itemBuilder: (context, index) {
-              return CachedNetworkImage(
-                imageUrl: widget.images[index],
-                placeholder: (context,
-                    url) => const CircularProgressIndicator(),
-                errorWidget: (context, url, error) =>
-                const Icon(Icons.error),
-              );
-            },
+    return Stack(
+      children: [
+        PageView.builder(
+          controller: _pageController,
+          onPageChanged: (int page) {
+            setState(() {
+              _currentPage = page;
+            });
+          },
+          itemCount: widget.images.length,
+          itemBuilder: (context, index) {
+            return CachedNetworkImage(
+              imageUrl: widget.images[index],
+              placeholder: (_, url) =>
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            );
+          },
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: MediaQuery.of(context).size.width / 2,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              (_currentPage > 0)
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back_ios),
+                      onPressed: _previousPage,
+                    )
+                  : const SizedBox(),
+              (_currentPage < (widget.images.length - 1))
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_forward_ios),
+                      onPressed: _nextPage,
+                    )
+                  : const SizedBox(),
+            ],
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            top: MediaQuery
-                .of(context)
-                .size
-                .width / 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                (_currentPage > 0) ? IconButton(
-                  icon: const Icon(Icons.arrow_back_ios),
-                  onPressed: _previousPage,
-                ) : const SizedBox(),
-
-                (_currentPage < (widget.images.length - 1)) ? IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios),
-                  onPressed: _nextPage,
-                ) : const SizedBox(),
-              ],
-            ),
-          ),
-        ],
-
-      );
+        ),
+      ],
+    );
   }
 }
