@@ -4,8 +4,8 @@ class ContentPostModel {
   List<String> videoUrls;
   String? location;
   String? feeling;
-  String? activity;
-  String? tag;
+  String? privacy;
+  List<String>? hashTags;
 
   ContentPostModel({
     this.text,
@@ -13,8 +13,8 @@ class ContentPostModel {
     required this.videoUrls,
     this.location,
     this.feeling,
-    this.activity,
-    this.tag,
+    this.privacy,
+    this.hashTags,
   });
 
   factory ContentPostModel.fromJson(Map<String, dynamic> json) {
@@ -26,8 +26,8 @@ class ContentPostModel {
           json['videoUrls'] != null ? List<String>.from(json['videoUrls']) : [],
       location: json['location'],
       feeling: json['feeling'],
-      activity: json['activity'],
-      tag: json['tag'],
+      privacy: json['privacy'],
+      hashTags: json['hashTags'],
     );
   }
 
@@ -38,13 +38,13 @@ class ContentPostModel {
       'videoUrls': videoUrls,
       'location': location,
       'feeling': feeling,
-      'activity': activity,
-      'tag': tag,
+      'privacy': privacy,
+      'hashTags': hashTags,
     };
   }
 
   @override
   String toString() {
-    return 'ContentPostModel{text: $text, imageUrls: $imageUrls, videoUrls: $videoUrls, location: $location, feeling: $feeling, activity: $activity, tag: $tag}';
+    return 'ContentPostModel{text: $text, imageUrls: $imageUrls, videoUrls: $videoUrls, location: $location, feeling: $feeling, privacy: $privacy, hashTags: $hashTags}';
   }
 }

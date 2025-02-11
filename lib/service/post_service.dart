@@ -5,6 +5,9 @@ import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
+import '../model/content_post_model.dart';
+import '../model/create_post_response.dart';
+
 class PostService {
   //private constructor
   PostService._privateConstructor();
@@ -60,6 +63,29 @@ class PostService {
       return comments;
     } else {
       throw Exception('Failed to get comments');
+    }
+  }
+
+  Future<CreatePostResponse> createPost(ContentPostModel contentPost) async {
+    final response = await callApi(
+      "post-service/posts/create",
+      "POST",
+      isToken: true,
+      data: contentPost.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return CreatePostResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to create post');
     }
   }
 }
