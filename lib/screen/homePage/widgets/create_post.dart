@@ -28,11 +28,11 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   final locationController = TextEditingController();
   final feelingController = TextEditingController();
   final tagController = TextEditingController();
-  final List<String> _privacyOptions = ['Public', 'Private', 'Friend'];
-  String _selectedPrivacy = 'Public';
+  final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE', 'FRIEND'];
+  String _selectedPrivacy = 'PUBLIC';
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _selectedFiles = [];
-  final List<String> _tags = [];
+  final List<String> _hashTags = [];
 
   Future<void> _pickFiles() async {
     final List<XFile> files = await _picker.pickMultiImage();
@@ -248,7 +248,7 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
           child: Row(
             children: [
               Row(
-                children: _tags.map((tag) {
+                children: _hashTags.map((tag) {
                   return Padding(
                     padding: const EdgeInsets.all(6.0),
                     child: Container(
@@ -286,15 +286,15 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
                   onChanged: (value) {
                     if (value.contains(' ') && value.length > 1) {
                       setState(() {
-                        _tags.add(value);
+                        _hashTags.add(value);
                         tagController.clear();
                         tagController.text = "#";
                       });
                     }
                     if (value.isEmpty) {
                       tagController.text = "#";
-                      if (_tags.isNotEmpty) {
-                        _tags.removeLast();
+                      if (_hashTags.isNotEmpty) {
+                        _hashTags.removeLast();
                       }
                       setState(() {});
                     }
@@ -397,7 +397,8 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
       videoUrls: [],
       location: locationController.text,
       feeling: feelingController.text,
-      tag: _tags.join(' '),
+      privacy: _selectedPrivacy,
+      hashTags: _hashTags,
     );
     LoadingDialog.showLoadingDialog(context);
     await widget.onCreatePost(post);

@@ -6,6 +6,8 @@ import 'package:untitled/model/content_post_model.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/post_service.dart';
 
+import '../model/create_post_response.dart';
+
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel() {
     fetchPost();
@@ -28,25 +30,29 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   Future<void> createPost(ContentPostModel contentPost) async {
-    // create post from api
-    await Future.delayed(const Duration(seconds: 1)); // delay 1s
-    final postModel = PostModel(
-      id: '1',
-      type: 'text',
-      privacy: 'public',
-      content: contentPost,
-      profileId: '1',
-      profileName: 'profileName',
-      avatarUrl:
-          'https://res.cloudinary.com/dszkt92jr/image/upload/v1719943637/vcbhui3dxeusphkgvycg.png',
-      hashTags: ['hashTag'],
-      trendingPoint: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      hidden: false,
-    );
-    posts.insert(0, postModel);
-    notifyListeners();
+    try {
+      final CreatePostResponse newPost = await PostService.instance.createPost(contentPost);
+
+      final postModel = PostModel(
+        id: newPost.id,
+        type: newPost.type,
+        privacy: newPost.privacy,
+        content: contentPost,
+        profileId: newPost.profileId,
+        profileName: await LocalStorage.instance.userName ?? '',
+        avatarUrl: newPost.avatarUrl,
+        hashTags: newPost.hashTags,
+        trendingPoint: newPost.trendingPoint,
+        createdAt: newPost.createdAt,
+        updatedAt: newPost.updatedAt,
+        hidden: false,
+      );
+
+      posts.insert(0, postModel);
+      notifyListeners();
+    } catch (e) {
+      throw Exception("Failed to create post: $e");
+    }
   }
 
   Future<List<CommentResponse>> getComment(PostModel post) async {
