@@ -311,7 +311,7 @@ class _CommonPostState extends State<CommonPost> {
               showModalBottomSheet(
                 context: context,
                 builder: (BuildContext context) {
-                  return const PrivacyModal();
+                  return PrivacyModal(postId: widget.post.id);
                 },
               );
               break;
