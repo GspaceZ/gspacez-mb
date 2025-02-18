@@ -38,16 +38,13 @@ class _PrivacyModalState extends State<PrivacyModal> {
   ];
 
   String _mapValueToPrivacy(int value) {
-    switch (value) {
-      case 0:
-        return "PUBLIC";
-      case 1:
-        return "FRIENDS";
-      case 2:
-        return "PRIVATE";
-      default:
-        return "PUBLIC";
-    }
+    final privacyMap = {
+      0: "PUBLIC",
+      1: "FRIENDS",
+      2: "PRIVATE",
+    };
+
+    return privacyMap[value] ?? "PUBLIC";
   }
 
   Future<void> _updatePrivacy() async {
