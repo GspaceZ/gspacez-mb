@@ -31,7 +31,9 @@ class _CommonPostState extends State<CommonPost> {
   VideoPlayerController? _controller;
   bool _showFullText = false;
   bool _isLiked = false;
+  bool _isDisliked = false;
   bool _isHide = false;
+  bool _isBookmark = false;
 
   @override
   void initState() {
@@ -115,44 +117,82 @@ class _CommonPostState extends State<CommonPost> {
                     _buildVideoPlayer(),
                   if (widget.post.content.imageUrls.isNotEmpty)
                     _buildImagePost(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              _isLiked = !_isLiked;
-                              setState(() {});
-                            },
-                            child: SvgPicture.asset("assets/svg/ic_like.svg",
-                                color:
-                                    _isLiked ? Colors.orange : Colors.black)),
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                              useSafeArea: true,
-                              context: context,
-                              builder: (context) => SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.8,
-                                child: CommonComment(
-                                  onCreateComment: widget.onComment,
-                                  onGetComment: widget.onGetComment,
-                                ),
-                              ),
-                            );
-                          },
-                          child: SvgPicture.asset("assets/svg/ic_comment.svg"),
-                        ),
-                        SvgPicture.asset("assets/svg/ic_share.svg"),
-                      ],
-                    ),
-                  ),
+                  _buildRowIcon()
                 ],
               )
             : _buildHidePost(),
+      ),
+    );
+  }
+
+  _buildRowIcon() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          InkWell(
+            onTap: () {
+              _isLiked = !_isLiked;
+              setState(() {});
+
+              /// TODO: call api like
+            },
+            child: _isLiked
+                ? Transform.rotate(
+                    angle: 3.14,
+                    child: SvgPicture.asset("assets/svg/ic_like_enable.svg"),
+                  )
+                : Transform.rotate(
+                    angle: -3.14 / 2,
+                    child: SvgPicture.asset("assets/svg/ic_like_disable.svg"),
+                  ),
+          ),
+          InkWell(
+            onTap: () {
+              _isDisliked = !_isDisliked;
+              setState(() {});
+
+              /// TODO: call api dislike
+            },
+            child: _isDisliked
+                ? Transform.rotate(
+                    angle: 0,
+                    child: SvgPicture.asset("assets/svg/ic_like_enable.svg"),
+                  )
+                : Transform.rotate(
+                    angle: 3.14 / 2,
+                    child: SvgPicture.asset("assets/svg/ic_like_disable.svg"),
+                  ),
+          ),
+          InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                isScrollControlled: true,
+                useSafeArea: true,
+                context: context,
+                builder: (context) => SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: CommonComment(
+                    onCreateComment: widget.onComment,
+                    onGetComment: widget.onGetComment,
+                  ),
+                ),
+              );
+            },
+            child: SvgPicture.asset("assets/svg/ic_comment.svg"),
+          ),
+          IconButton(
+            onPressed: () {
+              _isBookmark = !_isBookmark;
+              setState(() {});
+            },
+            icon: Icon(
+              _isBookmark ? Icons.bookmark : Icons.bookmark_border,
+              color: _isBookmark ? Colors.green : Colors.black,
+            ),
+          ),
+        ],
       ),
     );
   }
