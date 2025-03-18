@@ -134,35 +134,41 @@ class _CommonPostState extends State<CommonPost> {
           InkWell(
             onTap: () {
               _isLiked = !_isLiked;
+              if (_isLiked) {
+                _isDisliked = false;
+              }
               setState(() {});
 
               /// TODO: call api like
             },
             child: _isLiked
-                ? Transform.rotate(
-                    angle: 3.14,
-                    child: SvgPicture.asset("assets/svg/ic_like_enable.svg"),
+                ? const Icon(
+                    Icons.thumb_up,
+                    color: Colors.green,
                   )
-                : Transform.rotate(
-                    angle: -3.14 / 2,
-                    child: SvgPicture.asset("assets/svg/ic_like_disable.svg"),
+                : const Icon(
+                    Icons.thumb_up_outlined,
+                    color: Colors.black,
                   ),
           ),
           InkWell(
             onTap: () {
               _isDisliked = !_isDisliked;
+              if (_isDisliked) {
+                _isLiked = false;
+              }
               setState(() {});
 
               /// TODO: call api dislike
             },
             child: _isDisliked
-                ? Transform.rotate(
-                    angle: 0,
-                    child: SvgPicture.asset("assets/svg/ic_like_enable.svg"),
+                ? const Icon(
+                    Icons.thumb_down,
+                    color: Colors.red,
                   )
-                : Transform.rotate(
-                    angle: 3.14 / 2,
-                    child: SvgPicture.asset("assets/svg/ic_like_disable.svg"),
+                : const Icon(
+                    Icons.thumb_down_outlined,
+                    color: Colors.black,
                   ),
           ),
           InkWell(
