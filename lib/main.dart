@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.signIn,
+          initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.home,
           onGenerateRoute: AppRoutes.generateRoute,
           localizationsDelegates: [
             widget.i18nDelegate,
