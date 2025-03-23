@@ -31,7 +31,8 @@ class HomeViewModel extends ChangeNotifier {
 
   Future<void> createPost(ContentPostModel contentPost) async {
     try {
-      final CreatePostResponse newPost = await PostService.instance.createPost(contentPost);
+      final CreatePostResponse newPost =
+          await PostService.instance.createPost(contentPost);
 
       final postModel = PostModel(
         id: newPost.id,

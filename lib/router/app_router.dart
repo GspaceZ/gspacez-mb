@@ -6,6 +6,7 @@ import 'package:untitled/screen/auth/introduce.dart';
 import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
+import 'package:untitled/screen/create_squad_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/homePage/home.dart';
 import 'package:untitled/screen/layout_landing.dart';
@@ -23,6 +24,7 @@ class AppRoutes {
   static const String activeSuccess = '/active_success';
   static const String waitingActive = '/waiting_active';
   static const String createNewPassword = '/create_password';
+  static const String createSquad = '/create_squad';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -66,6 +68,12 @@ class AppRoutes {
       case createNewPassword:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: CreatePasswordView()));
+      case createSquad:
+        return MaterialPageRoute(
+            builder: (_) => const DefaultLayout(
+                  selectedIndex: 4,
+                  child: CreateSquadView(),
+                ));
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

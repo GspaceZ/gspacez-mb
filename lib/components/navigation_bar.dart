@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/utils/style.dart';
@@ -103,13 +104,16 @@ class NavigationSidebar extends StatelessWidget {
   }
 
   Widget _buildCreateSquadButton() {
+    final context = navigatorKey.currentContext!;
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.createSquad);
+            },
             child: const Row(
               children: [
                 Text("Create Squad", style: TextStyle(color: Colors.blue)),

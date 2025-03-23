@@ -1,0 +1,252 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:untitled/view_model/create_squad_view_model.dart';
+
+class CreateSquadView extends StatelessWidget {
+  const CreateSquadView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => CreateSquadViewModel(),
+      child: Consumer<CreateSquadViewModel>(
+        builder: (context, createSquadViewModel, child) {
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Create Squad',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const Text(
+                    "Create a place that people can interact with others about a topic",
+                    style: TextStyle(fontSize: 16),
+                  ),
+
+                  /// Form input
+                  _buildTextFormField("Name of your squad", "Your squad's name",
+                      createSquadViewModel.nameSquadController, Icons.group),
+                  _buildTextFormField("Description", "Description",
+                      createSquadViewModel.descriptionSquadController, null,
+                      isDescription: true),
+                  _buildTextFormField("Tags", "Tags",
+                      createSquadViewModel.tagSquadController, Icons.tag),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Choose your squad's privacy",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  _buildCheckBox(
+                      title: 'Public',
+                      description:
+                          'Anyone can see your squad and join without your approval',
+                      value: createSquadViewModel.isPublic,
+                      onChanged: (_) {
+                        createSquadViewModel.onCheckPublic();
+                      }),
+                  _buildCheckBox(
+                      title: 'Private',
+                      description:
+                          'Only members in the squads can interact with posts. Members can also send invitation link to join the squad.',
+                      value: !createSquadViewModel.isPublic,
+                      onChanged: (_) {
+                        createSquadViewModel.onCheckPublic();
+                      }),
+
+                  /// Advanced setting
+                  _buildButtonAdvancedSetting(
+                      createSquadViewModel.onChangeAdvancedSettingStatus,
+                      createSquadViewModel.isShowAdvancedSetting),
+                  if (createSquadViewModel.isShowAdvancedSetting) ...[
+                    _buildSwitch(
+                        title: 'Allow members to change profile',
+                        description:
+                            'Allow members to change their profile information',
+                        value: createSquadViewModel.isAllowChangeProfile,
+                        onChanged: (_) {
+                          createSquadViewModel.onChangeAllowChangeProfile();
+                        }),
+                    _buildSwitch(
+                        title: 'Allow members to change post',
+                        description:
+                            'Allow members to change their post information',
+                        value: createSquadViewModel.isAllowChangePost,
+                        onChanged: (_) {
+                          createSquadViewModel.onChangeAllowChangePost();
+                        }),
+                    _buildSwitch(
+                        title: 'Allow members to post under',
+                        description:
+                            'Allow members to post under other members post',
+                        value: createSquadViewModel.isAllowPostUnder,
+                        onChanged: (_) {
+                          createSquadViewModel.onChangeAllowPostUnder();
+                        }),
+                  ],
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: createSquadViewModel.submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'Submit your new squad',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  _buildButtonAdvancedSetting(
+      VoidCallback onPressed, bool isShowAdvancedSetting) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.settings),
+            const Text(
+              'Advanced setting (Coming soon)',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            (isShowAdvancedSetting)
+                ? const Icon(Icons.arrow_drop_up)
+                : const Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildSwitch(
+      {required String title,
+      required String description,
+      required bool value,
+      Function(bool?)? onChanged}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Switch(
+                value: value,
+                onChanged: onChanged,
+                activeColor: Colors.blue,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(description, style: const TextStyle(fontSize: 14)),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildCheckBox(
+      {required String title,
+      required String description,
+      required bool value,
+      Function(bool?)? onChanged}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Checkbox(
+              value: value,
+              onChanged: onChanged,
+              shape: const CircleBorder(),
+              activeColor: Colors.blue,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(description, style: const TextStyle(fontSize: 14)),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  _buildTextFormField(String title, String labelText,
+      TextEditingController controller, IconData? icon,
+      {bool isDescription = false}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 5),
+            const Text(
+              '*',
+              style: TextStyle(
+                  fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              prefixIcon: Icon(icon),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey.shade200),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              hintText: labelText,
+            ),
+            maxLines: isDescription ? 3 : 1,
+            minLines: isDescription ? 3 : 1,
+          ),
+        ),
+      ],
+    );
+  }
+}
