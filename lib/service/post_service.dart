@@ -88,4 +88,24 @@ class PostService {
       throw Exception('Failed to create post');
     }
   }
+
+  Future<BaseResponseApi> setPrivacyPost(String postId, String privacy) async {
+    final response = await callApi(
+      "post-service/posts/$postId/update-privacy",
+      'PUT',
+      isToken: true,
+      data: {"privacy": privacy}
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      return baseResponse;
+    } else {
+      throw Exception('Failed to set privacy for post');
+    }
+  }
 }

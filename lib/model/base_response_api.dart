@@ -3,7 +3,7 @@ class BaseResponseApi {
   final String? message;
   final dynamic result;
 
-  BaseResponseApi({required this.code, this.message, required this.result});
+  BaseResponseApi({required this.code, this.message, this.result});
 
   factory BaseResponseApi.fromJson(Map<String, dynamic> json) {
     return BaseResponseApi(
