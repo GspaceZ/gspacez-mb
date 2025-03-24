@@ -1,4 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../components/dialog_loading.dart';
+import '../main.dart';
+import '../model/content_squad_model.dart';
+import '../model/squad_setting.dart';
+import '../service/squad_service.dart';
 
 class CreateSquadViewModel extends ChangeNotifier {
   CreateSquadViewModel() {
@@ -19,8 +26,38 @@ class CreateSquadViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void submit() {
-    /// TODO: Call API to create squad
+  void submit() async {
+    try {
+      LoadingDialog.showLoadingDialog(navigatorKey.currentContext);
+      final contentSquad = ContentSquadModel(
+        name: nameSquadController.text.trim(),
+        tagName: tagSquadController.text.trim(),
+        privacy: isPublic ? "PUBLIC" : "PRIVATE",
+        description: descriptionSquadController.text.trim(),
+        setting: SquadSetting(
+          allowPostModeration: isAllowPostUnder,
+          allowChangeProfileAccessibility: isAllowChangeProfile,
+          allowPostInteraction: isAllowChangePost,
+        ),
+      );
+
+      await SquadService.instance.createSquad(contentSquad);
+      LoadingDialog.hideLoadingDialog();
+      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Squad created successfully!"),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Failed to create squad"),
+        ),
+      );
+      throw Exception("Failed to create squad: $e");
+    }
   }
 
   void onCheckPublic() {
