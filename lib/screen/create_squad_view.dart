@@ -26,10 +26,12 @@ class CreateSquadView extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 12),
                   const Text(
                     "Create a place that people can interact with others about a topic",
                     style: TextStyle(fontSize: 16),
                   ),
+                  const SizedBox(height: 16),
 
                   /// Form input
                   _buildTextFormField("Name of your squad", "Your squad's name",
@@ -44,6 +46,7 @@ class CreateSquadView extends StatelessWidget {
                     "Choose your squad's privacy",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 16),
                   _buildCheckBox(
                       title: 'Public',
                       description:
@@ -60,6 +63,7 @@ class CreateSquadView extends StatelessWidget {
                       onChanged: (_) {
                         createSquadViewModel.onCheckPublic();
                       }),
+                  const SizedBox(height: 16),
 
                   /// Advanced setting
                   _buildButtonAdvancedSetting(
@@ -161,16 +165,22 @@ class CreateSquadView extends StatelessWidget {
                 onChanged: onChanged,
                 activeColor: Colors.blue,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(description, style: const TextStyle(fontSize: 14)),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      description,
+                      style: const TextStyle(fontSize: 14),
+                      softWrap: true,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -179,14 +189,16 @@ class CreateSquadView extends StatelessWidget {
     );
   }
 
-  _buildCheckBox(
-      {required String title,
-      required String description,
-      required bool value,
-      Function(bool?)? onChanged}) {
+  _buildCheckBox({
+    required String title,
+    required String description,
+    required bool value,
+    Function(bool?)? onChanged,
+  }) {
     return Column(
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Checkbox(
               value: value,
@@ -194,16 +206,23 @@ class CreateSquadView extends StatelessWidget {
               shape: const CircleBorder(),
               activeColor: Colors.blue,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(description, style: const TextStyle(fontSize: 14)),
-              ],
+            const SizedBox(width: 4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    description,
+                    style: const TextStyle(fontSize: 14),
+                    softWrap: true,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
