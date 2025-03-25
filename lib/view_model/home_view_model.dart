@@ -17,9 +17,11 @@ class HomeViewModel extends ChangeNotifier {
   final List<PostModel> posts = [];
   String urlAvatar = AppConstants.urlImageDefault;
   Future<void> fetchPost() async {
-    final response = await PostService.instance.getNewFeed();
+    //final response = await PostService.instance.getNewFeed();
     posts.clear();
-    posts.addAll(response);
+
+    /// TODO: FIX API CALL
+    //  posts.addAll(response);
     notifyListeners();
   }
 
