@@ -2,11 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/comment_response.dart';
-import 'package:untitled/model/content_post_model.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/post_service.dart';
-
-import '../model/create_post_response.dart';
+import '../model/post_model_request.dart';
 
 class HomeViewModel extends ChangeNotifier {
   HomeViewModel() {
@@ -14,14 +12,14 @@ class HomeViewModel extends ChangeNotifier {
     _init();
   }
 
-  final List<PostModel> posts = [];
+  final List<PostModelResponse> posts = [];
   String urlAvatar = AppConstants.urlImageDefault;
   Future<void> fetchPost() async {
-    //final response = await PostService.instance.getNewFeed();
+    final response = await PostService.instance.getNewFeed();
     posts.clear();
 
     /// TODO: FIX API CALL
-    //  posts.addAll(response);
+    posts.addAll(response);
     notifyListeners();
   }
 
@@ -31,24 +29,28 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> createPost(ContentPostModel contentPost) async {
+  Future<void> createPost(PostModelRequest postModelRequest) async {
     try {
-      final CreatePostResponse newPost =
-          await PostService.instance.createPost(contentPost);
+      final PostModelResponse newPost =
+          await PostService.instance.createPost(postModelRequest);
 
-      final postModel = PostModel(
+      final postModel = PostModelResponse(
         id: newPost.id,
-        type: newPost.type,
-        privacy: newPost.privacy,
-        content: contentPost,
         profileId: newPost.profileId,
         profileName: await LocalStorage.instance.userName ?? '',
         avatarUrl: newPost.avatarUrl,
+        content: newPost.content,
+        comments: newPost.comments,
+        type: newPost.type,
+        privacy: newPost.privacy,
         hashTags: newPost.hashTags,
-        trendingPoint: newPost.trendingPoint,
         createdAt: newPost.createdAt,
         updatedAt: newPost.updatedAt,
-        hidden: false,
+        title: newPost.title,
+        totalLike: newPost.totalLike,
+        totalDislike: newPost.totalDislike,
+        liked: newPost.liked,
+        disliked: newPost.disliked
       );
 
       posts.insert(0, postModel);
@@ -58,7 +60,7 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<List<CommentResponse>> getComment(PostModel post) async {
+  Future<List<CommentResponse>> getComment(PostModelResponse post) async {
     final response = await PostService.instance.getCommentById(post.id);
     return response;
   }

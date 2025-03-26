@@ -7,8 +7,8 @@ class CommentResponse {
   final ContentComment content;
   final String? parentId;
   final String profileName;
-  final String profileImageUrl;
-  final String? createdAt;
+  final String? profileImageUrl;
+  final String createdAt;
   final String? updatedAt;
 
   CommentResponse({
@@ -18,7 +18,7 @@ class CommentResponse {
     required this.content,
     this.parentId,
     required this.profileName,
-    required this.profileImageUrl,
+    this.profileImageUrl,
     required this.createdAt,
     this.updatedAt,
   });
@@ -54,28 +54,21 @@ class CommentResponse {
 
 class ContentComment {
   final String text;
-  final List<String> images;
-  final List<String> videos;
 
   ContentComment({
     required this.text,
-    required this.images,
-    required this.videos,
   });
+
 
   factory ContentComment.fromJson(Map<String, dynamic> json) {
     return ContentComment(
       text: json['text'],
-      images: List<String>.from(json['images']),
-      videos: List<String>.from(json['videos']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'text': text,
-      'images': images,
-      'videos': videos,
     };
   }
 }

@@ -5,13 +5,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
-import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:video_player/video_player.dart';
+import '../utils/content_converter.dart';
 
 class CommonPost extends StatefulWidget {
-  final PostModel post;
+  final PostModelResponse post;
   final VoidCallback? onLike;
   final Function()? onComment;
   final Function() onGetComment;
@@ -38,12 +38,16 @@ class _CommonPostState extends State<CommonPost> {
   @override
   void initState() {
     super.initState();
-    if (widget.post.content.videoUrls.isNotEmpty) {
+
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
+
+    if (videoUrls.isNotEmpty) {
       _controller = VideoPlayerController.networkUrl(
-          Uri.parse(widget.post.content.videoUrls.first))
-        ..initialize().then((_) {
-          setState(() {});
-        });
+        Uri.parse(videoUrls.first),
+      )..initialize().then((_) {
+        setState(() {});
+      });
     }
   }
 
@@ -55,6 +59,10 @@ class _CommonPostState extends State<CommonPost> {
 
   @override
   Widget build(BuildContext context) {
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
+    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -80,8 +88,7 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                  widget.post.avatarUrl ??
-                                      AppConstants.urlImageDefault,
+                                  widget.post.avatarUrl,
                                   errorListener: (_) {
                                     Log.error(
                                         'Error loading image ${widget.post.avatarUrl}');
@@ -113,9 +120,9 @@ class _CommonPostState extends State<CommonPost> {
                     ],
                   ),
                   _buildTextContent(),
-                  if (widget.post.content.videoUrls.isNotEmpty)
+                  if (videoUrls.isNotEmpty)
                     _buildVideoPlayer(),
-                  if (widget.post.content.imageUrls.isNotEmpty)
+                  if (imageUrls.isNotEmpty)
                     _buildImagePost(),
                   _buildRowIcon()
                 ],
@@ -204,13 +211,17 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildTextContent() {
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+    final String text = convertedContent["text"];
+
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           const style = TextStyle(fontSize: 17);
           final textSpan =
-              TextSpan(text: widget.post.content.text, style: style);
+              TextSpan(text: text, style: style);
           final textPainter =
               TextPainter(text: textSpan, textDirection: TextDirection.ltr);
           textPainter.layout(maxWidth: constraints.maxWidth);
@@ -219,7 +230,7 @@ class _CommonPostState extends State<CommonPost> {
 
           TextStyle styleContent;
           double fontSize = 17;
-          if (lines == 1 && widget.post.content.imageUrls.isEmpty) {
+          if (lines == 1 && imageUrls.isEmpty) {
             fontSize = 30;
             styleContent = const TextStyle(
                 fontSize: 30,
@@ -234,14 +245,14 @@ class _CommonPostState extends State<CommonPost> {
                 fontSize: 16); // Font size for more than three lines
           }
 
-          String displayText = widget.post.content.text ?? "";
+          String displayText = text;
           if (lines > 5 && !_showFullText) {
             final endPosition = textPainter
                 .getPositionForOffset(
                     Offset(constraints.maxWidth, fontSize * 5))
                 .offset;
             displayText =
-                '${widget.post.content.text?.substring(0, endPosition)}...';
+                '${text.substring(0, endPosition)}...';
           }
 
           return Column(
@@ -274,10 +285,12 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildImagePost() {
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
     return SizedBox(
       height: MediaQuery.sizeOf(context).width,
       child: ImageCarousel(
-        images: widget.post.content.imageUrls,
+        images: imageUrls,
       ),
     );
   }

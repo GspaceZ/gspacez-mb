@@ -5,11 +5,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
-import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
+import '../../../utils/content_converter.dart';
 
 class CreatePostDialog extends StatefulWidget {
-  final Future<void> Function(ContentPostModel) onCreatePost;
+  final Future<void> Function(PostModelRequest) onCreatePost;
 
   const CreatePostDialog({super.key, required this.onCreatePost});
 
@@ -20,15 +21,12 @@ class CreatePostDialog extends StatefulWidget {
 class _CreatePostDialogState extends State<CreatePostDialog> {
   String avatarUrl = AppConstants.urlImageDefault;
   String userName = '';
-  bool isShowLocation = false;
-  bool isShowFeeling = false;
   bool isShowTag = false;
   bool isShowPrivacy = false;
   final contentController = TextEditingController();
-  final locationController = TextEditingController();
-  final feelingController = TextEditingController();
   final tagController = TextEditingController();
-  final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE', 'FRIEND'];
+  String _title = '';
+  final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE'];
   String _selectedPrivacy = 'PUBLIC';
   final ImagePicker _picker = ImagePicker();
   final List<XFile> _selectedFiles = [];
@@ -45,8 +43,6 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   void dispose() {
     super.dispose();
     contentController.dispose();
-    locationController.dispose();
-    feelingController.dispose();
     tagController.dispose();
   }
 
@@ -194,42 +190,10 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
               const SizedBox(height: 12),
               _getListOptions(),
               const SizedBox(height: 8),
-              _buildShowLocation(),
-              _buildShowFeeding(),
               _buildShowTag(),
               _buildPrivacy(),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  _buildShowLocation() {
-    return Visibility(
-      visible: isShowLocation,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TextField(
-          controller: locationController,
-          decoration: CusTomInputDecoration(
-                  FlutterI18n.translate(context, 'post.modal.location'))
-              .getInputDecoration(),
-        ),
-      ),
-    );
-  }
-
-  _buildShowFeeding() {
-    return Visibility(
-      visible: isShowFeeling,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TextField(
-          controller: feelingController,
-          decoration: CusTomInputDecoration(
-                  FlutterI18n.translate(context, 'post.modal.feeling'))
-              .getInputDecoration(),
         ),
       ),
     );
@@ -352,24 +316,6 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
           InkWell(
             onTap: () {
               setState(() {
-                isShowLocation = !isShowLocation;
-              });
-            },
-            child: Icon(Icons.location_on_outlined,
-                color: isShowLocation ? Colors.deepOrange : Colors.black),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                isShowFeeling = !isShowFeeling;
-              });
-            },
-            child: Icon(Icons.emoji_emotions_outlined,
-                color: isShowFeeling ? Colors.deepOrange : Colors.black),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
                 isShowTag = !isShowTag;
               });
             },
@@ -391,15 +337,18 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   }
 
   _onClickPost() async {
-    final post = ContentPostModel(
-      text: contentController.text,
-      imageUrls: _selectedFiles.map((e) => e.path).toList(),
-      videoUrls: [],
-      location: locationController.text,
-      feeling: feelingController.text,
+    List<String> imageUrls = _selectedFiles.map((file) => file.path).toList();
+
+    final post = PostModelRequest(
+      text: convertToMarkdown({
+        "text": contentController.text,
+        "imageUrls": imageUrls,
+      }),
       privacy: _selectedPrivacy,
       hashTags: _hashTags,
+      title: _title,
     );
+
     LoadingDialog.showLoadingDialog(context);
     await widget.onCreatePost(post);
     LoadingDialog.hideLoadingDialog();

@@ -10,6 +10,8 @@ import 'package:untitled/model/comment_model.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/service/cloudinary_service.dart';
 
+import '../utils/content_converter.dart';
+
 class CommonComment extends StatefulWidget {
   final Function() onGetComment;
   final Function()? onCreateComment;
@@ -68,13 +70,17 @@ class _CommonCommentState extends State<CommonComment> {
   }
 
   _buildCommentItem(CommentResponse comment) {
+    final String profileImageUrl = comment.profileImageUrl ?? AppConstants.urlImageDefault;
+    final convertedContent = convertContent(comment.content.text);
+    final String text = convertedContent["text"];
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(comment.profileImageUrl),
+              backgroundImage: NetworkImage(profileImageUrl),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -99,11 +105,7 @@ class _CommonCommentState extends State<CommonComment> {
                           const Text("now", style: TextStyle(fontSize: 12)),
                         ],
                       ),
-                      Text(comment.content.text),
-                      if (comment.content.images.isNotEmpty)
-                        _buildImagePost(comment),
-                      if (comment.content.videos.isNotEmpty)
-                        _buildVideoPost(comment),
+                      Text(text),
                     ],
                   ),
                 ),
@@ -151,26 +153,29 @@ class _CommonCommentState extends State<CommonComment> {
   }
 
   _buildImagePost(CommentResponse comment) {
+    final convertedContent = convertContent(comment.content.text);
+    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+
     return SizedBox(
       height: MediaQuery.sizeOf(context).width / 3,
       child: Center(
-        child: (comment.content.images.length == 1)
+        child: (imageUrls.length == 1)
             ? CachedNetworkImage(
-                imageUrl: comment.content.images[0],
+                imageUrl: imageUrls[0],
                 placeholder: (_, url) =>
                     const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               )
             : ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: comment.content.images.length,
+                itemCount: imageUrls.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: SizedBox(
                       width: MediaQuery.sizeOf(context).width / 3,
                       child: CachedNetworkImage(
-                        imageUrl: comment.content.images[index],
+                        imageUrl: imageUrls[index],
                         placeholder: (_, url) =>
                             const Center(child: CircularProgressIndicator()),
                         errorWidget: (context, url, error) =>
@@ -185,21 +190,24 @@ class _CommonCommentState extends State<CommonComment> {
   }
 
   _buildVideoPost(CommentResponse comment) {
+    final convertedContent = convertContent(comment.content.text);
+    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
+
     return SizedBox(
       height: MediaQuery.sizeOf(context).width / 3,
       child: Center(
-        child: (comment.content.videos.length == 1)
-            ? BaseVideoPlayer(url: comment.content.videos[0])
+        child: (videoUrls.length == 1)
+            ? BaseVideoPlayer(url: videoUrls[0])
             : ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: comment.content.videos.length,
+                itemCount: videoUrls.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: SizedBox(
                       width: MediaQuery.sizeOf(context).width / 3,
                       child:
-                          BaseVideoPlayer(url: comment.content.videos[index]),
+                          BaseVideoPlayer(url: videoUrls[index]),
                     ),
                   );
                 },
@@ -296,12 +304,11 @@ class _CommonCommentState extends State<CommonComment> {
         _uploadedImages.add(response);
       }
     }
-    final List<String> listImage = List.from(_uploadedImages);
     comments.add(CommentModel(
             profileName: profileName,
             profileImageUrl: avatarUrl,
             contentComment: ContentComment(
-                text: commentController.text, images: listImage, videos: []),
+                text: commentController.text),
             createdAt: DateTime.now().toString())
         .toCommentResponse());
 
