@@ -1,16 +1,13 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:untitled/components/base_video_player.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/comment_model.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/service/cloudinary_service.dart';
-
-import '../utils/content_converter.dart';
+import 'package:untitled/utils/content_converter.dart';
 
 class CommonComment extends StatefulWidget {
   final Function() onGetComment;
@@ -152,69 +149,69 @@ class _CommonCommentState extends State<CommonComment> {
     );
   }
 
-  _buildImagePost(CommentResponse comment) {
-    final convertedContent = convertContent(comment.content.text);
-    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
-
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).width / 3,
-      child: Center(
-        child: (imageUrls.length == 1)
-            ? CachedNetworkImage(
-                imageUrl: imageUrls[0],
-                placeholder: (_, url) =>
-                    const Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              )
-            : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: imageUrls.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SizedBox(
-                      width: MediaQuery.sizeOf(context).width / 3,
-                      child: CachedNetworkImage(
-                        imageUrl: imageUrls[index],
-                        placeholder: (_, url) =>
-                            const Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  );
-                },
-              ),
-      ),
-    );
-  }
-
-  _buildVideoPost(CommentResponse comment) {
-    final convertedContent = convertContent(comment.content.text);
-    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
-
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).width / 3,
-      child: Center(
-        child: (videoUrls.length == 1)
-            ? BaseVideoPlayer(url: videoUrls[0])
-            : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: videoUrls.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SizedBox(
-                      width: MediaQuery.sizeOf(context).width / 3,
-                      child:
-                          BaseVideoPlayer(url: videoUrls[index]),
-                    ),
-                  );
-                },
-              ),
-      ),
-    );
-  }
+  // _buildImagePost(CommentResponse comment) {
+  //   final convertedContent = convertContent(comment.content.text);
+  //   final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+  //
+  //   return SizedBox(
+  //     height: MediaQuery.sizeOf(context).width / 3,
+  //     child: Center(
+  //       child: (imageUrls.length == 1)
+  //           ? CachedNetworkImage(
+  //               imageUrl: imageUrls[0],
+  //               placeholder: (_, url) =>
+  //                   const Center(child: CircularProgressIndicator()),
+  //               errorWidget: (context, url, error) => const Icon(Icons.error),
+  //             )
+  //           : ListView.builder(
+  //               scrollDirection: Axis.horizontal,
+  //               itemCount: imageUrls.length,
+  //               itemBuilder: (context, index) {
+  //                 return Padding(
+  //                   padding: const EdgeInsets.all(2.0),
+  //                   child: SizedBox(
+  //                     width: MediaQuery.sizeOf(context).width / 3,
+  //                     child: CachedNetworkImage(
+  //                       imageUrl: imageUrls[index],
+  //                       placeholder: (_, url) =>
+  //                           const Center(child: CircularProgressIndicator()),
+  //                       errorWidget: (context, url, error) =>
+  //                           const Icon(Icons.error),
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //     ),
+  //   );
+  // }
+  //
+  // _buildVideoPost(CommentResponse comment) {
+  //   final convertedContent = convertContent(comment.content.text);
+  //   final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
+  //
+  //   return SizedBox(
+  //     height: MediaQuery.sizeOf(context).width / 3,
+  //     child: Center(
+  //       child: (videoUrls.length == 1)
+  //           ? BaseVideoPlayer(url: videoUrls[0])
+  //           : ListView.builder(
+  //               scrollDirection: Axis.horizontal,
+  //               itemCount: videoUrls.length,
+  //               itemBuilder: (context, index) {
+  //                 return Padding(
+  //                   padding: const EdgeInsets.all(2.0),
+  //                   child: SizedBox(
+  //                     width: MediaQuery.sizeOf(context).width / 3,
+  //                     child:
+  //                         BaseVideoPlayer(url: videoUrls[index]),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //     ),
+  //   );
+  // }
 
   _buildSelectedImage() {
     return (_selectedImages.isNotEmpty)

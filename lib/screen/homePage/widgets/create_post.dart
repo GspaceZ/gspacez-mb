@@ -7,7 +7,7 @@ import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
-import '../../../utils/content_converter.dart';
+import 'package:untitled/utils/content_converter.dart';
 
 class CreatePostDialog extends StatefulWidget {
   final Future<void> Function(PostModelRequest) onCreatePost;
@@ -25,7 +25,7 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   bool isShowPrivacy = false;
   final contentController = TextEditingController();
   final tagController = TextEditingController();
-  String _title = '';
+  final String _title = '';
   final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE'];
   String _selectedPrivacy = 'PUBLIC';
   final ImagePicker _picker = ImagePicker();

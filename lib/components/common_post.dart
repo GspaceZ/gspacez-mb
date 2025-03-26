@@ -7,8 +7,8 @@ import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_response.dart';
+import 'package:untitled/utils/content_converter.dart';
 import 'package:video_player/video_player.dart';
-import '../utils/content_converter.dart';
 
 class CommonPost extends StatefulWidget {
   final PostModelResponse post;
