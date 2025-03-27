@@ -306,7 +306,9 @@ class _CommonCommentState extends State<CommonComment> {
             profileImageUrl: avatarUrl,
             contentComment: ContentComment(
                 text: commentController.text),
-            createdAt: DateTime.now().toString())
+            createdAt: DateTime.now().toUtc(),
+            updatedAt: DateTime.now().toUtc(),
+        )
         .toCommentResponse());
 
     commentController.clear();

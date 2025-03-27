@@ -1,5 +1,3 @@
-import '../utils/date_utils.dart';
-
 class SquadResponse {
   String id;
   String name;
@@ -30,8 +28,8 @@ class SquadResponse {
       description: json['description'] as String,
       adminName: json['adminName'] as String,
       adminId: json['adminId'] as String,
-      createdAt: DateUtils.parseDate(json['createdAt']),
-      updatedAt: json['updatedAt'] != null ? DateUtils.parseDate(json['updatedAt']) : null,
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -43,8 +41,8 @@ class SquadResponse {
       'description': description,
       'adminName': adminName,
       'adminId': adminId,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt?.toUtc().toIso8601String(),
     };
   }
 

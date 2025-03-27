@@ -8,8 +8,8 @@ class CommentResponse {
   final String? parentId;
   final String profileName;
   final String? profileImageUrl;
-  final String createdAt;
-  final String? updatedAt;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
 
   CommentResponse({
     required this.id,
@@ -32,8 +32,8 @@ class CommentResponse {
       parentId: json['parentId'],
       profileName: json['profileName'],
       profileImageUrl: json['profileImageUrl'] ?? AppConstants.urlImageDefault,
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -46,8 +46,8 @@ class CommentResponse {
       'parentId': parentId,
       'profileName': profileName,
       'profileImageUrl': profileImageUrl,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt?.toUtc().toIso8601String(),
     };
   }
 }
