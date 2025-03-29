@@ -123,7 +123,7 @@ class CreateSquadView extends StatelessWidget {
 
   _buildButtonAdvancedSetting(
       VoidCallback onPressed, bool isShowAdvancedSetting) {
-    return InkWell(
+    return GestureDetector(
       onTap: onPressed,
       child: Container(
         padding: const EdgeInsets.all(12),

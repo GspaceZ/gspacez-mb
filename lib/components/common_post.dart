@@ -40,14 +40,15 @@ class _CommonPostState extends State<CommonPost> {
     super.initState();
 
     final convertedContent = convertContent(widget.post.content.text);
-    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
+    final List<String> videoUrls =
+        List<String>.from(convertedContent["videoUrls"]);
 
     if (videoUrls.isNotEmpty) {
       _controller = VideoPlayerController.networkUrl(
         Uri.parse(videoUrls.first),
       )..initialize().then((_) {
-        setState(() {});
-      });
+          setState(() {});
+        });
     }
   }
 
@@ -60,8 +61,10 @@ class _CommonPostState extends State<CommonPost> {
   @override
   Widget build(BuildContext context) {
     final convertedContent = convertContent(widget.post.content.text);
-    final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
-    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+    final List<String> videoUrls =
+        List<String>.from(convertedContent["videoUrls"]);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -120,10 +123,8 @@ class _CommonPostState extends State<CommonPost> {
                     ],
                   ),
                   _buildTextContent(),
-                  if (videoUrls.isNotEmpty)
-                    _buildVideoPlayer(),
-                  if (imageUrls.isNotEmpty)
-                    _buildImagePost(),
+                  if (videoUrls.isNotEmpty) _buildVideoPlayer(),
+                  if (imageUrls.isNotEmpty) _buildImagePost(),
                   _buildRowIcon()
                 ],
               )
@@ -138,7 +139,7 @@ class _CommonPostState extends State<CommonPost> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () {
               _isLiked = !_isLiked;
               if (_isLiked) {
@@ -158,7 +159,7 @@ class _CommonPostState extends State<CommonPost> {
                     color: Colors.black,
                   ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: () {
               _isDisliked = !_isDisliked;
               if (_isDisliked) {
@@ -178,7 +179,7 @@ class _CommonPostState extends State<CommonPost> {
                     color: Colors.black,
                   ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: () {
               showModalBottomSheet(
                 isScrollControlled: true,
@@ -212,7 +213,8 @@ class _CommonPostState extends State<CommonPost> {
 
   _buildTextContent() {
     final convertedContent = convertContent(widget.post.content.text);
-    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
     final String text = convertedContent["text"];
 
     return Padding(
@@ -220,8 +222,7 @@ class _CommonPostState extends State<CommonPost> {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           const style = TextStyle(fontSize: 17);
-          final textSpan =
-              TextSpan(text: text, style: style);
+          final textSpan = TextSpan(text: text, style: style);
           final textPainter =
               TextPainter(text: textSpan, textDirection: TextDirection.ltr);
           textPainter.layout(maxWidth: constraints.maxWidth);
@@ -251,8 +252,7 @@ class _CommonPostState extends State<CommonPost> {
                 .getPositionForOffset(
                     Offset(constraints.maxWidth, fontSize * 5))
                 .offset;
-            displayText =
-                '${text.substring(0, endPosition)}...';
+            displayText = '${text.substring(0, endPosition)}...';
           }
 
           return Column(
@@ -264,7 +264,7 @@ class _CommonPostState extends State<CommonPost> {
                 textAlign: TextAlign.start,
               ),
               if (lines > 5)
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     setState(() {
                       _showFullText = !_showFullText;
@@ -286,11 +286,15 @@ class _CommonPostState extends State<CommonPost> {
 
   _buildImagePost() {
     final convertedContent = convertContent(widget.post.content.text);
-    final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).width,
-      child: ImageCarousel(
-        images: imageUrls,
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).width / 1.5,
+        child: ImageCarousel(
+          images: imageUrls,
+        ),
       ),
     );
   }
@@ -302,7 +306,7 @@ class _CommonPostState extends State<CommonPost> {
         children: [
           AspectRatio(
             aspectRatio: _controller!.value.aspectRatio,
-            child: InkWell(
+            child: GestureDetector(
                 onTap: () {
                   if (_controller!.value.isPlaying) {
                     _controller!.pause();

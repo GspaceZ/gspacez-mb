@@ -5,6 +5,7 @@ import '../model/base_response_api.dart';
 
 class PrivacyModal extends StatefulWidget {
   final String postId;
+
   const PrivacyModal({super.key, required this.postId});
 
   @override
@@ -47,23 +48,28 @@ class _PrivacyModalState extends State<PrivacyModal> {
     try {
       String privacyValue = _mapValueToPrivacy(_selectedOption!);
 
-      final BaseResponseApi response =
-      await PostService.instance.setPrivacyPost(widget.postId, privacyValue);
+      final BaseResponseApi response = await PostService.instance
+          .setPrivacyPost(widget.postId, privacyValue);
 
       if (response.code == 1000) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Privacy updated successfully!")),
-        );
-
-        Navigator.of(context).pop(true);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Privacy updated successfully!")),
+          );
+        }
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
       } else {
         throw Exception(response.message ?? "Failed to update privacy.");
       }
     } catch (error) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.toString())),
+        );
+      }
     }
   }
 
@@ -93,12 +99,12 @@ class _PrivacyModalState extends State<PrivacyModal> {
                 child: _isLoading
                     ? const CircularProgressIndicator()
                     : Text(
-                  FlutterI18n.translate(context, 'post.privacy.done'),
-                  style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
+                        FlutterI18n.translate(context, 'post.privacy.done'),
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),

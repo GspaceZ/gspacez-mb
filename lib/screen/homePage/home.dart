@@ -22,34 +22,35 @@ class _HomeState extends State<Home> {
         builder: (context, homeViewModel, child) {
           return RefreshIndicator(
             onRefresh: homeViewModel.fetchPost,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    _buildSearchBar(homeViewModel.urlAvatar, homeViewModel.createPost),
-                    if (homeViewModel.posts.isNotEmpty)
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.7,
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: homeViewModel.posts.length,
-                          itemBuilder: (context, index) {
-                            final post = homeViewModel.posts[index];
-                            return CommonPost(
-                              post: post,
-                              onGetComment: () async {
-                                return await homeViewModel.getComment(post);
-                              },
-                            );
-                          },
-                        ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildSearchBar(
+                      homeViewModel.urlAvatar, homeViewModel.createPost),
+                  if (homeViewModel.posts.isNotEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: homeViewModel.posts.length,
+                        itemBuilder: (context, index) {
+                          final post = homeViewModel.posts[index];
+                          return CommonPost(
+                            post: post,
+                            onGetComment: () async {
+                              return await homeViewModel.getComment(post);
+                            },
+                          );
+                        },
                       ),
-                    if (homeViewModel.posts.isEmpty)
-                      const Center(
-                        child: Text('No posts available'),
-                      ),
-                  ],
-                ),
+                    ),
+                  if (homeViewModel.posts.isEmpty)
+                    const Center(
+                      child: Text('No posts available'),
+                    ),
+                ],
               ),
+            ),
           );
         },
       ),
@@ -69,7 +70,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 _showCreatePostDialog(onCreatePost: onCreatePost);
               },

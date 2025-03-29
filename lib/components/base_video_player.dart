@@ -31,7 +31,7 @@ class _BaseVideoPlayerState extends State<BaseVideoPlayer> {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: _controller.value.aspectRatio,
-      child: InkWell(
+      child: GestureDetector(
           onTap: () {
             if (_controller.value.isPlaying) {
               _controller.pause();
