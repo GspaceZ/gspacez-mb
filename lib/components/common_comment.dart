@@ -2,12 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/comment_model.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/service/cloudinary_service.dart';
 import 'package:untitled/utils/content_converter.dart';
+import 'package:untitled/utils/format_time.dart';
 
 class CommonComment extends StatefulWidget {
   final Function() onGetComment;
@@ -67,9 +69,13 @@ class _CommonCommentState extends State<CommonComment> {
   }
 
   _buildCommentItem(CommentResponse comment) {
-    final String profileImageUrl = comment.profileImageUrl ?? AppConstants.urlImageDefault;
+    final String profileImageUrl =
+        comment.profileImageUrl ?? AppConstants.urlImageDefault;
     final convertedContent = convertContent(comment.content.text);
     final String text = convertedContent["text"];
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+    final DateTime time = comment.createdAt;
 
     return SafeArea(
       child: Padding(
@@ -99,10 +105,12 @@ class _CommonCommentState extends State<CommonComment> {
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const Spacer(),
-                          const Text("now", style: TextStyle(fontSize: 12)),
+                          Text(formatTime(time),
+                              style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                       Text(text),
+                      if (imageUrls.isNotEmpty) _buildImagePost(comment),
                     ],
                   ),
                 ),
@@ -149,42 +157,31 @@ class _CommonCommentState extends State<CommonComment> {
     );
   }
 
-  // _buildImagePost(CommentResponse comment) {
-  //   final convertedContent = convertContent(comment.content.text);
-  //   final List<String> imageUrls = List<String>.from(convertedContent["imageUrls"]);
-  //
-  //   return SizedBox(
-  //     height: MediaQuery.sizeOf(context).width / 3,
-  //     child: Center(
-  //       child: (imageUrls.length == 1)
-  //           ? CachedNetworkImage(
-  //               imageUrl: imageUrls[0],
-  //               placeholder: (_, url) =>
-  //                   const Center(child: CircularProgressIndicator()),
-  //               errorWidget: (context, url, error) => const Icon(Icons.error),
-  //             )
-  //           : ListView.builder(
-  //               scrollDirection: Axis.horizontal,
-  //               itemCount: imageUrls.length,
-  //               itemBuilder: (context, index) {
-  //                 return Padding(
-  //                   padding: const EdgeInsets.all(2.0),
-  //                   child: SizedBox(
-  //                     width: MediaQuery.sizeOf(context).width / 3,
-  //                     child: CachedNetworkImage(
-  //                       imageUrl: imageUrls[index],
-  //                       placeholder: (_, url) =>
-  //                           const Center(child: CircularProgressIndicator()),
-  //                       errorWidget: (context, url, error) =>
-  //                           const Icon(Icons.error),
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //     ),
-  //   );
-  // }
+  _buildImagePost(CommentResponse comment) {
+    final convertedContent = convertContent(comment.content.text);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).width / 3,
+      child: Center(
+        child: (imageUrls.length == 1)
+            ? BaseImageNetwork(imageUrl: imageUrls[0])
+            : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: imageUrls.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width / 3,
+                        child: BaseImageNetwork(imageUrl: imageUrls[0])),
+                  );
+                },
+              ),
+      ),
+    );
+  }
   //
   // _buildVideoPost(CommentResponse comment) {
   //   final convertedContent = convertContent(comment.content.text);
@@ -302,14 +299,12 @@ class _CommonCommentState extends State<CommonComment> {
       }
     }
     comments.add(CommentModel(
-            profileName: profileName,
-            profileImageUrl: avatarUrl,
-            contentComment: ContentComment(
-                text: commentController.text),
-            createdAt: DateTime.now().toUtc(),
-            updatedAt: DateTime.now().toUtc(),
-        )
-        .toCommentResponse());
+      profileName: profileName,
+      profileImageUrl: avatarUrl,
+      contentComment: ContentComment(text: commentController.text),
+      createdAt: DateTime.now().toUtc(),
+      updatedAt: DateTime.now().toUtc(),
+    ).toCommentResponse());
 
     commentController.clear();
     _selectedImages.clear();

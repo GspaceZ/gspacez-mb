@@ -46,7 +46,7 @@ class _HomeState extends State<Home> {
                     ),
                   if (homeViewModel.posts.isEmpty)
                     const Center(
-                      child: Text('No posts available'),
+                      child: CircularProgressIndicator(),
                     ),
                 ],
               ),

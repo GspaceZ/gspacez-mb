@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/screen/auth/active_success.dart';
 import 'package:untitled/screen/auth/create_password_view.dart';
 import 'package:untitled/screen/auth/forgot_password.dart';
@@ -8,7 +9,6 @@ import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/create_squad_view.dart';
 import 'package:untitled/screen/default_layout.dart';
-import 'package:untitled/screen/homePage/home.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../screen/profile/update_avatar.dart';
@@ -30,10 +30,10 @@ class AppRoutes {
     switch (settings.name) {
       case home:
         return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(
-                  selectedIndex: 4,
-                  child: Home(),
-                ));
+          builder: (_) => const DefaultLayout(
+            selectedIndex: AppConstants.home,
+          ),
+        );
       case splashScreen:
         return MaterialPageRoute(
           builder: (_) => const LayoutLanding(child: Introduce()),
@@ -50,13 +50,13 @@ class AppRoutes {
       case updateProfile:
         return MaterialPageRoute(
             builder: (_) => const DefaultLayout(
-                  selectedIndex: 4,
+                  selectedIndex: AppConstants.profile,
                   child: UpdateProfile(),
                 ));
       case updateAvatar:
         return MaterialPageRoute(
             builder: (_) => const DefaultLayout(
-                  selectedIndex: 4,
+                  selectedIndex: AppConstants.custom,
                   child: UpdateAvatar(),
                 ));
       case activeSuccess:
@@ -70,10 +70,11 @@ class AppRoutes {
             builder: (_) => const LayoutLanding(child: CreatePasswordView()));
       case createSquad:
         return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(
-                  selectedIndex: 4,
-                  child: CreateSquadView(),
-                ));
+          builder: (_) => const DefaultLayout(
+            selectedIndex: AppConstants.custom,
+            child: CreateSquadView(),
+          ),
+        );
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

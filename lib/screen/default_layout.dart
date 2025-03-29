@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/screen/profile/update_profile.dart';
 import '../components/navigation_bar.dart';
-import '../components/trending_sidebar.dart';
 import 'homePage/home.dart';
 
 class DefaultLayout extends StatefulWidget {
   final int selectedIndex;
   final Widget? child;
+  final String? title;
 
-  const DefaultLayout({super.key, required this.selectedIndex, this.child});
+  const DefaultLayout(
+      {super.key, required this.selectedIndex, this.child, this.title});
 
   @override
   State<DefaultLayout> createState() => _DefaultLayoutState();
 }
 
 class _DefaultLayoutState extends State<DefaultLayout> {
-  int _selectedIndex = 4;
-  List<int> check = [0, 0, 0, 0, 0];
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    _selectedIndex = widget.selectedIndex;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,15 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          FlutterI18n.translate(context, "title.home"),
+          (_selectedIndex == 0)
+              ? "Home"
+              : (_selectedIndex == 1)
+                  ? "Notifications"
+                  : (_selectedIndex == 2)
+                      ? "Messages"
+                      : (_selectedIndex == 3)
+                          ? "Profile"
+                          : widget.title ?? "",
           textAlign: TextAlign.center,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
         ),
@@ -62,12 +76,10 @@ class _DefaultLayoutState extends State<DefaultLayout> {
                   /// Messages page
                   const Home(),
 
-                  /// Activity page
-                  const TrendingSidebar(),
-                  widget.child ??
-                      const Center(
-                        child: Text('Page not found!'),
-                      ),
+                  /// Profile page
+                  const UpdateProfile(),
+
+                  if (widget.child != null) widget.child!,
                 ][_selectedIndex],
               ],
             ),
@@ -79,38 +91,35 @@ class _DefaultLayoutState extends State<DefaultLayout> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         indicatorColor: Colors.transparent,
         onDestinationSelected: (int index) {
-          if (check[index] == 1) {
-            _selectedIndex = 4;
-            check = [0, 0, 0, 0, 0];
-          } else {
-            check = [0, 0, 0, 0, 0];
-            check[index] = 1;
-            _selectedIndex = index;
-          }
+          _selectedIndex = index;
           setState(() {});
         },
         selectedIndex: (_selectedIndex > 3) ? 3 : _selectedIndex,
         destinations: [
           NavigationDestination(
-            icon: getIcon("assets/svg/ic_share.svg", false),
-            selectedIcon: getIcon("assets/svg/ic_share.svg", true),
+            // Home
+            icon: getIcon(Icons.home_outlined, false),
+            selectedIcon: getIcon(Icons.home_outlined, true),
             label: "",
           ),
           NavigationDestination(
-            icon: getIcon('assets/svg/notification.svg', false),
-            selectedIcon: getIcon('assets/svg/notification.svg', true),
+            // Notifications
+            icon: getIcon(Icons.notifications_none, false),
+            selectedIcon: getIcon(Icons.notifications_none, true),
             label: "",
           ),
           NavigationDestination(
-            icon: getIcon('assets/svg/setting-2.svg', false),
-            selectedIcon: getIcon('assets/svg/setting-2.svg', true),
+            // Messages
+            icon: getIcon(Icons.messenger_outline, false),
+            selectedIcon: getIcon(Icons.messenger_outline, true),
             label: "",
           ),
           NavigationDestination(
-            icon: getIcon('assets/svg/activity.svg', false),
+            // Profile
+            icon: getIcon(Icons.account_circle_outlined, false),
             selectedIcon: (_selectedIndex == 3)
-                ? getIcon('assets/svg/activity.svg', true)
-                : getIcon('assets/svg/activity.svg', false),
+                ? getIcon(Icons.account_circle_outlined, true)
+                : getIcon(Icons.account_circle_outlined, false),
             label: "",
           ),
         ],
@@ -118,7 +127,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
     );
   }
 
-  Widget getIcon(String path, bool isActive) {
+  Widget getIcon(IconData icon, bool isActive) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -126,8 +135,8 @@ class _DefaultLayoutState extends State<DefaultLayout> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SvgPicture.asset(
-          path,
+        child: Icon(
+          icon,
           color: (isActive) ? Colors.white : Colors.black,
         ),
       ),

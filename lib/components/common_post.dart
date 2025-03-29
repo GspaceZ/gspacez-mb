@@ -8,6 +8,7 @@ import 'package:untitled/components/privacy_modal.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/utils/content_converter.dart';
+import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
 
 class CommonPost extends StatefulWidget {
@@ -109,7 +110,7 @@ class _CommonPostState extends State<CommonPost> {
                                       fontSize: 17),
                                 ),
                                 Text(
-                                  _formatTime(widget.post.createdAt),
+                                  formatTime(widget.post.createdAt),
                                   style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w200),
@@ -122,9 +123,31 @@ class _CommonPostState extends State<CommonPost> {
                       _buildPopupMenu(),
                     ],
                   ),
-                  _buildTextContent(),
-                  if (videoUrls.isNotEmpty) _buildVideoPlayer(),
-                  if (imageUrls.isNotEmpty) _buildImagePost(),
+                  if (widget.post.title.isNotEmpty) _buildTitle(),
+                  if (widget.post.hashTags != null) _buildHashTags(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.post.content.text.isNotEmpty)
+                            _buildTextContent(),
+                          if (videoUrls.isNotEmpty) _buildVideoPlayer(),
+                          if (imageUrls.isNotEmpty) _buildImagePost(),
+                        ],
+                      ),
+                    ),
+                  ),
                   _buildRowIcon()
                 ],
               )
@@ -151,8 +174,8 @@ class _CommonPostState extends State<CommonPost> {
             },
             child: _isLiked
                 ? const Icon(
-                    Icons.thumb_up,
-                    color: Colors.green,
+                    Icons.thumb_up_alt_outlined,
+                    color: Colors.blue,
                   )
                 : const Icon(
                     Icons.thumb_up_outlined,
@@ -171,7 +194,7 @@ class _CommonPostState extends State<CommonPost> {
             },
             child: _isDisliked
                 ? const Icon(
-                    Icons.thumb_down,
+                    Icons.thumb_down_alt_outlined,
                     color: Colors.red,
                   )
                 : const Icon(
@@ -218,7 +241,7 @@ class _CommonPostState extends State<CommonPost> {
     final String text = convertedContent["text"];
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           const style = TextStyle(fontSize: 17);
@@ -289,9 +312,11 @@ class _CommonPostState extends State<CommonPost> {
     final List<String> imageUrls =
         List<String>.from(convertedContent["imageUrls"]);
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: MediaQuery.sizeOf(context).width / 1.5,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).width / 1.5,
+        ),
         child: ImageCarousel(
           images: imageUrls,
         ),
@@ -450,27 +475,42 @@ class _CommonPostState extends State<CommonPost> {
     );
   }
 
-  void _hidePost() {
-    // xử lý api hide post
-    _isHide = true;
-    setState(() {});
+  _buildHashTags() {
+    final List<String> hashTags = widget.post.hashTags ?? [];
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: hashTags
+            .map((e) => Chip(
+                  backgroundColor: Colors.grey.shade200,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  label: Text("#$e"),
+                ))
+            .toList(),
+      ),
+    );
   }
 
-  String _formatTime(DateTime createAt) {
-    final now = DateTime.now();
-    final difference = now.difference(createAt);
-    if (difference.inDays > 365) {
-      return "${difference.inDays ~/ 365} years ago";
-    } else if (difference.inDays > 30) {
-      return "${difference.inDays ~/ 30} months ago";
-    } else if (difference.inDays > 0) {
-      return "${difference.inDays} days ago";
-    } else if (difference.inHours > 0) {
-      return "${difference.inHours} hours ago";
-    } else if (difference.inMinutes > 0) {
-      return "${difference.inMinutes} minutes ago";
-    } else {
-      return "Now";
-    }
+  _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.post.title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  void _hidePost() {
+    // call api hide post
+    _isHide = true;
+    setState(() {});
   }
 }
