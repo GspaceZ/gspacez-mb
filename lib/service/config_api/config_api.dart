@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
@@ -54,6 +55,11 @@ Future<http.Response> callApi<T>(
   final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
   if (baseResponse.code == 1401) {
     // Token expired
+    final refreshToken = await LocalStorage.instance.userRefreshToken;
+    final accessTokenExpired = await TokenDataSource.instance.getToken();
+    if (refreshToken == null || accessTokenExpired == null) {
+      return response;
+    }
     await AuthService.instance.refreshToken();
     return callApi(url, method,
         data: data, isToken: isToken, contentType: contentType);

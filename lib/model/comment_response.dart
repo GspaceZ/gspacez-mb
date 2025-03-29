@@ -7,9 +7,9 @@ class CommentResponse {
   final ContentComment content;
   final String? parentId;
   final String profileName;
-  final String profileImageUrl;
-  final String? createdAt;
-  final String? updatedAt;
+  final String? profileImageUrl;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
 
   CommentResponse({
     required this.id,
@@ -18,7 +18,7 @@ class CommentResponse {
     required this.content,
     this.parentId,
     required this.profileName,
-    required this.profileImageUrl,
+    this.profileImageUrl,
     required this.createdAt,
     this.updatedAt,
   });
@@ -32,8 +32,8 @@ class CommentResponse {
       parentId: json['parentId'],
       profileName: json['profileName'],
       profileImageUrl: json['profileImageUrl'] ?? AppConstants.urlImageDefault,
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
@@ -46,36 +46,29 @@ class CommentResponse {
       'parentId': parentId,
       'profileName': profileName,
       'profileImageUrl': profileImageUrl,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt?.toUtc().toIso8601String(),
     };
   }
 }
 
 class ContentComment {
   final String text;
-  final List<String> images;
-  final List<String> videos;
 
   ContentComment({
     required this.text,
-    required this.images,
-    required this.videos,
   });
+
 
   factory ContentComment.fromJson(Map<String, dynamic> json) {
     return ContentComment(
       text: json['text'],
-      images: List<String>.from(json['images']),
-      videos: List<String>.from(json['videos']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'text': text,
-      'images': images,
-      'videos': videos,
     };
   }
 }

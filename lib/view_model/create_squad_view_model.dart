@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../components/dialog_loading.dart';
 import '../main.dart';
 import '../model/content_squad_model.dart';
@@ -44,14 +42,14 @@ class CreateSquadViewModel extends ChangeNotifier {
       await SquadService.instance.createSquad(contentSquad);
       LoadingDialog.hideLoadingDialog();
       ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.green,
           content: Text("Squad created successfully!"),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
-        SnackBar(
+        const SnackBar(
           backgroundColor: Colors.red,
           content: Text("Failed to create squad"),
         ),

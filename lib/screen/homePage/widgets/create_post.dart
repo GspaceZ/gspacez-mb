@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
-import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
+import 'package:untitled/service/cloudinary_service.dart';
+import 'package:untitled/utils/content_converter.dart';
 
 class CreatePostDialog extends StatefulWidget {
-  final Future<void> Function(ContentPostModel) onCreatePost;
+  final Future<void> Function(PostModelRequest) onCreatePost;
 
   const CreatePostDialog({super.key, required this.onCreatePost});
 
@@ -17,44 +19,59 @@ class CreatePostDialog extends StatefulWidget {
   State<CreatePostDialog> createState() => _CreatePostDialogState();
 }
 
-class _CreatePostDialogState extends State<CreatePostDialog> {
+class _CreatePostDialogState extends State<CreatePostDialog>
+    with SingleTickerProviderStateMixin {
   String avatarUrl = AppConstants.urlImageDefault;
   String userName = '';
-  bool isShowLocation = false;
-  bool isShowFeeling = false;
   bool isShowTag = false;
   bool isShowPrivacy = false;
   final contentController = TextEditingController();
-  final locationController = TextEditingController();
-  final feelingController = TextEditingController();
   final tagController = TextEditingController();
-  final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE', 'FRIEND'];
+  final titleController = TextEditingController();
+  final List<String> _privacyOptions = ['PUBLIC', 'PRIVATE'];
   String _selectedPrivacy = 'PUBLIC';
   final ImagePicker _picker = ImagePicker();
-  final List<XFile> _selectedFiles = [];
   final List<String> _hashTags = [];
+  late TabController _tabController;
+  final List<String> _urlImages = [];
 
   Future<void> _pickFiles() async {
     final List<XFile> files = await _picker.pickMultiImage();
-    setState(() {
-      _selectedFiles.addAll(files);
-    });
+    if (files.isEmpty) return;
+    if (mounted) {
+      LoadingDialog.showLoadingDialog(context);
+    }
+    for (var file in files) {
+      final url = await CloudinaryService.instance.uploadImage(file.path);
+      _urlImages.add(url);
+      contentController.text += "\n![Image]($url)\n";
+    }
+    if (mounted) {
+      LoadingDialog.hideLoadingDialog();
+    }
+    setState(() {});
   }
 
   @override
   void dispose() {
     super.dispose();
     contentController.dispose();
-    locationController.dispose();
-    feelingController.dispose();
     tagController.dispose();
+    titleController.dispose();
+    _tabController.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     tagController.text = "#";
     _getUserInfo();
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) {
+        setState(() {}); // Update the view when tab is switched
+      }
+    });
   }
 
   _getUserInfo() async {
@@ -69,9 +86,7 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(avatarUrl),
-          ),
+          CircleAvatar(backgroundImage: NetworkImage(avatarUrl)),
           const SizedBox(width: 8),
           Text(
             userName,
@@ -79,158 +94,114 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
           ),
         ],
       ),
-      content: SingleChildScrollView(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: TextField(
-                  controller: contentController,
-                  decoration:
-                      CusTomInputDecoration(null).getInputDecoration().copyWith(
-                            hintText: FlutterI18n.translate(
-                              context,
-                              'post.modal.placeholder',
-                            ),
-                          ),
-                  maxLines: 5,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: SingleChildScrollView(
+          child: DefaultTabController(
+            length: 2,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Title",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-              ),
-              if (_selectedFiles.isNotEmpty)
+                const SizedBox(height: 8),
+                _buildTextField(titleController, "Your Title"),
+                const SizedBox(height: 8),
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black,
+                  indicatorColor: Colors.blueAccent,
+                  tabs: const [
+                    Tab(text: "Write"),
+                    Tab(text: "Preview"),
+                  ],
+                ),
+                const SizedBox(height: 8),
                 SizedBox(
-                  height: 200.0, // Adjust this value as needed
-                  width: double.infinity, // Adjust this value as needed
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: _selectedFiles.length,
-                    itemBuilder: (context, index) {
-                      return Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Image.file(
-                                    File(_selectedFiles[index].path))),
-                          ),
-                          Positioned(
-                            top: 0,
-                            right: 0,
-                            child: IconButton(
-                              icon: const Icon(Icons.dangerous_outlined),
-                              onPressed: () {
-                                setState(() {
-                                  _selectedFiles.removeAt(index);
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  height: 200,
+                  child: TabBarView(
+                    controller: _tabController,
+                    key: ValueKey(_tabController.index),
+                    children: [
+                      // Tab Write
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: _buildTextField(
+                            contentController, "What do you want to share?",
+                            maxLines: 5),
+                      ),
+
+                      // Tab Preview
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: _buildPreview(),
+                      ),
+                    ],
                   ),
-                )
-              else
-                const SizedBox.shrink(),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      width: 80,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          FlutterI18n.translate(context, 'post.modal.cancel'),
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  InkWell(
-                    onTap: () => _onClickPost(),
-                    child: Container(
-                      width: 80,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          FlutterI18n.translate(context, 'post.modal.post'),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _getListOptions(),
-              const SizedBox(height: 8),
-              _buildShowLocation(),
-              _buildShowFeeding(),
-              _buildShowTag(),
-              _buildPrivacy(),
-            ],
+                ),
+                const SizedBox(height: 12),
+                _getListOptions(),
+                const SizedBox(height: 8),
+                _buildShowTag(),
+                _buildPrivacy(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildButton("Cancel", Colors.grey.shade200, Colors.black,
+                        () => Navigator.of(context).pop()),
+                    const SizedBox(width: 8),
+                    _buildButton("Post", Colors.blue, Colors.white, () {
+                      _onClickPost();
+                    }),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  _buildShowLocation() {
-    return Visibility(
-      visible: isShowLocation,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TextField(
-          controller: locationController,
-          decoration: CusTomInputDecoration(
-                  FlutterI18n.translate(context, 'post.modal.location'))
-              .getInputDecoration(),
+  Widget _buildTextField(TextEditingController controller, String hint,
+      {int maxLines = 1}) {
+    return SizedBox(
+      width: double.infinity,
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          hintText: hint,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(width: 1.5, color: Colors.grey),
+          ),
         ),
       ),
     );
   }
 
-  _buildShowFeeding() {
-    return Visibility(
-      visible: isShowFeeling,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: TextField(
-          controller: feelingController,
-          decoration: CusTomInputDecoration(
-                  FlutterI18n.translate(context, 'post.modal.feeling'))
-              .getInputDecoration(),
-        ),
+  Widget _buildButton(
+      String text, Color bgColor, Color textColor, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 80,
+        height: 40,
+        decoration: BoxDecoration(
+            color: bgColor, borderRadius: BorderRadius.circular(8)),
+        child: Center(
+            child: Text(text,
+                style:
+                    TextStyle(color: textColor, fontWeight: FontWeight.bold))),
       ),
     );
   }
@@ -334,10 +305,68 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
     );
   }
 
+  _buildPreview() {
+    final result = convertContent(contentController.text);
+    final text = result['text'];
+
+    return Expanded(
+      child: ListView(
+        children: [
+          Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(
+              minHeight: 150,
+            ),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (contentController.text.isEmpty &&
+                    titleController.text.isEmpty)
+                  const Text(
+                    "What do you want to share?",
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                if (titleController.text.isNotEmpty)
+                  Text(
+                    titleController.text,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                const SizedBox(height: 8),
+                if (text.isNotEmpty)
+                  Text(
+                    text,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                const SizedBox(height: 8),
+                if (_urlImages.isNotEmpty)
+                  Column(
+                    children: _urlImages.map((url) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: BaseImageNetwork(imageUrl: url, width: 150),
+                      );
+                    }).toList(),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   _getListOptions() {
     return Container(
       height: 50,
-      width: MediaQuery.of(context).size.width * 0.7,
+      width: MediaQuery.of(context).size.width * 0.8,
       decoration: BoxDecoration(
         color: Colors.grey.shade200,
         borderRadius: BorderRadius.circular(8),
@@ -352,28 +381,10 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
           InkWell(
             onTap: () {
               setState(() {
-                isShowLocation = !isShowLocation;
-              });
-            },
-            child: Icon(Icons.location_on_outlined,
-                color: isShowLocation ? Colors.deepOrange : Colors.black),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
-                isShowFeeling = !isShowFeeling;
-              });
-            },
-            child: Icon(Icons.emoji_emotions_outlined,
-                color: isShowFeeling ? Colors.deepOrange : Colors.black),
-          ),
-          InkWell(
-            onTap: () {
-              setState(() {
                 isShowTag = !isShowTag;
               });
             },
-            child: Icon(Icons.more_outlined,
+            child: Icon(Icons.tag,
                 color: isShowTag ? Colors.deepOrange : Colors.black),
           ),
           InkWell(
@@ -391,15 +402,18 @@ class _CreatePostDialogState extends State<CreatePostDialog> {
   }
 
   _onClickPost() async {
-    final post = ContentPostModel(
-      text: contentController.text,
-      imageUrls: _selectedFiles.map((e) => e.path).toList(),
-      videoUrls: [],
-      location: locationController.text,
-      feeling: feelingController.text,
+    final result = convertContent(contentController.text);
+    final text = result['text'];
+    final post = PostModelRequest(
+      text: convertToMarkdown({
+        "text": text,
+        "imageUrls": _urlImages,
+      }),
       privacy: _selectedPrivacy,
       hashTags: _hashTags,
+      title: titleController.text,
     );
+
     LoadingDialog.showLoadingDialog(context);
     await widget.onCreatePost(post);
     LoadingDialog.hideLoadingDialog();

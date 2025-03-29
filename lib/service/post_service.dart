@@ -4,9 +4,7 @@ import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
-
-import '../model/content_post_model.dart';
-import '../model/create_post_response.dart';
+import '../model/post_model_request.dart';
 
 class PostService {
   //private constructor
@@ -18,7 +16,7 @@ class PostService {
   //static getter for the instance
   static PostService get instance => _instance;
 
-  Future<List<PostModel>> getNewFeed() async {
+  Future<List<PostModelResponse>> getNewFeed() async {
     final response = await callApi(
       "post-service/posts/newsfeed?pageNum=1&pageSize=20",
       'GET',
@@ -32,10 +30,10 @@ class PostService {
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
-      final List<PostModel> posts = baseResponse.result
-          .map((post) => PostModel.fromJson(post))
+      final List<PostModelResponse> posts = baseResponse.result
+          .map((post) => PostModelResponse.fromJson(post))
           .toList()
-          .cast<PostModel>();
+          .cast<PostModelResponse>();
       return posts;
     } else {
       throw Exception('Failed to get new feed');
@@ -66,12 +64,12 @@ class PostService {
     }
   }
 
-  Future<CreatePostResponse> createPost(ContentPostModel contentPost) async {
+  Future<PostModelResponse> createPost(PostModelRequest postModelRequest) async {
     final response = await callApi(
       "post-service/posts/create",
       "POST",
       isToken: true,
-      data: contentPost.toJson(),
+      data: postModelRequest.toJson(),
     );
 
     if (response.statusCode == 200) {
@@ -83,7 +81,7 @@ class PostService {
         throw Exception(baseResponse.message);
       }
 
-      return CreatePostResponse.fromJson(baseResponse.result);
+        return PostModelResponse.fromJson(baseResponse.result);
     } else {
       throw Exception('Failed to create post');
     }

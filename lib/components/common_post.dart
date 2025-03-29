@@ -5,13 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
-import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_response.dart';
+import 'package:untitled/utils/content_converter.dart';
+import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
 
 class CommonPost extends StatefulWidget {
-  final PostModel post;
+  final PostModelResponse post;
   final VoidCallback? onLike;
   final Function()? onComment;
   final Function() onGetComment;
@@ -38,10 +39,15 @@ class _CommonPostState extends State<CommonPost> {
   @override
   void initState() {
     super.initState();
-    if (widget.post.content.videoUrls.isNotEmpty) {
+
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> videoUrls =
+        List<String>.from(convertedContent["videoUrls"]);
+
+    if (videoUrls.isNotEmpty) {
       _controller = VideoPlayerController.networkUrl(
-          Uri.parse(widget.post.content.videoUrls.first))
-        ..initialize().then((_) {
+        Uri.parse(videoUrls.first),
+      )..initialize().then((_) {
           setState(() {});
         });
     }
@@ -55,6 +61,12 @@ class _CommonPostState extends State<CommonPost> {
 
   @override
   Widget build(BuildContext context) {
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> videoUrls =
+        List<String>.from(convertedContent["videoUrls"]);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
@@ -80,8 +92,7 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                  widget.post.avatarUrl ??
-                                      AppConstants.urlImageDefault,
+                                  widget.post.avatarUrl,
                                   errorListener: (_) {
                                     Log.error(
                                         'Error loading image ${widget.post.avatarUrl}');
@@ -99,7 +110,7 @@ class _CommonPostState extends State<CommonPost> {
                                       fontSize: 17),
                                 ),
                                 Text(
-                                  _formatTime(widget.post.createdAt),
+                                  formatTime(widget.post.createdAt),
                                   style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w200),
@@ -112,11 +123,31 @@ class _CommonPostState extends State<CommonPost> {
                       _buildPopupMenu(),
                     ],
                   ),
-                  _buildTextContent(),
-                  if (widget.post.content.videoUrls.isNotEmpty)
-                    _buildVideoPlayer(),
-                  if (widget.post.content.imageUrls.isNotEmpty)
-                    _buildImagePost(),
+                  if (widget.post.title.isNotEmpty) _buildTitle(),
+                  if (widget.post.hashTags != null) _buildHashTags(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 0.5,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (widget.post.content.text.isNotEmpty)
+                            _buildTextContent(),
+                          if (videoUrls.isNotEmpty) _buildVideoPlayer(),
+                          if (imageUrls.isNotEmpty) _buildImagePost(),
+                        ],
+                      ),
+                    ),
+                  ),
                   _buildRowIcon()
                 ],
               )
@@ -131,7 +162,7 @@ class _CommonPostState extends State<CommonPost> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          InkWell(
+          GestureDetector(
             onTap: () {
               _isLiked = !_isLiked;
               if (_isLiked) {
@@ -143,15 +174,15 @@ class _CommonPostState extends State<CommonPost> {
             },
             child: _isLiked
                 ? const Icon(
-                    Icons.thumb_up,
-                    color: Colors.green,
+                    Icons.thumb_up_alt_outlined,
+                    color: Colors.blue,
                   )
                 : const Icon(
                     Icons.thumb_up_outlined,
                     color: Colors.black,
                   ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: () {
               _isDisliked = !_isDisliked;
               if (_isDisliked) {
@@ -163,7 +194,7 @@ class _CommonPostState extends State<CommonPost> {
             },
             child: _isDisliked
                 ? const Icon(
-                    Icons.thumb_down,
+                    Icons.thumb_down_alt_outlined,
                     color: Colors.red,
                   )
                 : const Icon(
@@ -171,7 +202,7 @@ class _CommonPostState extends State<CommonPost> {
                     color: Colors.black,
                   ),
           ),
-          InkWell(
+          GestureDetector(
             onTap: () {
               showModalBottomSheet(
                 isScrollControlled: true,
@@ -204,13 +235,17 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildTextContent() {
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+    final String text = convertedContent["text"];
+
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           const style = TextStyle(fontSize: 17);
-          final textSpan =
-              TextSpan(text: widget.post.content.text, style: style);
+          final textSpan = TextSpan(text: text, style: style);
           final textPainter =
               TextPainter(text: textSpan, textDirection: TextDirection.ltr);
           textPainter.layout(maxWidth: constraints.maxWidth);
@@ -219,7 +254,7 @@ class _CommonPostState extends State<CommonPost> {
 
           TextStyle styleContent;
           double fontSize = 17;
-          if (lines == 1 && widget.post.content.imageUrls.isEmpty) {
+          if (lines == 1 && imageUrls.isEmpty) {
             fontSize = 30;
             styleContent = const TextStyle(
                 fontSize: 30,
@@ -234,14 +269,13 @@ class _CommonPostState extends State<CommonPost> {
                 fontSize: 16); // Font size for more than three lines
           }
 
-          String displayText = widget.post.content.text ?? "";
+          String displayText = text;
           if (lines > 5 && !_showFullText) {
             final endPosition = textPainter
                 .getPositionForOffset(
                     Offset(constraints.maxWidth, fontSize * 5))
                 .offset;
-            displayText =
-                '${widget.post.content.text?.substring(0, endPosition)}...';
+            displayText = '${text.substring(0, endPosition)}...';
           }
 
           return Column(
@@ -253,7 +287,7 @@ class _CommonPostState extends State<CommonPost> {
                 textAlign: TextAlign.start,
               ),
               if (lines > 5)
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     setState(() {
                       _showFullText = !_showFullText;
@@ -274,10 +308,18 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildImagePost() {
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).width,
-      child: ImageCarousel(
-        images: widget.post.content.imageUrls,
+    final convertedContent = convertContent(widget.post.content.text);
+    final List<String> imageUrls =
+        List<String>.from(convertedContent["imageUrls"]);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).width / 1.5,
+        ),
+        child: ImageCarousel(
+          images: imageUrls,
+        ),
       ),
     );
   }
@@ -289,7 +331,7 @@ class _CommonPostState extends State<CommonPost> {
         children: [
           AspectRatio(
             aspectRatio: _controller!.value.aspectRatio,
-            child: InkWell(
+            child: GestureDetector(
                 onTap: () {
                   if (_controller!.value.isPlaying) {
                     _controller!.pause();
@@ -433,27 +475,42 @@ class _CommonPostState extends State<CommonPost> {
     );
   }
 
-  void _hidePost() {
-    // xử lý api hide post
-    _isHide = true;
-    setState(() {});
+  _buildHashTags() {
+    final List<String> hashTags = widget.post.hashTags ?? [];
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 8.0,
+        children: hashTags
+            .map((e) => Chip(
+                  backgroundColor: Colors.grey.shade200,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  label: Text("#$e"),
+                ))
+            .toList(),
+      ),
+    );
   }
 
-  String _formatTime(DateTime createAt) {
-    final now = DateTime.now();
-    final difference = now.difference(createAt);
-    if (difference.inDays > 365) {
-      return "${difference.inDays ~/ 365} years ago";
-    } else if (difference.inDays > 30) {
-      return "${difference.inDays ~/ 30} months ago";
-    } else if (difference.inDays > 0) {
-      return "${difference.inDays} days ago";
-    } else if (difference.inHours > 0) {
-      return "${difference.inHours} hours ago";
-    } else if (difference.inMinutes > 0) {
-      return "${difference.inMinutes} minutes ago";
-    } else {
-      return "Now";
-    }
+  _buildTitle() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        widget.post.title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  void _hidePost() {
+    // call api hide post
+    _isHide = true;
+    setState(() {});
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/common_post.dart';
-import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/view_model/home_view_model.dart';
 
@@ -28,23 +28,25 @@ class _HomeState extends State<Home> {
                   _buildSearchBar(
                       homeViewModel.urlAvatar, homeViewModel.createPost),
                   if (homeViewModel.posts.isNotEmpty)
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: homeViewModel.posts.length,
-                      itemBuilder: (context, index) {
-                        final post = homeViewModel.posts[index];
-                        return CommonPost(
-                          post: post,
-                          onGetComment: () async {
-                            return await homeViewModel.getComment(post);
-                          },
-                        );
-                      },
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: homeViewModel.posts.length,
+                        itemBuilder: (context, index) {
+                          final post = homeViewModel.posts[index];
+                          return CommonPost(
+                            post: post,
+                            onGetComment: () async {
+                              return await homeViewModel.getComment(post);
+                            },
+                          );
+                        },
+                      ),
                     ),
                   if (homeViewModel.posts.isEmpty)
                     const Center(
-                      child: Text('No posts available'),
+                      child: CircularProgressIndicator(),
                     ),
                 ],
               ),
@@ -56,7 +58,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildSearchBar(
-      String urlAvatar, Future<void> Function(ContentPostModel) onCreatePost) {
+      String urlAvatar, Future<void> Function(PostModelRequest) onCreatePost) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -68,7 +70,7 @@ class _HomeState extends State<Home> {
             ),
           ),
           Expanded(
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
                 _showCreatePostDialog(onCreatePost: onCreatePost);
               },
@@ -99,7 +101,7 @@ class _HomeState extends State<Home> {
   }
 
   void _showCreatePostDialog(
-      {required Future<void> Function(ContentPostModel) onCreatePost}) {
+      {required Future<void> Function(PostModelRequest) onCreatePost}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

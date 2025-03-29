@@ -31,7 +31,7 @@ class ActiveSuccess extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InkWell(
+                    GestureDetector(
                       onTap: () {
                         Navigator.pushReplacementNamed(
                             context, AppRoutes.signIn);

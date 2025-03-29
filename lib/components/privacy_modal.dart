@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:untitled/service/post_service.dart';
-
 import '../model/base_response_api.dart';
 
 class PrivacyModal extends StatefulWidget {
   final String postId;
+
   const PrivacyModal({super.key, required this.postId});
 
   @override
@@ -24,24 +24,17 @@ class _PrivacyModalState extends State<PrivacyModal> {
       'value': 0,
     },
     {
-      'icon': Icons.people,
-      'title': 'post.privacy.friends_title',
-      'subtitle': 'post.privacy.friends_subtitle',
-      'value': 1,
-    },
-    {
       'icon': Icons.lock,
       'title': 'post.privacy.private_title',
       'subtitle': 'post.privacy.private_subtitle',
-      'value': 2,
+      'value': 1,
     },
   ];
 
   String _mapValueToPrivacy(int value) {
     final privacyMap = {
       0: "PUBLIC",
-      1: "FRIENDS",
-      2: "PRIVATE",
+      1: "PRIVATE",
     };
 
     return privacyMap[value] ?? "PUBLIC";
@@ -55,23 +48,28 @@ class _PrivacyModalState extends State<PrivacyModal> {
     try {
       String privacyValue = _mapValueToPrivacy(_selectedOption!);
 
-      final BaseResponseApi response =
-      await PostService.instance.setPrivacyPost(widget.postId, privacyValue);
+      final BaseResponseApi response = await PostService.instance
+          .setPrivacyPost(widget.postId, privacyValue);
 
       if (response.code == 1000) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Privacy updated successfully!")),
-        );
-
-        Navigator.of(context).pop(true);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Privacy updated successfully!")),
+          );
+        }
+        if (mounted) {
+          Navigator.of(context).pop(true);
+        }
       } else {
         throw Exception(response.message ?? "Failed to update privacy.");
       }
     } catch (error) {
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error.toString())),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error.toString())),
+        );
+      }
     }
   }
 
@@ -101,12 +99,12 @@ class _PrivacyModalState extends State<PrivacyModal> {
                 child: _isLoading
                     ? const CircularProgressIndicator()
                     : Text(
-                  FlutterI18n.translate(context, 'post.privacy.done'),
-                  style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
+                        FlutterI18n.translate(context, 'post.privacy.done'),
+                        style: const TextStyle(
+                            color: Colors.blue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
+                      ),
               ),
             ],
           ),
