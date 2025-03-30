@@ -145,9 +145,13 @@ class SigninViewModel extends ChangeNotifier {
               ),
             );
           }
-          await Future.delayed(const Duration(seconds: 2));
+          await Future.delayed(const Duration(seconds: 1));
           if (context.mounted) {
-            Navigator.pushReplacementNamed(context, AppRoutes.home);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.home,
+              (Route<dynamic> route) => false,
+            );
           }
         }
       } catch (e) {
