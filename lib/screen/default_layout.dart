@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../components/navigation_bar.dart';
 import 'homePage/home.dart';
@@ -28,7 +29,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(
           (_selectedIndex == 0)
@@ -36,7 +37,7 @@ class _DefaultLayoutState extends State<DefaultLayout> {
               : (_selectedIndex == 1)
                   ? "Notifications"
                   : (_selectedIndex == 2)
-                      ? "Messages"
+                      ? "Chat with AI"
                       : (_selectedIndex == 3)
                           ? "Profile"
                           : widget.title ?? "",
@@ -64,23 +65,22 @@ class _DefaultLayoutState extends State<DefaultLayout> {
             height: 1,
           ),
           Expanded(
-            child: Stack(
+            child: IndexedStack(
+              index: _selectedIndex,
               children: [
-                <Widget>[
-                  /// Home page
-                  const Home(),
+                /// Home page
+                const Home(),
 
-                  /// Notifications page
-                  const Home(),
+                /// Notifications page
+                const Home(),
 
-                  /// Messages page
-                  const Home(),
+                /// Messages page
+                const ChatAIView(),
 
-                  /// Profile page
-                  const UpdateProfile(),
+                /// Profile page
+                const UpdateProfile(),
 
-                  if (widget.child != null) widget.child!,
-                ][_selectedIndex],
+                if (widget.child != null) widget.child!,
               ],
             ),
           ),

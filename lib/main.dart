@@ -3,8 +3,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/router/app_router.dart';
+import 'package:untitled/screen/auth/introduce.dart';
+import 'package:untitled/screen/default_layout.dart';
+import 'package:untitled/screen/layout_landing.dart';
 import 'provider/language_provider.dart';
 
 void main() async {
@@ -55,6 +59,9 @@ class _MyAppState extends State<MyApp> {
           navigatorKey: navigatorKey,
           initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.home,
           onGenerateRoute: AppRoutes.generateRoute,
+          home: (widget.isAuth)
+              ? const DefaultLayout(selectedIndex: AppConstants.home)
+              : const LayoutLanding(child: Introduce()),
           localizationsDelegates: [
             widget.i18nDelegate,
             GlobalMaterialLocalizations.delegate,
