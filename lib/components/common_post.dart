@@ -10,6 +10,7 @@ import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/utils/content_converter.dart';
 import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
+
 import '../constants/appconstants.dart';
 
 class CommonPost extends StatefulWidget {
@@ -124,6 +125,7 @@ class _CommonPostState extends State<CommonPost> {
                       _buildPopupMenu(),
                     ],
                   ),
+                  _buildTitle(),
                   if (widget.post.hashTags != null) _buildHashTags(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
