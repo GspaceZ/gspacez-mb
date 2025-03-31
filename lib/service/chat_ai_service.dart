@@ -4,6 +4,8 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 class ChatAiService {
   final String apiKey = "AIzaSyAK8WQsqN61xbBAO1zU7GAkt4ojbG9EqZw";
   late GenerativeModel model;
+
+  // Need to re-check ??
   static final clientId = dotenv.env['GEMINI_API_KEY'] ?? '';
 
   ChatAiService() {

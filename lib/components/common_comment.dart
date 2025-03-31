@@ -49,7 +49,7 @@ class _CommonCommentState extends State<CommonComment> {
                   sizeImageComment,
               child: (isLoading)
                   ? const Center(child: CircularProgressIndicator())
-                  : (comments.isEmpty)
+                  : (comments == null || comments.isEmpty)
                       ? const Center(
                           child: Text('No comments available'),
                         )

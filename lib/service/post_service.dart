@@ -16,9 +16,9 @@ class PostService {
   //static getter for the instance
   static PostService get instance => _instance;
 
-  Future<List<PostModelResponse>> getNewFeed() async {
+  Future<List<PostModelResponse>> getNewFeed(int pageNum, int pageSize) async {
     final response = await callApi(
-      "post-service/posts/newsfeed?pageNum=1&pageSize=20",
+      "post-service/posts/newsfeed?pageNum=$pageNum&pageSize=$pageSize",
       'GET',
       isToken: true,
     );
