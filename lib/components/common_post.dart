@@ -11,6 +11,8 @@ import 'package:untitled/utils/content_converter.dart';
 import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
 
+import '../constants/appconstants.dart';
+
 class CommonPost extends StatefulWidget {
   final PostModelResponse post;
   final VoidCallback? onLike;
@@ -92,7 +94,7 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                  widget.post.avatarUrl,
+                                  widget.post.avatarUrl ?? AppConstants.urlImageDefault,
                                   errorListener: (_) {
                                     Log.error(
                                         'Error loading image ${widget.post.avatarUrl}');
@@ -123,7 +125,7 @@ class _CommonPostState extends State<CommonPost> {
                       _buildPopupMenu(),
                     ],
                   ),
-                  if (widget.post.title.isNotEmpty) _buildTitle(),
+                  _buildTitle(),
                   if (widget.post.hashTags != null) _buildHashTags(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -499,7 +501,7 @@ class _CommonPostState extends State<CommonPost> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        widget.post.title,
+        widget.post.title ?? "",
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,

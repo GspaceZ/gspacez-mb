@@ -31,6 +31,7 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.7,
                       child: ListView.builder(
+                        controller: homeViewModel.scrollController,
                         physics: const BouncingScrollPhysics(),
                         itemCount: homeViewModel.posts.length,
                         itemBuilder: (context, index) {

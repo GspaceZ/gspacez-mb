@@ -33,7 +33,8 @@ class SigninViewModel extends ChangeNotifier {
 
   static final clientId = dotenv.env['CLIENT_ID'] ?? 'Client ID not found';
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: clientId,
+    // clientID is error => re-check if use serverClientId
+    serverClientId: clientId,
     scopes: [
       'email',
       'profile',

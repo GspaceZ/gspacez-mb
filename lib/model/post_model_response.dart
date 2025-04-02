@@ -5,7 +5,7 @@ class PostModelResponse {
   String id;
   String profileId;
   String profileName;
-  String avatarUrl;
+  String? avatarUrl;
   ContentPostModel content;
   List<CommentResponse>? comments;
   List<String>? hashTags;
@@ -13,7 +13,7 @@ class PostModelResponse {
   String? type;
   DateTime createdAt;
   DateTime updatedAt;
-  String title;
+  String? title;
   int totalLike;
   int totalDislike;
   bool liked;
@@ -23,7 +23,7 @@ class PostModelResponse {
     required this.id,
     required this.profileId,
     required this.profileName,
-    required this.avatarUrl,
+    this.avatarUrl,
     required this.content,
     this.comments,
     this.hashTags,
@@ -31,7 +31,7 @@ class PostModelResponse {
     this.type,
     required this.createdAt,
     required this.updatedAt,
-    required this.title,
+    this.title,
     required this.totalLike,
     required this.totalDislike,
     required this.liked,
@@ -50,7 +50,7 @@ class PostModelResponse {
             .map((e) => CommentResponse.fromJson(e as Map<String, dynamic>))
             .toList()
             : null,
-      hashTags: json['hashTags'] != null ? List<String>.from(json['hashTags']) : null,
+      hashTags: List<String>.from(json['hashTags'] ?? []),
       privacy: json['privacy'],
       type: json['type'],
       createdAt: DateTime.parse(json['createdAt']),
