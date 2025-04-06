@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/view_model/create_squad_view_model.dart';
 
 class CreateSquadView extends StatelessWidget {
@@ -32,6 +34,14 @@ class CreateSquadView extends StatelessWidget {
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 16),
+
+                  /// Avatar
+                  const Text(
+                    "Upload your squad's avatar",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildUploadAvatarButton(createSquadViewModel),
 
                   /// Form input
                   _buildTextFormField("Name of your squad", "Your squad's name",
@@ -121,6 +131,70 @@ class CreateSquadView extends StatelessWidget {
     );
   }
 
+  _buildUploadAvatarButton(CreateSquadViewModel viewModel) {
+    return Column(
+      children: [
+        Container(
+          width: MediaQuery.of(navigatorKey.currentContext!).size.width * 0.4,
+          height: MediaQuery.of(navigatorKey.currentContext!).size.width * 0.4,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color(0xFFAAAAAA),
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(140),
+          ),
+          child: CircleAvatar(
+            radius: 140,
+            backgroundColor: Colors.white54,
+            backgroundImage: viewModel.uploadedImageUrl.isNotEmpty
+                ? CachedNetworkImageProvider(viewModel.uploadedImageUrl)
+                : null,
+            child: viewModel.uploadedImageUrl.isEmpty
+                ? TextButton(
+                    onPressed: viewModel.onPressUpdateAvatar,
+                    style: ButtonStyle(
+                      backgroundColor:
+                          WidgetStateProperty.all(const Color(0xFFE6F1FE)),
+                    ),
+                    child: const Text(
+                      "Upload Avatar",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : null,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextButton(
+          onPressed: viewModel.onPressUpdateAvatar,
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(Colors.white),
+            foregroundColor: WidgetStateProperty.all(Colors.black),
+            side: WidgetStateProperty.all(
+              const BorderSide(color: Colors.grey, width: 1),
+            ),
+            padding: WidgetStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          child: const Text(
+            "Choose another image",
+          ),
+        )
+      ],
+    );
+  }
+
   _buildButtonAdvancedSetting(
       VoidCallback onPressed, bool isShowAdvancedSetting) {
     return GestureDetector(
@@ -135,9 +209,12 @@ class CreateSquadView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.settings),
-            const Text(
-              'Advanced setting (Coming soon)',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            const Expanded(
+              child: Text(
+                'Advanced setting (Coming soon)',
+                maxLines: 1,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
             (isShowAdvancedSetting)
                 ? const Icon(Icons.arrow_drop_up)
