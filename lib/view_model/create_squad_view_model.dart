@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/screen/crop_image_dialog.dart';
 import '../components/dialog_loading.dart';
 import '../main.dart';
 import '../model/content_squad_model.dart';
@@ -16,12 +17,36 @@ class CreateSquadViewModel extends ChangeNotifier {
   bool isPublic = true;
   bool isShowAdvancedSetting = false;
 
+  /// Upload avatar
+  String uploadedImageUrl = "";
+
   /// Advanced setting
   bool isAllowChangeProfile = false;
   bool isAllowChangePost = false;
   bool isAllowPostUnder = false;
   _init() async {
     notifyListeners();
+  }
+
+  void uploadImage(String imageUrl) {
+    uploadedImageUrl = imageUrl;
+    notifyListeners();
+  }
+
+  onPressUpdateAvatar() {
+    showDialog(
+      context: navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          widthFactor: 1.1,
+          child: CropImageDialog(
+            voidCallback: (imageUrl) {
+              uploadImage(imageUrl);
+            },
+          ),
+        );
+      },
+    );
   }
 
   void submit() async {

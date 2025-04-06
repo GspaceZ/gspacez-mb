@@ -53,6 +53,8 @@ dependencies:
   logger: ^2.5.0
   flutter_secure_storage: ^9.2.2
   google_generative_ai: ^0.4.6
+  crop_your_image: ^2.0.0
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
