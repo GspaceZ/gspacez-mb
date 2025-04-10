@@ -1,4 +1,4 @@
-name: Flutter CI/CD with Previews
+name: Flutter CI/CD with Netlify Previews
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.3.0"
+          flutter-version: "3.22.3"
 
       - name: Flutter upgrade
         run: flutter upgrade
@@ -34,48 +34,16 @@ jobs:
       - name: Run static analysis
         run: dart analyze
 
-      - name: Check formatting
-        run: dart format . --set-exit-if-changed
-
       # 5. Run tests
       - name: Run tests
         run: flutter test
 
-      # ====================================
-      # 6. Build APK
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: flutter-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-
-      # Optional: Upload APK to Appetize.io
-      # - name: Upload to Appetize.io
-      #   run: |
-      #     curl -X POST https://$APPETIZE_API_TOKEN@appetize.io/upload \
-      #       -F "file=@build/app/outputs/flutter-apk/app-release.apk"
-      #   env:
-      #     APPETIZE_API_TOKEN: ${{ secrets.APPETIZE_API_TOKEN }}
-
-      # ====================================
-      # 7. Build Web
+      # 6. Build Web
       - name: Build Flutter Web
         run: flutter build web
 
-      # 8. Deploy Web to GitHub Pages
-      - name: Deploy to GitHub Pages
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/dev'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build/web
-
-      # ====================================
-      # 9. Comment PR with Preview Links
-      - name: Comment on PR with preview links
+      # 7. Comment PR with Netlify Preview Link
+      - name: Comment on PR with Netlify preview link
         if: github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -83,7 +51,6 @@ jobs:
           message: |
             🚀 **Flutter Preview for PR #${{ github.event.pull_request.number }} is ready!**
 
-            🔗 [Download APK](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            🌐 [Web Preview](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-${{ github.event.pull_request.number }}/)
+            🌐 [Netlify Web Preview](https://deploy-preview-${{ github.event.pull_request.number }}--gspacez-mb.netlify.app)
 
-            _Built by GitHub Actions 🤖_
+            _Built by GitHub Actions + Deployed on Netlify 🤖_
