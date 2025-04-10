@@ -43,18 +43,18 @@ jobs:
 
       # ====================================
       # 6. Build APK
-      - name: Build APK
-        run: flutter build apk --release
+      # - name: Build APK
+      #   run: flutter build apk --release
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
-          retention-days: 7
-          compression-level: 0
-          overwrite: true
+      # - name: Upload APK artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: flutter-apk
+      #     path: build/app/outputs/flutter-apk/app-release.apk
+      #     if-no-files-found: error
+      #     retention-days: 7
+      #     compression-level: 0
+      #     overwrite: true
 
       # Optional: Upload APK to Appetize.io
       # - name: Upload to Appetize.io
