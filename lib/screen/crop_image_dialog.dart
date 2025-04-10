@@ -6,6 +6,7 @@ import 'package:crop_your_image/crop_your_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:untitled/service/cloudinary_service.dart';
+import 'package:untitled/utils/style.dart';
 
 class CropImageDialog extends StatefulWidget {
   final Function(String) voidCallback;
@@ -132,7 +133,7 @@ class _CropSimplePageState extends State<CropImageDialog> {
                                 return CustomPaint(
                                   painter: GridPainter(),
                                   child: Container(
-                                    color: Colors.black.withOpacity(0.0),
+                                    color: withOpacityCompat(Colors.black, 0.0),
                                   ),
                                 );
                               },

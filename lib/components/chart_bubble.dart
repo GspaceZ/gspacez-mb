@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/utils/style.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -30,7 +31,7 @@ class ChatBubble extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               decoration: BoxDecoration(
-                color: isUser ? color.withOpacity(0.9) : Colors.grey[200],
+                color: isUser ? withOpacityCompat(color, 0.9) : Colors.grey[200],
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -43,7 +44,7 @@ class ChatBubble extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: withOpacityCompat(Colors.black, 0.1),
                     blurRadius: 5,
                     offset: const Offset(2, 2),
                   )

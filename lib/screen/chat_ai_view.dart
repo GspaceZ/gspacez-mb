@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/components/chart_bubble.dart';
 import 'package:untitled/view_model/chat_ai_view_model.dart';
+import 'package:untitled/utils/style.dart';
 
 class ChatAIView extends StatelessWidget {
   const ChatAIView({super.key});
@@ -143,7 +144,7 @@ class ChatAIView extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.2),
+          color: withOpacityCompat(Colors.black, 0.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: SingleChildScrollView(

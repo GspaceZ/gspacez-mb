@@ -13,3 +13,6 @@ TextStyle textBold = const TextStyle(
     fontWeight: FontWeight.bold, fontSize: 17, color: Colors.black);
 TextStyle textNormal = const TextStyle(
     fontWeight: FontWeight.normal, fontSize: 16, color: Colors.black);
+
+Color withOpacityCompat(Color color, double opacity) =>
+    color.withAlpha((opacity * 255).toInt());

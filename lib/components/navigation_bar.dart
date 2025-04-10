@@ -6,7 +6,6 @@ import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/utils/style.dart';
-
 import '../screen/auth/introduce.dart';
 
 class NavigationSidebar extends StatelessWidget {
@@ -50,7 +49,7 @@ class NavigationSidebar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: withOpacityCompat(Colors.black, 0.3),
                 blurRadius: 6,
                 spreadRadius: 3),
           ],
