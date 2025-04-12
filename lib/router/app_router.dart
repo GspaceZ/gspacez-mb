@@ -64,17 +64,9 @@ class AppRoutes {
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: SignUp()));
       case updateProfile:
-        return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(
-                  selectedIndex: AppConstants.profile,
-                  child: UpdateProfile(),
-                ));
+        return MaterialPageRoute(builder: (_) => const UpdateProfile());
       case updateAvatar:
-        return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(
-                  selectedIndex: AppConstants.custom,
-                  child: UpdateAvatar(),
-                ));
+        return MaterialPageRoute(builder: (_) => const UpdateAvatar());
       case activeSuccess:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: ActiveSuccess()));
@@ -86,17 +78,10 @@ class AppRoutes {
             builder: (_) => const LayoutLanding(child: CreatePasswordView()));
       case createSquad:
         return MaterialPageRoute(
-          builder: (_) => const DefaultLayout(
-            selectedIndex: AppConstants.custom,
-            child: CreateSquadView(),
-          ),
+          builder: (_) => const CreateSquadView(),
         );
       case chatAi:
-        return MaterialPageRoute(
-            builder: (_) => const DefaultLayout(
-                  selectedIndex: AppConstants.message,
-                  child: ChatAIView(),
-                ));
+        return MaterialPageRoute(builder: (_) => const ChatAIView());
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));
