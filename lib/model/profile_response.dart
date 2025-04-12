@@ -7,8 +7,7 @@ class ProfileResponse {
   final String? country;
   final String? city;
   final String? address;
-  final String? shortDescription;
-  final String? fullDescription;
+  final String? description;
   final String? avatarUrl;
   final String createdAt;
 
@@ -21,8 +20,7 @@ class ProfileResponse {
     this.country,
     this.city,
     this.address,
-    this.shortDescription,
-    this.fullDescription,
+    this.description,
     this.avatarUrl,
     required this.createdAt,
   });
@@ -37,8 +35,7 @@ class ProfileResponse {
       country: json['country'] as String?,
       city: json['city'] as String?,
       address: json['address'] as String?,
-      shortDescription: json['shortDescription'] as String?,
-      fullDescription: json['fullDescription'] as String?,
+      description: json['description'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
       createdAt: json['createdAt'] as String,
     );
@@ -54,8 +51,7 @@ class ProfileResponse {
       'country': country,
       'city': city,
       'address': address,
-      'shortDescription': shortDescription,
-      'fullDescription': fullDescription,
+      'description': description,
       'avatarUrl': avatarUrl,
       'createdAt': createdAt,
     };

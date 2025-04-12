@@ -4,6 +4,9 @@ import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
+import '../model/post_model_response.dart';
+import '../model/squad_model.dart';
+
 class UserService {
   // Private constructor
   UserService._privateConstructor();
@@ -127,6 +130,78 @@ class UserService {
     } catch (error) {
       Log.debug('Error: $error');
       rethrow;
+    }
+  }
+
+  Future<List<SquadModel>> getJoinedSquads(String profileId) async {
+    final response = await callApi(
+      "profile-service/squads/joined/$profileId",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<SquadModel> joinedSquads = baseResponse.result
+          .map((squad) => SquadModel.fromProfileJson(squad))
+          .toList()
+          .cast<SquadModel>();
+      return joinedSquads;
+    } else {
+      throw Exception('Failed to get joined squads');
+    }
+  }
+
+  Future<List<PostModelResponse>> getPostsByProfile(String profileId, int pageNum, int pageSize) async {
+    final response = await callApi(
+      "post-service/posts/own-post/$profileId?pageNum=$pageNum&pageSize=$pageSize",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<PostModelResponse> posts = baseResponse.result
+          .map((post) => PostModelResponse.fromJson(post))
+          .toList()
+          .cast<PostModelResponse>();
+      return posts;
+    } else {
+      throw Exception('Failed to get posts by profile');
+    }
+  }
+
+  Future<List<PostModelResponse>> getLikedPostsByProfile(String profileId, int size, int page) async {
+    final response = await callApi(
+      "post-service/posts/liked/by/$profileId?size=$size&page=$page",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<PostModelResponse> posts = baseResponse.result
+          .map((post) => PostModelResponse.fromJson(post))
+          .toList()
+          .cast<PostModelResponse>();
+      return posts;
+    } else {
+      throw Exception('Failed to get liked posts by profile');
     }
   }
 }

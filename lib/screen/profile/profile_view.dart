@@ -5,6 +5,7 @@ import 'package:untitled/main.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/view_model/profile_view_model.dart';
+import '../../constants/appconstants.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -16,6 +17,7 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late ProfileViewModel _viewModel;
 
   @override
   void dispose() {
@@ -27,9 +29,10 @@ class _ProfileViewState extends State<ProfileView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _viewModel = ProfileViewModel();
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        setState(() {}); // Update the view when tab is switched
+        _viewModel.updateCurrentTab(_tabController.index); // Update the view when tab is switched
       }
     });
   }
@@ -49,6 +52,7 @@ class _ProfileViewState extends State<ProfileView>
         child: Consumer<ProfileViewModel>(
           builder: (context, viewModel, child) {
             return NestedScrollView(
+              controller: viewModel.scrollController,
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverToBoxAdapter(child: _buildUserInfo(viewModel)),
                 SliverToBoxAdapter(child: _buildInvolvedSquad(viewModel)),
@@ -57,8 +61,8 @@ class _ProfileViewState extends State<ProfileView>
                   child: TabBar(
                     controller: _tabController,
                     tabs: const [
-                      Tab(text: 'My Posts'),
-                      Tab(text: 'Liked'),
+                      Tab(text: 'Posts'),
+                      Tab(text: 'Upvoted'),
                     ],
                   ),
                 ),
@@ -66,8 +70,8 @@ class _ProfileViewState extends State<ProfileView>
               body: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildPostList(viewModel.listMyPost, viewModel),
-                  _buildPostList(viewModel.listLikePost, viewModel),
+                  _buildPostList(viewModel.listProfilePosts, viewModel),
+                  _buildPostList(viewModel.listLikedPosts, viewModel),
                 ],
               ),
             );
@@ -98,7 +102,7 @@ class _ProfileViewState extends State<ProfileView>
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(viewModel.urlAvatar),
+              backgroundImage: NetworkImage(viewModel.avatarUrl),
             ),
             const SizedBox(height: 10),
             Text(
@@ -106,23 +110,25 @@ class _ProfileViewState extends State<ProfileView>
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.location_city),
-                const SizedBox(width: 5),
-                Text(viewModel.location),
-              ],
-            ),
+            if (viewModel.address.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.location_city),
+                  const SizedBox(width: 5),
+                  Text(viewModel.address),
+                ],
+              ),
             const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.calendar_month),
-                const SizedBox(width: 5),
-                Text(viewModel.dateOfBirth),
-              ],
-            ),
+            if (viewModel.dateOfBirth.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.calendar_month),
+                  const SizedBox(width: 5),
+                  Text(viewModel.dateOfBirth),
+                ],
+              ),
             const SizedBox(height: 5),
             TextButton(
               onPressed: () {
@@ -183,31 +189,40 @@ class _ProfileViewState extends State<ProfileView>
                   )
                 : const SizedBox.shrink(),
             SizedBox(
-              height: 100,
               width: MediaQuery.of(context).size.width,
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: viewModel.involvedSquads.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundImage: NetworkImage(
-                            viewModel.involvedSquads[index].urlImage,
-                          ),
-                        ),
-                        Text(
-                          viewModel.involvedSquads[index].name,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    const avatarSize = 40.0;
+                    const spacing = 16.0;
+                    final countPerRow = (constraints.maxWidth + spacing) ~/ (avatarSize + spacing);
+                    final totalSpacing = constraints.maxWidth - (countPerRow * avatarSize);
+                    final spacingBetween = countPerRow > 1
+                        ? totalSpacing / (countPerRow - 1)
+                        : totalSpacing;
+
+                    return Wrap(
+                      spacing: spacingBetween,
+                      runSpacing: 12,
+                      children: viewModel.involvedSquads.map((squad) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: avatarSize / 2,
+                              backgroundImage: NetworkImage(
+                                squad.avatarUrl.isNotEmpty == true
+                                    ? squad.avatarUrl
+                                    : AppConstants.urlImageDefault,
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -250,34 +265,42 @@ class _ProfileViewState extends State<ProfileView>
                         style: TextStyle(color: Colors.grey)),
                   )
                 : SizedBox(
-                    height: 100,
-                    width:
-                        MediaQuery.of(navigatorKey.currentContext!).size.width,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: viewModel.involvedSquads.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  viewModel.involvedSquads[index].urlImage,
+                  width: MediaQuery.of(context).size.width,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        const avatarSize = 40.0;
+                        const spacing = 16.0;
+                        final countPerRow = (constraints.maxWidth + spacing) ~/ (avatarSize + spacing);
+                        final totalSpacing = constraints.maxWidth - (countPerRow * avatarSize);
+                        final spacingBetween = countPerRow > 1
+                          ? totalSpacing / (countPerRow - 1)
+                          : totalSpacing;
+
+                        return Wrap(
+                          spacing: spacingBetween,
+                          runSpacing: 12,
+                          children: viewModel.involvedSquads.map((squad) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircleAvatar(
+                                  radius: avatarSize / 2,
+                                  backgroundImage: NetworkImage(
+                                    squad.avatarUrl.isNotEmpty == true
+                                      ? squad.avatarUrl
+                                      : AppConstants.urlImageDefault,
+                                    ),
                                 ),
-                              ),
-                              Text(
-                                viewModel.involvedSquads[index].name,
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
+                              ],
+                            );
+                          }).toList(),
                         );
-                      },
-                    ),
-                  ),
+                    },
+                ),
+              ),
+            ),
           ],
         ),
       ),
