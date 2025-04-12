@@ -5,6 +5,11 @@ class LoadingDialog {
   static late BuildContext _dialogContext;
 
   static Future<void> showLoadingDialog(BuildContext? context) async {
+    Future.delayed(const Duration(seconds: 15), () {
+      if (_dialogContext.mounted) {
+        Navigator.pop(_dialogContext);
+      }
+    });
     return showDialog(
       context: context ?? navigatorKey.currentContext!,
       barrierDismissible: false,
