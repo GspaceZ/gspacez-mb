@@ -110,17 +110,17 @@ class _ProfileViewState extends State<ProfileView>
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            if (viewModel.address != null && viewModel.address!.isNotEmpty)
+            if (viewModel.address.isNotEmpty)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.location_city),
                   const SizedBox(width: 5),
-                  Text(viewModel.address!),
+                  Text(viewModel.address),
                 ],
               ),
             const SizedBox(height: 5),
-            if (viewModel.dateOfBirth != null && viewModel.dateOfBirth!.isNotEmpty)
+            if (viewModel.dateOfBirth.isNotEmpty)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -212,8 +212,8 @@ class _ProfileViewState extends State<ProfileView>
                             CircleAvatar(
                               radius: avatarSize / 2,
                               backgroundImage: NetworkImage(
-                                squad.avatarUrl?.isNotEmpty == true
-                                    ? squad.avatarUrl!
+                                squad.avatarUrl.isNotEmpty == true
+                                    ? squad.avatarUrl
                                     : AppConstants.urlImageDefault,
                               ),
                             ),
@@ -288,8 +288,8 @@ class _ProfileViewState extends State<ProfileView>
                                 CircleAvatar(
                                   radius: avatarSize / 2,
                                   backgroundImage: NetworkImage(
-                                    squad.avatarUrl?.isNotEmpty == true
-                                      ? squad.avatarUrl!
+                                    squad.avatarUrl.isNotEmpty == true
+                                      ? squad.avatarUrl
                                       : AppConstants.urlImageDefault,
                                     ),
                                 ),
