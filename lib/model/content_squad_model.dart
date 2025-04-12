@@ -2,14 +2,16 @@ import 'package:untitled/model/squad_setting.dart';
 
 class ContentSquadModel {
   String name;
-  String? tagName;
+  String tagName;
+  String? avatarUrl;
   String privacy;
   String? description;
   SquadSetting? setting;
 
   ContentSquadModel({
     required this.name,
-    this.tagName,
+    required this.tagName,
+    this.avatarUrl,
     required this.privacy,
     this.description,
     this.setting,
@@ -19,6 +21,7 @@ class ContentSquadModel {
     return ContentSquadModel(
       name: json['name'] as String,
       tagName: json['tagName'] as String,
+      avatarUrl: json['avatarUrl'] as String,
       privacy: json['privacy'] as String,
       description: json['description'] as String,
       setting: SquadSetting.fromJson(json['setting']),
@@ -29,6 +32,7 @@ class ContentSquadModel {
     return {
       'name': name,
       'tagName': tagName,
+      'avatarUrl': avatarUrl,
       'privacy': privacy,
       'description': description,
       'setting': setting,
@@ -37,6 +41,6 @@ class ContentSquadModel {
 
   @override
   String toString() {
-    return 'ContentSquadModel(name: $name, tagName: $tagName,  privacy: $privacy, description: $description, setting: $setting)';
+    return 'ContentSquadModel(name: $name, tagName: $tagName, avatarUrl: $avatarUrl, privacy: $privacy, description: $description, setting: $setting)';
   }
 }
