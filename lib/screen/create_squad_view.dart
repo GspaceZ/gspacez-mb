@@ -9,124 +9,131 @@ class CreateSquadView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => CreateSquadViewModel(),
-      child: Consumer<CreateSquadViewModel>(
-        builder: (context, createSquadViewModel, child) {
-          return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16),
-              child: ListView(
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Create Squad',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    "Create a place that people can interact with others about a topic",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-
-                  /// Avatar
-                  const Text(
-                    "Upload your squad's avatar",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildUploadAvatarButton(createSquadViewModel),
-
-                  /// Form input
-                  _buildTextFormField("Name of your squad", "Your squad's name",
-                      createSquadViewModel.nameSquadController, Icons.group),
-                  _buildTextFormField("Description", "Description",
-                      createSquadViewModel.descriptionSquadController, null,
-                      isDescription: true),
-                  _buildTextFormField("Tags", "Tags",
-                      createSquadViewModel.tagSquadController, Icons.tag),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Choose your squad's privacy",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildCheckBox(
-                      title: 'Public',
-                      description:
-                          'Anyone can see your squad and join without your approval',
-                      value: createSquadViewModel.isPublic,
-                      onChanged: (_) {
-                        createSquadViewModel.onCheckPublic();
-                      }),
-                  _buildCheckBox(
-                      title: 'Private',
-                      description:
-                          'Only members in the squads can interact with posts. Members can also send invitation link to join the squad.',
-                      value: !createSquadViewModel.isPublic,
-                      onChanged: (_) {
-                        createSquadViewModel.onCheckPublic();
-                      }),
-                  const SizedBox(height: 16),
-
-                  /// Advanced setting
-                  _buildButtonAdvancedSetting(
-                      createSquadViewModel.onChangeAdvancedSettingStatus,
-                      createSquadViewModel.isShowAdvancedSetting),
-                  if (createSquadViewModel.isShowAdvancedSetting) ...[
-                    _buildSwitch(
-                        title: 'Allow members to change profile',
-                        description:
-                            'Allow members to change their profile information',
-                        value: createSquadViewModel.isAllowChangeProfile,
-                        onChanged: (_) {
-                          createSquadViewModel.onChangeAllowChangeProfile();
-                        }),
-                    _buildSwitch(
-                        title: 'Allow members to change post',
-                        description:
-                            'Allow members to change their post information',
-                        value: createSquadViewModel.isAllowChangePost,
-                        onChanged: (_) {
-                          createSquadViewModel.onChangeAllowChangePost();
-                        }),
-                    _buildSwitch(
-                        title: 'Allow members to post under',
-                        description:
-                            'Allow members to post under other members post',
-                        value: createSquadViewModel.isAllowPostUnder,
-                        onChanged: (_) {
-                          createSquadViewModel.onChangeAllowPostUnder();
-                        }),
-                  ],
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: createSquadViewModel.submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.all(16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Create Squad',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: ChangeNotifierProvider(
+        create: (BuildContext context) => CreateSquadViewModel(),
+        child: Consumer<CreateSquadViewModel>(
+          builder: (context, createSquadViewModel, child) {
+            return Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.all(16),
+                child: ListView(
+                  children: [
+                    const SizedBox(height: 12),
+                    const Text(
+                      "Create a place that people can interact with others about a topic",
+                      style: TextStyle(fontSize: 16),
                     ),
-                    child: const Text(
-                      'Submit your new squad',
+                    const SizedBox(height: 16),
+
+                    /// Avatar
+                    const Text(
+                      "Upload your squad's avatar",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    _buildUploadAvatarButton(createSquadViewModel),
+
+                    /// Form input
+                    _buildTextFormField(
+                        "Name of your squad",
+                        "Your squad's name",
+                        createSquadViewModel.nameSquadController,
+                        Icons.group),
+                    _buildTextFormField("Description", "Description",
+                        createSquadViewModel.descriptionSquadController, null,
+                        isDescription: true),
+                    _buildTextFormField("Tags", "Tags",
+                        createSquadViewModel.tagSquadController, Icons.tag),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Choose your squad's privacy",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildCheckBox(
+                        title: 'Public',
+                        description:
+                            'Anyone can see your squad and join without your approval',
+                        value: createSquadViewModel.isPublic,
+                        onChanged: (_) {
+                          createSquadViewModel.onCheckPublic();
+                        }),
+                    _buildCheckBox(
+                        title: 'Private',
+                        description:
+                            'Only members in the squads can interact with posts. Members can also send invitation link to join the squad.',
+                        value: !createSquadViewModel.isPublic,
+                        onChanged: (_) {
+                          createSquadViewModel.onCheckPublic();
+                        }),
+                    const SizedBox(height: 16),
+
+                    /// Advanced setting
+                    _buildButtonAdvancedSetting(
+                        createSquadViewModel.onChangeAdvancedSettingStatus,
+                        createSquadViewModel.isShowAdvancedSetting),
+                    if (createSquadViewModel.isShowAdvancedSetting) ...[
+                      _buildSwitch(
+                          title: 'Allow members to change profile',
+                          description:
+                              'Allow members to change their profile information',
+                          value: createSquadViewModel.isAllowChangeProfile,
+                          onChanged: (_) {
+                            createSquadViewModel.onChangeAllowChangeProfile();
+                          }),
+                      _buildSwitch(
+                          title: 'Allow members to change post',
+                          description:
+                              'Allow members to change their post information',
+                          value: createSquadViewModel.isAllowChangePost,
+                          onChanged: (_) {
+                            createSquadViewModel.onChangeAllowChangePost();
+                          }),
+                      _buildSwitch(
+                          title: 'Allow members to post under',
+                          description:
+                              'Allow members to post under other members post',
+                          value: createSquadViewModel.isAllowPostUnder,
+                          onChanged: (_) {
+                            createSquadViewModel.onChangeAllowPostUnder();
+                          }),
+                    ],
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: createSquadViewModel.submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.all(16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: const Text(
+                        'Submit your new squad',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

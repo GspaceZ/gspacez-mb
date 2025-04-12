@@ -1,40 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:untitled/data/local/local_storage.dart';
-import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
-import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/utils/style.dart';
-
-import '../screen/auth/introduce.dart';
 
 class NavigationSidebar extends StatelessWidget {
   const NavigationSidebar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> menuItems = [
-      {
-        "title": "My Feed",
-        "icon": Icons.library_books,
-        "route": AppRoutes.home
-      },
-      {"title": "Explore", "icon": Icons.local_fire_department},
-      {
-        "title": "History",
-        "icon": Icons.history,
-        "route": AppRoutes.updateProfile
-      },
-    ];
-
     final List<Map<String, dynamic>> networkItems = [
       {"title": "Search Squads", "icon": Icons.square_foot},
       {"title": "Web Development", "icon": Icons.html},
       {"title": "Mobile Development", "icon": Icons.phone_android},
-      {"title": "AI", "icon": Icons.analytics},
       {"title": "Database", "icon": Icons.storage},
       {"title": "Cloud", "icon": Icons.cloud},
+    ];
+
+    final List<Map<String, dynamic>> aiItems = [
+      {"title": "AI", "icon": Icons.psychology, "route": AppRoutes.chatAi},
     ];
 
     final List<Map<String, dynamic>> discoverItems = [
@@ -57,14 +40,13 @@ class NavigationSidebar extends StatelessWidget {
         ),
         child: ListView(
           children: [
-            _buildSectionHeader("Menu"),
-            ...menuItems.map((item) => _buildMenuItem(context, item)),
             _buildSectionHeader("Network"),
             ...networkItems.map((item) => _buildMenuItem(context, item)),
             _buildCreateSquadButton(),
+            _buildSectionHeader("AI"),
+            ...aiItems.map((item) => _buildMenuItem(context, item)),
             _buildSectionHeader("Discover"),
             ...discoverItems.map((item) => _buildMenuItem(context, item)),
-            _buildLogoutButton(context),
           ],
         ),
       ),
@@ -87,7 +69,7 @@ class NavigationSidebar extends StatelessWidget {
       child: TextButton(
         style: TextButton.styleFrom(backgroundColor: Colors.white),
         onPressed: item["route"] != null
-            ? () => Navigator.pushReplacementNamed(context, item["route"])
+            ? () => Navigator.pushNamed(context, item["route"])
             : null,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -125,28 +107,5 @@ class NavigationSidebar extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return TextButton(
-      style: TextButton.styleFrom(backgroundColor: Colors.white),
-      onPressed: () => _logOut(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: Text(FlutterI18n.translate(context, "sidebar.logout_switch"),
-              style: textBold),
-        ),
-      ),
-    );
-  }
-
-  void _logOut(BuildContext context) {
-    LocalStorage.instance.removeUserData();
-    TokenDataSource.instance.deleteToken();
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const LayoutLanding(child: Introduce())));
   }
 }

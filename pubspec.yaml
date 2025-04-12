@@ -55,6 +55,7 @@ dependencies:
   google_generative_ai: ^0.4.6
   crop_your_image: ^2.0.0
   path: ^1.9.0
+  animated_bottom_navigation_bar: ^1.4.0
 
 dev_dependencies:
   flutter_test:

@@ -8,69 +8,78 @@ class ChatAIView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.red.shade900,
-            Colors.purple.shade900,
-            //  Colors.blue
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Chat AI"),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
-      child: ChangeNotifierProvider(
-        create: (BuildContext context) => ChatAIViewModel(),
-        child: Consumer<ChatAIViewModel>(
-          builder: (context, viewModel, child) {
-            return (viewModel.isLoading)
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (viewModel.userController.message.isNotEmpty)
-                        _buildIconNewChat(viewModel.newChat),
-                      Expanded(
-                        child: (viewModel.userController.message.isEmpty)
-                            ? _buildEmptyChat()
-                            : ListView.builder(
-                                controller: viewModel.scrollController,
-                                itemCount:
-                                    viewModel.userController.message.length,
-                                itemBuilder: (context, index) {
-                                  return Column(
-                                    children: [
-                                      ChatBubble(
-                                        message: viewModel
-                                            .userController.message[index],
-                                        name: viewModel.userController.name,
-                                        avatar: viewModel.userController.avatar,
-                                        color: viewModel.userController.color,
-                                        isUser: true,
-                                      ),
-                                      if (index <
-                                          viewModel
-                                              .botController.message.length)
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.red.shade900,
+              Colors.purple.shade900,
+              //  Colors.blue
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: ChangeNotifierProvider(
+          create: (BuildContext context) => ChatAIViewModel(),
+          child: Consumer<ChatAIViewModel>(
+            builder: (context, viewModel, child) {
+              return (viewModel.isLoading)
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (viewModel.userController.message.isNotEmpty)
+                          _buildIconNewChat(viewModel.newChat),
+                        Expanded(
+                          child: (viewModel.userController.message.isEmpty)
+                              ? _buildEmptyChat()
+                              : ListView.builder(
+                                  controller: viewModel.scrollController,
+                                  itemCount:
+                                      viewModel.userController.message.length,
+                                  itemBuilder: (context, index) {
+                                    return Column(
+                                      children: [
                                         ChatBubble(
                                           message: viewModel
-                                              .botController.message[index],
-                                          name: viewModel.botController.name,
+                                              .userController.message[index],
+                                          name: viewModel.userController.name,
                                           avatar:
-                                              viewModel.botController.avatar,
-                                          color: viewModel.botController.color,
-                                          isUser: false,
+                                              viewModel.userController.avatar,
+                                          color: viewModel.userController.color,
+                                          isUser: true,
                                         ),
-                                    ],
-                                  );
-                                },
-                              ),
-                      ),
-                      _buildChatInputField(
-                          viewModel.controller, viewModel.sendMessage)
-                    ],
-                  );
-          },
+                                        if (index <
+                                            viewModel
+                                                .botController.message.length)
+                                          ChatBubble(
+                                            message: viewModel
+                                                .botController.message[index],
+                                            name: viewModel.botController.name,
+                                            avatar:
+                                                viewModel.botController.avatar,
+                                            color:
+                                                viewModel.botController.color,
+                                            isUser: false,
+                                          ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                        ),
+                        _buildChatInputField(
+                            viewModel.controller, viewModel.sendMessage)
+                      ],
+                    );
+            },
+          ),
         ),
       ),
     );
@@ -131,7 +140,7 @@ class ChatAIView extends StatelessWidget {
         ),
       ),
       icon: const Icon(
-        Icons.add_comment_sharp,
+        Icons.cleaning_services_outlined,
         color: Colors.white,
         size: 30,
       ),
