@@ -189,7 +189,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
           child: Row(
             children: [
               Icon(Icons.person_2_outlined),
-              Text(" Profile", style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(" Profile"),
             ],
           ),
         ),
@@ -218,8 +218,10 @@ class _DefaultLayoutState extends State<DefaultLayout>
       onSelected: (value) {
         switch (value) {
           case 1:
-
-            /// TODO: Navigate to Profile page
+            Navigator.pushNamed(
+              context,
+              AppRoutes.profile,
+            );
             break;
           case 2:
 
@@ -237,6 +239,6 @@ class _DefaultLayoutState extends State<DefaultLayout>
     LocalStorage.instance.removeUserData();
     TokenDataSource.instance.deleteToken();
     Navigator.pushReplacementNamed(
-        context, AppRoutes.splashScreen); // Navigate to login page
+        context, AppRoutes.signIn); // Navigate to login page
   }
 }

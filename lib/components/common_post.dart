@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
+import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/utils/content_converter.dart';
@@ -31,6 +32,7 @@ class CommonPost extends StatefulWidget {
 }
 
 class _CommonPostState extends State<CommonPost> {
+  bool _isMyPost = false;
   VideoPlayerController? _controller;
   bool _showFullText = false;
   bool _isLiked = false;
@@ -41,7 +43,7 @@ class _CommonPostState extends State<CommonPost> {
   @override
   void initState() {
     super.initState();
-
+    _checkMyPost();
     final convertedContent = convertContent(widget.post.content.text);
     final List<String> videoUrls =
         List<String>.from(convertedContent["videoUrls"]);
@@ -53,6 +55,14 @@ class _CommonPostState extends State<CommonPost> {
           setState(() {});
         });
     }
+  }
+
+  _checkMyPost() async {
+    final userName = await LocalStorage.instance.userName ?? "";
+    if (userName == widget.post.profileName) {
+      _isMyPost = true;
+    }
+    setState(() {});
   }
 
   @override
@@ -94,7 +104,8 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: CircleAvatar(
                                 backgroundImage: CachedNetworkImageProvider(
-                                  widget.post.avatarUrl ?? AppConstants.urlImageDefault,
+                                  widget.post.avatarUrl ??
+                                      AppConstants.urlImageDefault,
                                   errorListener: (_) {
                                     Log.error(
                                         'Error loading image ${widget.post.avatarUrl}');
@@ -407,6 +418,8 @@ class _CommonPostState extends State<CommonPost> {
               break;
             case "report":
               break;
+            case "edit":
+              break;
           }
           setState(() {
             // _selectedOption = value;
@@ -420,13 +433,20 @@ class _CommonPostState extends State<CommonPost> {
               child: Center(
                   child: Text(FlutterI18n.translate(context, "post.hide"))),
             ),
-            PopupMenuItem<String>(
-              padding: EdgeInsets.zero,
-              value: "privacy",
-              child: Center(
-                  child: Text(FlutterI18n.translate(
-                      context, "post.privacy.privacy_btn"))),
-            ),
+            if (_isMyPost)
+              PopupMenuItem<String>(
+                padding: EdgeInsets.zero,
+                value: "privacy",
+                child: Center(
+                    child: Text(FlutterI18n.translate(
+                        context, "post.privacy.privacy_btn"))),
+              ),
+            if (_isMyPost)
+              const PopupMenuItem<String>(
+                padding: EdgeInsets.zero,
+                value: "edit",
+                child: Center(child: Text("Edit Post")),
+              ),
             PopupMenuItem<String>(
               padding: EdgeInsets.zero,
               value: "report",

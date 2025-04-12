@@ -12,6 +12,7 @@ import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/create_squad_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
+import 'package:untitled/screen/profile/profile_view.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../screen/profile/update_avatar.dart';
 
@@ -28,6 +29,7 @@ class AppRoutes {
   static const String createNewPassword = '/create_password';
   static const String createSquad = '/create_squad';
   static const String chatAi = '/chat_ai';
+  static const String profile = '/profile';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -82,6 +84,8 @@ class AppRoutes {
         );
       case chatAi:
         return MaterialPageRoute(builder: (_) => const ChatAIView());
+      case profile:
+        return MaterialPageRoute(builder: (_) => const ProfileView());
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));
