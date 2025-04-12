@@ -50,12 +50,12 @@ class CreateSquadView extends StatelessWidget {
                         "Name of your squad",
                         "Your squad's name",
                         createSquadViewModel.nameSquadController,
-                        Icons.group),
-                    _buildTextFormField("Description", "Description",
+                        Icons.label_outline),
+                    _buildTextFormField("Tag name", "Find a tag name that can impress everyone",
+                        createSquadViewModel.tagSquadController, Icons.alternate_email),
+                    _buildTextFormField("Description", "To help people know that your group will do",
                         createSquadViewModel.descriptionSquadController, null,
                         isDescription: true),
-                    _buildTextFormField("Tags", "Tags",
-                        createSquadViewModel.tagSquadController, Icons.tag),
                     const SizedBox(height: 16),
                     const Text(
                       "Choose your squad's privacy",
@@ -216,6 +216,7 @@ class CreateSquadView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.settings),
+            const SizedBox(width: 4),
             const Expanded(
               child: Text(
                 'Advanced setting (Coming soon)',
