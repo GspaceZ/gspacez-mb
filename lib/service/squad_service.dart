@@ -4,6 +4,8 @@ import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 import '../model/content_squad_model.dart';
+import '../model/squad-access-response.dart';
+import '../model/squad_model.dart';
 import '../model/squad_response.dart';
 
 class SquadService {
@@ -36,6 +38,54 @@ class SquadService {
       return SquadResponse.fromJson(baseResponse.result);
     } else {
       throw Exception('Failed to create squad');
+    }
+  }
+
+  Future<List<SquadModel>> getJoinedSquads(String profileId) async {
+    final response = await callApi(
+      "profile-service/squads/joined/$profileId",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<SquadModel> joinedSquads = baseResponse.result
+          .map((squad) => SquadModel.fromProfileJson(squad))
+          .toList()
+          .cast<SquadModel>();
+      return joinedSquads;
+    } else {
+      throw Exception('Failed to get joined squads');
+    }
+  }
+
+  Future<List<SquadAccessResponse>> getLastAccess() async {
+    final response = await callApi(
+      "profile-service/squads/squad-access",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<SquadAccessResponse> accessedSquads = baseResponse.result
+          .map((squad) => SquadAccessResponse.fromJson(squad))
+          .toList()
+          .cast<SquadAccessResponse>();
+      return accessedSquads;
+    } else {
+      throw Exception('Failed to get accessed squads');
     }
   }
 }
