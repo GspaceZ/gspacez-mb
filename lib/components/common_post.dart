@@ -13,6 +13,7 @@ import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
 
 import '../constants/appconstants.dart';
+import '../service/post_service.dart';
 
 class CommonPost extends StatefulWidget {
   final PostModelResponse post;
@@ -35,8 +36,6 @@ class _CommonPostState extends State<CommonPost> {
   bool _isMyPost = false;
   VideoPlayerController? _controller;
   bool _showFullText = false;
-  bool _isLiked = false;
-  bool _isDisliked = false;
   bool _isHide = false;
   bool _isBookmark = false;
 
@@ -161,7 +160,7 @@ class _CommonPostState extends State<CommonPost> {
                       ),
                     ),
                   ),
-                  _buildRowIcon()
+                  _buildRowIcon(widget.post)
                 ],
               )
             : _buildHidePost(),
@@ -169,51 +168,79 @@ class _CommonPostState extends State<CommonPost> {
     );
   }
 
-  _buildRowIcon() {
+  _buildRowIcon(PostModelResponse post) {
+    String postId = post.id;
+    bool isLiked = post.liked;
+    bool isDisliked = post.disliked;
+    int totalLike = post.totalLike;
+    int totalDislike = post.totalDislike;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           GestureDetector(
-            onTap: () {
-              _isLiked = !_isLiked;
-              if (_isLiked) {
-                _isDisliked = false;
+            onTap: () async {
+              if (isLiked) return;
+              try {
+                  final response = await PostService.instance.reactPost(postId, 'LIKE');
+                  setState(() {
+                    post.liked = true;
+                    post.disliked = false;
+                    post.totalLike = response.totalLikes;
+                    post.totalDislike = response.totalDislikes;
+                  });
+              } catch (e) {
+                throw Exception("Failed to react post: $e");
               }
-              setState(() {});
-
-              /// TODO: call api like
             },
-            child: _isLiked
-                ? const Icon(
-                    Icons.thumb_up_alt_outlined,
-                    color: Colors.blue,
-                  )
-                : const Icon(
-                    Icons.thumb_up_outlined,
-                    color: Colors.black,
-                  ),
-          ),
+            child: Row(
+              children: [
+                isLiked
+                  ? const Icon(
+                      Icons.thumb_up_alt_outlined,
+                      color: Colors.blue,
+                    )
+                  : const Icon(
+                      Icons.thumb_up_outlined,
+                      color: Colors.black,
+                    ),
+                  const SizedBox(width: 4),
+                  Text('$totalLike'),
+                ]
+              )
+            ),
           GestureDetector(
-            onTap: () {
-              _isDisliked = !_isDisliked;
-              if (_isDisliked) {
-                _isLiked = false;
+            onTap: () async {
+              if (isDisliked) return;
+              try {
+                final response = await PostService.instance.reactPost(postId, 'DISLIKE');
+                setState(() {
+                  post.disliked = true;
+                  post.liked = false;
+                  post.totalLike = response.totalLikes;
+                  post.totalDislike = response.totalDislikes;
+                });
+              } catch (e) {
+                throw Exception("Failed to react post: $e");
               }
-              setState(() {});
-
-              /// TODO: call api dislike
             },
-            child: _isDisliked
-                ? const Icon(
-                    Icons.thumb_down_alt_outlined,
-                    color: Colors.red,
-                  )
-                : const Icon(
-                    Icons.thumb_down_outlined,
-                    color: Colors.black,
-                  ),
+            child: Row(
+              children: [
+                isDisliked
+                  ? const Icon(
+                      Icons.thumb_down_alt_outlined,
+                      color: Colors.red,
+                    )
+                  : const Icon(
+                      Icons.thumb_down_outlined,
+                      color: Colors.black,
+                    ),
+                const SizedBox(width: 4),
+                Text('$totalDislike'),
+              ]
+            )
           ),
           GestureDetector(
             onTap: () {
