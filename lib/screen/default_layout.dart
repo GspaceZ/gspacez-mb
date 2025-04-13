@@ -209,7 +209,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
                 Icons.logout_outlined,
                 color: Colors.red,
               ),
-              Text(" Logout", style: TextStyle(color: Colors.red)),
+              Text(" Sign out", style: TextStyle(color: Colors.red)),
             ],
           ),
         ),
