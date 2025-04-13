@@ -1,21 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/utils/style.dart';
 
-class NavigationSidebar extends StatelessWidget {
+import '../model/squad-access-response.dart';
+import '../service/squad_service.dart';
+
+class NavigationSidebar extends StatefulWidget {
   const NavigationSidebar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> networkItems = [
-      {"title": "Search Squads", "icon": Icons.manage_search_outlined},
-      {"title": "Web Development", "icon": Icons.html},
-      {"title": "Mobile Development", "icon": Icons.phone_android},
-      {"title": "Database", "icon": Icons.storage},
-      {"title": "Cloud", "icon": Icons.cloud},
-    ];
+  State<NavigationSidebar> createState() => _NavigationSidebarState();
+}
 
+class _NavigationSidebarState extends State<NavigationSidebar> {
+  bool showSearch = false;
+  String searchQuery = '';
+  bool isLoading = true;
+  List<SquadAccessResponse> squads = [];
+  bool isNetworkTabOpen = true;
+  bool isAiTabOpen = false;
+  bool isDiscoverTabOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSquads();
+  }
+
+  Future<void> fetchSquads() async {
+    try {
+      final List<SquadAccessResponse> accessedSquads = await SquadService.instance.getLastAccess();
+      setState(() {
+        squads = accessedSquads;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      throw Exception('Failed to fetch last accessed squads: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final List<Map<String, dynamic>> aiItems = [
       {"title": "AI", "icon": Icons.psychology, "route": AppRoutes.chatAi},
     ];
@@ -24,6 +54,15 @@ class NavigationSidebar extends StatelessWidget {
       {"title": "Tags", "icon": Icons.tag},
       {"title": "Discussions", "icon": Icons.chat},
     ];
+
+    final List<Map<String, dynamic>> feedbackItems = [
+      {"title": "Feedback", "icon": Icons.feedback_outlined},
+    ];
+
+    final filteredSquads = searchQuery.isEmpty
+        ? squads
+        : squads.where((squad) =>
+        squad.name.toLowerCase().contains(searchQuery.toLowerCase())).toList();
 
     return SafeArea(
       child: Container(
@@ -40,46 +79,145 @@ class NavigationSidebar extends StatelessWidget {
         ),
         child: ListView(
           children: [
-            _buildSectionHeader("Network"),
-            ...networkItems.map((item) => _buildMenuItem(context, item)),
-            _buildCreateSquadButton(),
-            _buildSectionHeader("AI"),
-            ...aiItems.map((item) => _buildMenuItem(context, item)),
-            _buildSectionHeader("Discover"),
-            ...discoverItems.map((item) => _buildMenuItem(context, item)),
+            _buildTabToggleButton("Network", () {
+              setState(() {
+                isNetworkTabOpen = !isNetworkTabOpen;
+              });
+            }),
+            if (isNetworkTabOpen) ...[
+              _buildSearchSquads(),
+              if (showSearch) _buildSearchField(),
+              if (isLoading)
+                const Center(child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: CircularProgressIndicator(),
+                ))
+              else
+                ...filteredSquads.map((squad) => _buildSquadItem(squad)),
+              _buildCreateSquadButton(),
+            ],
+            _buildTabToggleButton("AI", () {
+              setState(() {
+                isAiTabOpen = !isAiTabOpen;
+              });
+            }),
+            if (isAiTabOpen)
+              ...aiItems.map((item) => _buildMenuItem(context, item)),
+            _buildTabToggleButton("Discover", () {
+              setState(() {
+                isDiscoverTabOpen = !isDiscoverTabOpen;
+              });
+            }),
+            if (isDiscoverTabOpen)
+              ...discoverItems.map((item) => _buildMenuItem(context, item)),
+            const SizedBox(height: 8),
+            ...feedbackItems.map((item) => _buildMenuItem(context, item)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(color: Colors.grey.shade200),
-      child: Text(title, style: textBold.copyWith(color: Colors.grey.shade700)),
+  Widget _buildTabToggleButton(String title, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          border: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title, style: textBold.copyWith(color: Colors.grey.shade700)),
+            Icon(
+              isAiTabOpen || isDiscoverTabOpen ? Icons.expand_less : Icons.expand_more,
+              color: Colors.black,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchSquads() {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          showSearch = !showSearch;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Search squads", style: textBold),
+            const Icon(Icons.manage_search_outlined, color: Colors.black, size: 30),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: TextField(
+        onChanged: (value) {
+          setState(() {
+            searchQuery = value;
+          });
+        },
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSquadItem(SquadAccessResponse squad) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(
+          (squad.avatarUrl != null && squad.avatarUrl!.isNotEmpty)
+              ? squad.avatarUrl!
+              : AppConstants.urlImageDefault,
+        ),
+      ),
+      title: Text(squad.name),
+      onTap: () {
+        /// TODO: navigate to squad page, or do something with squad.squadId
+      },
     );
   }
 
   Widget _buildMenuItem(BuildContext context, Map<String, dynamic> item) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
-      ),
-      child: TextButton(
-        style: TextButton.styleFrom(backgroundColor: Colors.white),
-        onPressed: item["route"] != null
-            ? () => Navigator.pushNamed(context, item["route"])
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(item["title"], style: textBold),
-              Icon(item["icon"], color: Colors.black, size: 30),
-            ],
-          ),
+    return InkWell(
+      onTap: item["route"] != null
+          ? () => Navigator.pushNamed(context, item["route"])
+          : null,
+      child: Container(
+        padding: const EdgeInsets.all(12.0),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(item["title"], style: textBold),
+            Icon(item["icon"], color: Colors.black, size: 30),
+          ],
         ),
       ),
     );
