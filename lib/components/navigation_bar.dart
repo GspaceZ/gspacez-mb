@@ -9,7 +9,7 @@ class NavigationSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> networkItems = [
-      {"title": "Search Squads", "icon": Icons.square_foot},
+      {"title": "Search Squads", "icon": Icons.manage_search_outlined},
       {"title": "Web Development", "icon": Icons.html},
       {"title": "Mobile Development", "icon": Icons.phone_android},
       {"title": "Database", "icon": Icons.storage},
@@ -21,7 +21,7 @@ class NavigationSidebar extends StatelessWidget {
     ];
 
     final List<Map<String, dynamic>> discoverItems = [
-      {"title": "Tags", "icon": Icons.local_offer},
+      {"title": "Tags", "icon": Icons.tag},
       {"title": "Discussions", "icon": Icons.chat},
     ];
 

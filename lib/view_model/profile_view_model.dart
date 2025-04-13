@@ -4,6 +4,7 @@ import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/model/squad_model.dart';
 import 'package:untitled/service/post_service.dart';
+import 'package:untitled/service/squad_service.dart';
 
 import '../service/user_service.dart';
 
@@ -55,7 +56,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   _fetchData() async {
-    final List<SquadModel> joinedSquads = await UserService.instance.getJoinedSquads(profileId);
+    final List<SquadModel> joinedSquads = await SquadService.instance.getJoinedSquads(profileId);
     involvedSquads.clear();
     involvedSquads.addAll(joinedSquads);
 
