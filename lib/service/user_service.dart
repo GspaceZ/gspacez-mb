@@ -105,10 +105,36 @@ class UserService {
     }
   }
 
-  Future<ProfileResponse> getProfile() async {
+  Future<ProfileResponse> getMe() async {
     try {
       final response = await callApi(
         "profile-service/info",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final profile = ProfileResponse.fromJson(baseResponse.result);
+        return profile;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get me');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<ProfileResponse> getProfile(String profileId) async {
+    try {
+      final response = await callApi(
+        "profile-service/info/$profileId",
         'GET',
         isToken: true,
       );
@@ -176,6 +202,81 @@ class UserService {
       return posts;
     } else {
       throw Exception('Failed to get liked posts by profile');
+    }
+  }
+
+  Future<BaseResponseApi> sendRequest(String tagName) async {
+    try {
+      final response = await callApi(
+        "profile-service/squads/$tagName/send-request",
+        'POST',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        return baseResponse;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to send request');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<BaseResponseApi> cancelRequest(String tagName) async {
+    try {
+      final response = await callApi(
+        "profile-service/squads/$tagName/cancel-request",
+        'POST',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        return baseResponse;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to cancel request');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<BaseResponseApi> leaveSquad(String tagName) async {
+    try {
+      final response = await callApi(
+        "profile-service/squads/$tagName/leave-squad",
+        'POST',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        return baseResponse;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to leave squad');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
     }
   }
 }

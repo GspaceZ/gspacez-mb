@@ -9,11 +9,12 @@ import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
-import 'package:untitled/screen/create_squad_view.dart';
+import 'package:untitled/screen/squad/squad_form_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/profile/profile_view.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
+import '../model/squad_response.dart';
 import '../screen/profile/update_avatar.dart';
 
 class AppRoutes {
@@ -28,6 +29,7 @@ class AppRoutes {
   static const String waitingActive = '/waiting_active';
   static const String createNewPassword = '/create_password';
   static const String createSquad = '/create_squad';
+  static const String updateSquad = '/update_squad';
   static const String chatAi = '/chat_ai';
   static const String profile = '/profile';
 
@@ -80,7 +82,12 @@ class AppRoutes {
             builder: (_) => const LayoutLanding(child: CreatePasswordView()));
       case createSquad:
         return MaterialPageRoute(
-          builder: (_) => const CreateSquadView(),
+          builder: (_) => const SquadFormView(),
+        );
+      case updateSquad:
+        final squad = settings.arguments as SquadResponse?;
+        return MaterialPageRoute(
+          builder: (_) => SquadFormView(currentSquad: squad),
         );
       case chatAi:
         return MaterialPageRoute(builder: (_) => const ChatAIView());

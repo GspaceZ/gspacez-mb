@@ -41,6 +41,29 @@ class SquadService {
     }
   }
 
+  Future<SquadResponse> updateSquad(ContentSquadModel contentSquad, String tagName) async {
+    final response = await callApi(
+      "profile-service/squads/$tagName/update",
+      "PUT",
+      isToken: true,
+      data: contentSquad.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return SquadResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to update squad');
+    }
+  }
+
   Future<List<SquadModel>> getJoinedSquads(String profileId) async {
     final response = await callApi(
       "profile-service/squads/joined/$profileId",
@@ -86,6 +109,28 @@ class SquadService {
       return accessedSquads;
     } else {
       throw Exception('Failed to get accessed squads');
+    }
+  }
+
+  Future<SquadResponse> getSquadInfo(String tagName) async {
+    final response = await callApi(
+      "profile-service/squads/$tagName/info",
+      "GET",
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return SquadResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to get squad info');
     }
   }
 }

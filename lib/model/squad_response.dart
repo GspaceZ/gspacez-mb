@@ -5,8 +5,8 @@ class SquadResponse {
   String id;
   String name;
   String privacy;
-  String avatarUrl;
-  String description;
+  String? avatarUrl;
+  String? description;
   String tagName;
   SquadSetting setting;
   int totalPosts;
@@ -21,8 +21,8 @@ class SquadResponse {
     required this.id,
     required this.name,
     required this.privacy,
-    required this.avatarUrl,
-    required this.description,
+    this.avatarUrl,
+    this.description,
     required this.tagName,
     required this.setting,
     required this.totalPosts,
@@ -39,8 +39,8 @@ class SquadResponse {
       id: json['id'],
       name: json['name'],
       privacy: json['privacy'],
-      avatarUrl: json['avatarUrl'],
-      description: json['description'],
+      avatarUrl: json['avatarUrl'] as String?,
+      description: json['description'] as String?,
       tagName: json['tagName'] as String,
       setting: SquadSetting.fromJson(json['setting']),
       totalPosts: json['totalPosts'],
