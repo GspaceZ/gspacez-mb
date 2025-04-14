@@ -115,7 +115,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
@@ -157,7 +157,8 @@ class UserService {
     }
   }
 
-  Future<List<PostModelResponse>> getPostsByProfile(String profileId, int pageNum, int pageSize) async {
+  Future<List<PostModelResponse>> getPostsByProfile(
+      String profileId, int pageNum, int pageSize) async {
     final response = await callApi(
       "post-service/posts/own-post/$profileId?pageNum=$pageNum&pageSize=$pageSize",
       'GET',
@@ -165,13 +166,13 @@ class UserService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
-      final List<PostModelResponse> posts = baseResponse.result
+      final List<PostModelResponse> posts = baseResponse.result['content']
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();
@@ -181,7 +182,8 @@ class UserService {
     }
   }
 
-  Future<List<PostModelResponse>> getLikedPostsByProfile(String profileId, int size, int page) async {
+  Future<List<PostModelResponse>> getLikedPostsByProfile(
+      String profileId, int size, int page) async {
     final response = await callApi(
       "post-service/posts/liked/by/$profileId?size=$size&page=$page",
       'GET',
@@ -189,13 +191,13 @@ class UserService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
-      final List<PostModelResponse> posts = baseResponse.result
+      final List<PostModelResponse> posts = baseResponse.result['content']
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();
@@ -215,7 +217,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
@@ -240,7 +242,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
@@ -265,7 +267,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }

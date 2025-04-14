@@ -33,7 +33,8 @@ class _ProfileViewState extends State<ProfileView>
     _viewModel = ProfileViewModel();
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
-        _viewModel.updateCurrentTab(_tabController.index); // Update the view when tab is switched
+        _viewModel.updateCurrentTab(
+            _tabController.index); // Update the view when tab is switched
       }
     });
   }
@@ -197,8 +198,10 @@ class _ProfileViewState extends State<ProfileView>
                   builder: (context, constraints) {
                     const avatarSize = 40.0;
                     const spacing = 16.0;
-                    final countPerRow = (constraints.maxWidth + spacing) ~/ (avatarSize + spacing);
-                    final totalSpacing = constraints.maxWidth - (countPerRow * avatarSize);
+                    final countPerRow = (constraints.maxWidth + spacing) ~/
+                        (avatarSize + spacing);
+                    final totalSpacing =
+                        constraints.maxWidth - (countPerRow * avatarSize);
                     final spacingBetween = countPerRow > 1
                         ? totalSpacing / (countPerRow - 1)
                         : totalSpacing;
@@ -214,9 +217,9 @@ class _ProfileViewState extends State<ProfileView>
                               MaterialPageRoute(
                                 builder: (_) =>
                                     SquadDetailView(tagName: squad.tagName),
-                                ),
-                              );
-                            },
+                              ),
+                            );
+                          },
                           borderRadius: BorderRadius.circular(8),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -292,42 +295,45 @@ class _ProfileViewState extends State<ProfileView>
                         style: TextStyle(color: Colors.grey)),
                   )
                 : SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        const avatarSize = 40.0;
-                        const spacing = 16.0;
-                        final countPerRow = (constraints.maxWidth + spacing) ~/ (avatarSize + spacing);
-                        final totalSpacing = constraints.maxWidth - (countPerRow * avatarSize);
-                        final spacingBetween = countPerRow > 1
-                          ? totalSpacing / (countPerRow - 1)
-                          : totalSpacing;
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          const avatarSize = 40.0;
+                          const spacing = 16.0;
+                          final countPerRow =
+                              (constraints.maxWidth + spacing) ~/
+                                  (avatarSize + spacing);
+                          final totalSpacing =
+                              constraints.maxWidth - (countPerRow * avatarSize);
+                          final spacingBetween = countPerRow > 1
+                              ? totalSpacing / (countPerRow - 1)
+                              : totalSpacing;
 
-                        return Wrap(
-                          spacing: spacingBetween,
-                          runSpacing: 12,
-                          children: viewModel.involvedSquads.map((squad) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircleAvatar(
-                                  radius: avatarSize / 2,
-                                  backgroundImage: NetworkImage(
-                                    squad.avatarUrl.isNotEmpty == true
-                                      ? squad.avatarUrl
-                                      : AppConstants.urlImageDefault,
+                          return Wrap(
+                            spacing: spacingBetween,
+                            runSpacing: 12,
+                            children: viewModel.involvedSquads.map((squad) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CircleAvatar(
+                                    radius: avatarSize / 2,
+                                    backgroundImage: NetworkImage(
+                                      squad.avatarUrl.isNotEmpty == true
+                                          ? squad.avatarUrl
+                                          : AppConstants.urlImageDefault,
                                     ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        );
-                    },
-                ),
-              ),
-            ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -337,7 +343,7 @@ class _ProfileViewState extends State<ProfileView>
   Widget _buildPostList(
       List<PostModelResponse> posts, ProfileViewModel viewModel) {
     return (posts.isEmpty)
-        ? const CircularProgressIndicator()
+        ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
             padding: const EdgeInsets.only(top: 10),
             itemCount: posts.length,

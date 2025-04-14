@@ -28,7 +28,7 @@ class ProfileViewModel extends ChangeNotifier {
 
   final List<SquadModel> otherUser = [];
 
-  int _currentTabIndex = 0;  // defaul tab: posts
+  int _currentTabIndex = 0; // defaul tab: posts
 
   void updateCurrentTab(int index) {
     _currentTabIndex = index;
@@ -49,6 +49,7 @@ class ProfileViewModel extends ChangeNotifier {
     final profile = await UserService.instance.getMe();
     profileId = profile.id;
     avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
+    print(avatarUrl);
     userName = "${profile.firstName} ${profile.lastName}".trim();
     dateOfBirth = profile.dob ?? '';
     address = profile.address ?? '';
@@ -56,7 +57,8 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   _fetchData() async {
-    final List<SquadModel> joinedSquads = await SquadService.instance.getJoinedSquads(profileId);
+    final List<SquadModel> joinedSquads =
+        await SquadService.instance.getJoinedSquads(profileId);
     involvedSquads.clear();
     involvedSquads.addAll(joinedSquads);
 
