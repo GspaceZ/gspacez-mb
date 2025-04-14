@@ -32,7 +32,7 @@ class PostService {
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
-      final List<PostModelResponse> posts = baseResponse.result
+      final List<PostModelResponse> posts = baseResponse.result['content']
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();
@@ -66,7 +66,8 @@ class PostService {
     }
   }
 
-  Future<PostModelResponse> createPost(PostModelRequest postModelRequest) async {
+  Future<PostModelResponse> createPost(
+      PostModelRequest postModelRequest) async {
     final response = await callApi(
       "post-service/posts/create",
       "POST",
@@ -76,14 +77,15 @@ class PostService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
 
-        return PostModelResponse.fromJson(baseResponse.result);
+      return PostModelResponse.fromJson(baseResponse.result);
     } else {
       throw Exception('Failed to create post');
     }
@@ -91,15 +93,14 @@ class PostService {
 
   Future<BaseResponseApi> setPrivacyPost(String postId, String privacy) async {
     final response = await callApi(
-      "post-service/posts/$postId/update-privacy",
-      'PUT',
-      isToken: true,
-      data: {"privacy": privacy}
-    );
+        "post-service/posts/$postId/update-privacy", 'PUT',
+        isToken: true, data: {"privacy": privacy});
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -117,9 +118,9 @@ class PostService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -141,9 +142,9 @@ class PostService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -169,8 +170,9 @@ class PostService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
@@ -182,7 +184,8 @@ class PostService {
     }
   }
 
-  Future<List<PostModelResponse>> getSquadPosts(String tagName, int size, int page) async {
+  Future<List<PostModelResponse>> getSquadPosts(
+      String tagName, int size, int page) async {
     final response = await callApi(
       "post-service/posts/squad/$tagName/accepted?size=$size&page=$page",
       'GET',
@@ -190,13 +193,13 @@ class PostService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
-      final List<PostModelResponse> posts = baseResponse.result
+      final List<PostModelResponse> posts = baseResponse.result['content']
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();

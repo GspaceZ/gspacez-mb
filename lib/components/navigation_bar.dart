@@ -32,7 +32,8 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
 
   Future<void> fetchSquads() async {
     try {
-      final List<SquadAccessResponse> accessedSquads = await SquadService.instance.getLastAccess();
+      final List<SquadAccessResponse> accessedSquads =
+          await SquadService.instance.getLastAccess();
       setState(() {
         squads = accessedSquads;
         isLoading = false;
@@ -54,16 +55,15 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
     final List<Map<String, dynamic>> discoverItems = [
       {"title": "Tags", "icon": Icons.tag},
       {"title": "Discussions", "icon": Icons.chat},
-    ];
-
-    final List<Map<String, dynamic>> feedbackItems = [
       {"title": "Feedback", "icon": Icons.feedback_outlined},
     ];
 
     final filteredSquads = searchQuery.isEmpty
         ? squads
-        : squads.where((squad) =>
-        squad.name.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+        : squads
+            .where((squad) =>
+                squad.name.toLowerCase().contains(searchQuery.toLowerCase()))
+            .toList();
 
     return SafeArea(
       child: Container(
@@ -84,56 +84,89 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
               setState(() {
                 isNetworkTabOpen = !isNetworkTabOpen;
               });
-            }),
-            if (isNetworkTabOpen) ...[
-              _buildSearchSquads(),
-              if (showSearch) _buildSearchField(),
-              if (isLoading)
-                const Center(child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: CircularProgressIndicator(),
-                ))
-              else
-                ...filteredSquads.map((squad) => _buildSquadItem(squad)),
-              _buildCreateSquadButton(),
-            ],
+            }, isOpen: isNetworkTabOpen),
+            AnimatedSize(
+              /// Network
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: isNetworkTabOpen
+                  ? Column(
+                      children: [
+                        _buildSearchSquads(),
+                        if (showSearch) _buildSearchField(),
+                        if (isLoading)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        else
+                          ...filteredSquads
+                              .map((squad) => _buildSquadItem(squad)),
+                        _buildCreateSquadButton(),
+                      ],
+                    )
+                  : const SizedBox.shrink(),
+            ),
             _buildTabToggleButton("AI", () {
               setState(() {
                 isAiTabOpen = !isAiTabOpen;
               });
-            }),
-            if (isAiTabOpen)
-              ...aiItems.map((item) => _buildMenuItem(context, item)),
+            }, isOpen: isAiTabOpen),
+            AnimatedSize(
+              /// AI
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: isAiTabOpen
+                  ? Column(
+                      children: aiItems
+                          .map((item) => _buildMenuItem(context, item))
+                          .toList(),
+                    )
+                  : const SizedBox.shrink(),
+            ),
             _buildTabToggleButton("Discover", () {
               setState(() {
                 isDiscoverTabOpen = !isDiscoverTabOpen;
               });
-            }),
-            if (isDiscoverTabOpen)
-              ...discoverItems.map((item) => _buildMenuItem(context, item)),
+            }, isOpen: isDiscoverTabOpen),
+            AnimatedSize(
+              /// Discover
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              child: isDiscoverTabOpen
+                  ? Column(
+                      children: discoverItems
+                          .map((item) => _buildMenuItem(context, item))
+                          .toList(),
+                    )
+                  : const SizedBox.shrink(),
+            ),
             const SizedBox(height: 8),
-            ...feedbackItems.map((item) => _buildMenuItem(context, item)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTabToggleButton(String title, VoidCallback onTap) {
+  Widget _buildTabToggleButton(String title, VoidCallback onTap,
+      {bool isOpen = false}) {
     return InkWell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
-          border: const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
+          border:
+              const Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: textBold.copyWith(color: Colors.grey.shade700)),
             Icon(
-              isAiTabOpen || isDiscoverTabOpen ? Icons.expand_less : Icons.expand_more,
+              isOpen ? Icons.expand_less : Icons.expand_more,
               color: Colors.black,
             ),
           ],
@@ -159,7 +192,8 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Search squads", style: textBold),
-            const Icon(Icons.manage_search_outlined, color: Colors.black, size: 30),
+            const Icon(Icons.manage_search_outlined,
+                color: Colors.black, size: 30),
           ],
         ),
       ),

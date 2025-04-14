@@ -9,7 +9,7 @@ class ProfileResponse {
   final String? address;
   final String? description;
   final String? avatarUrl;
-  final String createdAt;
+  final String updatedAt;
 
   ProfileResponse({
     required this.id,
@@ -22,7 +22,7 @@ class ProfileResponse {
     this.address,
     this.description,
     this.avatarUrl,
-    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory ProfileResponse.fromJson(Map<String, dynamic> json) {
@@ -37,7 +37,7 @@ class ProfileResponse {
       address: json['address'] as String?,
       description: json['description'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
-      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String,
     );
   }
 
@@ -53,7 +53,7 @@ class ProfileResponse {
       'address': address,
       'description': description,
       'avatarUrl': avatarUrl,
-      'createdAt': createdAt,
+      'updatedAt': updatedAt,
     };
   }
 }
