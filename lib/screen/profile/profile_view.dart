@@ -6,6 +6,7 @@ import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/view_model/profile_view_model.dart';
 import '../../constants/appconstants.dart';
+import '../squad/squad_detail_view.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -206,18 +207,44 @@ class _ProfileViewState extends State<ProfileView>
                       spacing: spacingBetween,
                       runSpacing: 12,
                       children: viewModel.involvedSquads.map((squad) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircleAvatar(
-                              radius: avatarSize / 2,
-                              backgroundImage: NetworkImage(
-                                squad.avatarUrl.isNotEmpty == true
-                                    ? squad.avatarUrl
-                                    : AppConstants.urlImageDefault,
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    SquadDetailView(tagName: squad.tagName),
+                                ),
+                              );
+                            },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                radius: avatarSize / 2,
+                                backgroundImage: NetworkImage(
+                                  squad.avatarUrl.isNotEmpty
+                                      ? squad.avatarUrl
+                                      : AppConstants.urlImageDefault,
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 6),
+                              Tooltip(
+                                message: squad.name,
+                                child: SizedBox(
+                                  width: avatarSize + 20,
+                                  child: Text(
+                                    squad.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       }).toList(),
                     );

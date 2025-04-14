@@ -46,7 +46,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   _getUserInfo() async {
-    final profile = await UserService.instance.getProfile();
+    final profile = await UserService.instance.getMe();
     profileId = profile.id;
     avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
     userName = "${profile.firstName} ${profile.lastName}".trim();

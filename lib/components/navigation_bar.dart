@@ -5,6 +5,7 @@ import 'package:untitled/router/app_router.dart';
 import 'package:untitled/utils/style.dart';
 
 import '../model/squad-access-response.dart';
+import '../screen/squad/squad_detail_view.dart';
 import '../service/squad_service.dart';
 
 class NavigationSidebar extends StatefulWidget {
@@ -196,7 +197,12 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
       ),
       title: Text(squad.name),
       onTap: () {
-        /// TODO: navigate to squad page, or do something with squad.squadId
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SquadDetailView(tagName: squad.tagName),
+          ),
+        );
       },
     );
   }

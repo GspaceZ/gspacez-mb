@@ -178,7 +178,7 @@ class SigninViewModel extends ChangeNotifier {
   }
 
   Future<void> _saveUserInLocal() async {
-    final profile = await UserService.instance.getProfile();
+    final profile = await UserService.instance.getMe();
     final localStorage = LocalStorage.instance;
     localStorage.saveUserEmail(emailController.text);
     localStorage.saveUserName('${profile.firstName} ${profile.lastName}');

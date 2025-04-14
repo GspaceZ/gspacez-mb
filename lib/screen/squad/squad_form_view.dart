@@ -2,18 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/main.dart';
-import 'package:untitled/view_model/create_squad_view_model.dart';
+import 'package:untitled/view_model/squad_form_view_model.dart';
 
-class CreateSquadView extends StatelessWidget {
-  const CreateSquadView({super.key});
+import '../../model/squad_response.dart';
+
+class SquadFormView extends StatelessWidget {
+  final SquadResponse? currentSquad;
+
+  const SquadFormView({super.key, this.currentSquad});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Create Squad',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        title: Text(
+          currentSquad == null ? 'Create Squad' : 'Update your squad ${currentSquad?.tagName}',
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
@@ -21,18 +25,20 @@ class CreateSquadView extends StatelessWidget {
         elevation: 0,
       ),
       body: ChangeNotifierProvider(
-        create: (BuildContext context) => CreateSquadViewModel(),
-        child: Consumer<CreateSquadViewModel>(
-          builder: (context, createSquadViewModel, child) {
+        create: (BuildContext context) => SquadFormViewModel(
+          currentSquad: currentSquad,
+        ),
+        child: Consumer<SquadFormViewModel>(
+          builder: (context, squadFormViewModel, child) {
             return Scaffold(
               body: Padding(
                 padding: const EdgeInsets.all(16),
                 child: ListView(
                   children: [
                     const SizedBox(height: 12),
-                    const Text(
-                      "Create a place that people can interact with others about a topic",
-                      style: TextStyle(fontSize: 16),
+                    Text(
+                      currentSquad == null ? "Create a place that people can interact with others about a topic" : "",
+                      style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 16),
 
@@ -43,18 +49,18 @@ class CreateSquadView extends StatelessWidget {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    _buildUploadAvatarButton(createSquadViewModel),
+                    _buildUploadAvatarButton(squadFormViewModel),
 
                     /// Form input
                     _buildTextFormField(
                         "Name of your squad",
                         "Your squad's name",
-                        createSquadViewModel.nameSquadController,
+                        squadFormViewModel.nameController,
                         Icons.label_outline),
                     _buildTextFormField("Tag name", "Find a tag name that can impress everyone",
-                        createSquadViewModel.tagSquadController, Icons.alternate_email),
+                        squadFormViewModel.tagNameController, Icons.alternate_email),
                     _buildTextFormField("Description", "To help people know that your group will do",
-                        createSquadViewModel.descriptionSquadController, null,
+                        squadFormViewModel.descriptionController, null,
                         isDescription: true),
                     const SizedBox(height: 16),
                     const Text(
@@ -67,53 +73,53 @@ class CreateSquadView extends StatelessWidget {
                         title: 'Public',
                         description:
                             'Anyone can see your squad and join without your approval',
-                        value: createSquadViewModel.isPublic,
+                        value: squadFormViewModel.isPublic,
                         onChanged: (_) {
-                          createSquadViewModel.onCheckPublic();
+                          squadFormViewModel.togglePublic();
                         }),
                     _buildCheckBox(
                         title: 'Private',
                         description:
                             'Only members in the squads can interact with posts. Members can also send invitation link to join the squad.',
-                        value: !createSquadViewModel.isPublic,
+                        value: !squadFormViewModel.isPublic,
                         onChanged: (_) {
-                          createSquadViewModel.onCheckPublic();
+                          squadFormViewModel.togglePublic();
                         }),
                     const SizedBox(height: 16),
 
                     /// Advanced setting
                     _buildButtonAdvancedSetting(
-                        createSquadViewModel.onChangeAdvancedSettingStatus,
-                        createSquadViewModel.isShowAdvancedSetting),
-                    if (createSquadViewModel.isShowAdvancedSetting) ...[
+                        squadFormViewModel.toggleAdvancedSettings,
+                        squadFormViewModel.isShowAdvancedSetting),
+                    if (squadFormViewModel.isShowAdvancedSetting) ...[
                       _buildSwitch(
                           title: 'Allow members to change profile',
                           description:
                               'Allow members to change their profile information',
-                          value: createSquadViewModel.isAllowChangeProfile,
+                          value: squadFormViewModel.isAllowChangeProfile,
                           onChanged: (_) {
-                            createSquadViewModel.onChangeAllowChangeProfile();
+                            squadFormViewModel.toggleAllowChangeProfile();
                           }),
                       _buildSwitch(
                           title: 'Allow members to change post',
                           description:
                               'Allow members to change their post information',
-                          value: createSquadViewModel.isAllowChangePost,
+                          value: squadFormViewModel.isAllowChangePost,
                           onChanged: (_) {
-                            createSquadViewModel.onChangeAllowChangePost();
+                            squadFormViewModel.toggleAllowChangePost();
                           }),
                       _buildSwitch(
                           title: 'Allow members to post under',
                           description:
                               'Allow members to post under other members post',
-                          value: createSquadViewModel.isAllowPostUnder,
+                          value: squadFormViewModel.isAllowPostUnder,
                           onChanged: (_) {
-                            createSquadViewModel.onChangeAllowPostUnder();
+                            squadFormViewModel.toggleAllowPostUnder();
                           }),
                     ],
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: createSquadViewModel.submit,
+                      onPressed: squadFormViewModel.submit,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
@@ -138,7 +144,7 @@ class CreateSquadView extends StatelessWidget {
     );
   }
 
-  _buildUploadAvatarButton(CreateSquadViewModel viewModel) {
+  _buildUploadAvatarButton(SquadFormViewModel viewModel) {
     return Column(
       children: [
         Container(

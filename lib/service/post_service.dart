@@ -181,4 +181,28 @@ class PostService {
       throw Exception('Failed to create post');
     }
   }
+
+  Future<List<PostModelResponse>> getSquadPosts(String tagName, int size, int page) async {
+    final response = await callApi(
+      "post-service/posts/squad/$tagName/accepted?size=$size&page=$page",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<PostModelResponse> posts = baseResponse.result
+          .map((post) => PostModelResponse.fromJson(post))
+          .toList()
+          .cast<PostModelResponse>();
+      return posts;
+    } else {
+      throw Exception('Failed to get posts in squad');
+    }
+  }
 }
