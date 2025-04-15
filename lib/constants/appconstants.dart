@@ -9,4 +9,5 @@ class AppConstants {
   static const history = 2;
   static const notification = 3;
   static const createSquads = 4;
+  static const dateFormat = 'MMM dd, yyyy';
 }

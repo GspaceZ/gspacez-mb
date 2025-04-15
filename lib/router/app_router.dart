@@ -9,6 +9,8 @@ import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
+import 'package:untitled/screen/explore/explore_view.dart';
+import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/squad/squad_form_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
@@ -23,6 +25,8 @@ class AppRoutes {
   static const String forgotPassword = '/sign_in/forgot_password';
   static const String signUp = '/sign_up';
   static const String home = '/home';
+  static const String history = '/history';
+  static const String explore = '/explore';
   static const String updateProfile = '/update_profile';
   static const String updateAvatar = '/update_avatar';
   static const String activeSuccess = '/active_success';
@@ -89,6 +93,10 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => SquadFormView(currentSquad: squad),
         );
+      case history:
+        return MaterialPageRoute(builder: (_) => const HistoryView());
+      case explore:
+        return MaterialPageRoute(builder: (_) => const ExploreView());
       case chatAi:
         return MaterialPageRoute(builder: (_) => const ChatAIView());
       case profile:
