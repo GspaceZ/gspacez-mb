@@ -13,6 +13,7 @@ import 'package:untitled/utils/format_time.dart';
 import 'package:video_player/video_player.dart';
 
 import '../constants/appconstants.dart';
+import '../screen/profile/profile_view.dart';
 import '../service/post_service.dart';
 
 class CommonPost extends StatefulWidget {
@@ -101,14 +102,22 @@ class _CommonPostState extends State<CommonPost> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CircleAvatar(
-                                backgroundImage: CachedNetworkImageProvider(
-                                  widget.post.avatarUrl ??
-                                      AppConstants.urlImageDefault,
-                                  errorListener: (_) {
-                                    Log.error(
-                                        'Error loading image ${widget.post.avatarUrl}');
-                                  },
+                              child: GestureDetector(
+                                onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ProfileView(profileId: widget.post.profileId),
+                                      ),
+                                    );
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    widget.post.avatarUrl ?? AppConstants.urlImageDefault,
+                                    errorListener: (_) {
+                                      Log.error('Error loading image ${widget.post.avatarUrl}');
+                                    },
+                                  ),
                                 ),
                               ),
                             ),

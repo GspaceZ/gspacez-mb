@@ -6,6 +6,7 @@ import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
 import '../../service/user_service.dart';
 import '../../view_model/squad_detail_view_model.dart';
+import '../profile/profile_view.dart';
 
 class SquadDetailView extends StatefulWidget {
   final String tagName;
@@ -61,10 +62,27 @@ class _SquadDetailViewState extends State<SquadDetailView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(squad),
+                const SizedBox(height: 8),
                 _buildSquadActions(context, squad, viewModel),
-                if (squad.description != null && squad.description!.isNotEmpty) _buildDescription(squad),
                 const SizedBox(height: 16),
-                _buildStats(squad),
+                _buildSquadAdmins(context, squad, viewModel),
+                const SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (squad.description != null && squad.description!.isNotEmpty) _buildDescription(squad),
+                    const SizedBox(height: 16),
+                    const Divider(
+                      thickness: 1,
+                      height: 24,
+                      indent: 16,
+                      endIndent: 16,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildStats(squad),
+                  ],
+                ),
                 const SizedBox(height: 16),
                 Expanded(
                   child: DefaultTabController(
@@ -152,6 +170,81 @@ class _SquadDetailViewState extends State<SquadDetailView> {
               ),
               Text(tagName, style: const TextStyle(color: Colors.grey)),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSquadAdmins(BuildContext context, SquadResponse squad, SquadDetailViewModel viewModel) {
+    final admins = squad.adminList;
+
+    if (admins.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Squad Admins",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: admins.map((admin) {
+              final avatarUrl = viewModel.adminAvatars[admin.profileId];
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProfileView(profileId: admin.profileId),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircleAvatar(
+                        radius: 12,
+                        backgroundColor: Colors.grey[300],
+                        backgroundImage: avatarUrl != null
+                            ? NetworkImage(avatarUrl)
+                            : null,
+                        child: avatarUrl == null
+                            ? const Icon(
+                          Icons.person,
+                          size: 16,
+                          color: Colors.grey,
+                        )
+                            : null,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        admin.profileName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -441,13 +534,41 @@ class _SquadDetailViewState extends State<SquadDetailView> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         children: [
-          const Icon(Icons.people),
-          const SizedBox(width: 4),
-          Text("${squad.totalMembers} members"),
-          const SizedBox(width: 16),
-          const Icon(Icons.post_add),
-          const SizedBox(width: 4),
-          Text("${squad.totalPosts} posts"),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.people, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  "${squad.totalMembers} members",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.post_add, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  "${squad.totalPosts} posts",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

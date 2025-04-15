@@ -9,6 +9,7 @@ import 'package:untitled/service/squad_service.dart';
 import '../service/user_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
+  String? _profileId;
   String profileId = '';
   String avatarUrl = '';
   String userName = '';
@@ -35,7 +36,8 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  ProfileViewModel() {
+  ProfileViewModel({String? profileId}) {
+    _profileId = profileId;
     scrollController.addListener(_onScroll);
     _init();
   }
@@ -46,10 +48,12 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   _getUserInfo() async {
-    final profile = await UserService.instance.getMe();
+    final profile = _profileId == null
+        ? await UserService.instance.getMe()
+        : await UserService.instance.getProfile(_profileId!);
+
     profileId = profile.id;
     avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
-    print(avatarUrl);
     userName = "${profile.firstName} ${profile.lastName}".trim();
     dateOfBirth = profile.dob ?? '';
     address = profile.address ?? '';
