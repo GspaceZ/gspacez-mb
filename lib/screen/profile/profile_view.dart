@@ -9,7 +9,8 @@ import '../../constants/appconstants.dart';
 import '../squad/squad_detail_view.dart';
 
 class ProfileView extends StatefulWidget {
-  const ProfileView({super.key});
+  final String? profileId;
+  const ProfileView({super.key, this.profileId});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -30,7 +31,7 @@ class _ProfileViewState extends State<ProfileView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _viewModel = ProfileViewModel();
+    _viewModel = ProfileViewModel(profileId: widget.profileId);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         _viewModel.updateCurrentTab(
@@ -50,7 +51,7 @@ class _ProfileViewState extends State<ProfileView>
         backgroundColor: Colors.white,
       ),
       body: ChangeNotifierProvider(
-        create: (BuildContext context) => ProfileViewModel(),
+        create: (BuildContext context) => _viewModel,
         child: Consumer<ProfileViewModel>(
           builder: (context, viewModel, child) {
             return NestedScrollView(
