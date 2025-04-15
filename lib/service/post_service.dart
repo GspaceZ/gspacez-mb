@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/explore_model.dart';
@@ -134,9 +133,9 @@ class PostService {
     }
   }
 
-  Future<List<ExploreModel>> getArticles() async {
+  Future<List<ExploreModel>> getArticles(int size, int page) async {
     final response = await callApi(
-      "post-service/explore/articles",
+      "post-service/explore/articles?size=$size&page=$page",
       'GET',
       isToken: true,
     );

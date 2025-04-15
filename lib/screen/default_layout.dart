@@ -6,6 +6,7 @@ import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
 import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/router/app_router.dart';
+import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/service/post_service.dart';
@@ -106,10 +107,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
                 const Home(),
 
                 /// Explore page
-                const Center(
-                  child: Text("Explore"),
-                ),
-
+                const ExploreView(),
                 /// History page
                 const HistoryView(),
 
