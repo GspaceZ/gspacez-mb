@@ -55,6 +55,9 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
     final List<Map<String, dynamic>> discoverItems = [
       {"title": "Tags", "icon": Icons.tag},
       {"title": "Discussions", "icon": Icons.chat},
+    ];
+
+    final List<Map<String, dynamic>> feedbackItems = [
       {"title": "Feedback", "icon": Icons.feedback_outlined},
     ];
 
@@ -144,6 +147,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
                   : const SizedBox.shrink(),
             ),
             const SizedBox(height: 8),
+            ...feedbackItems.map((item) => _buildMenuItem(context, item)),
           ],
         ),
       ),
