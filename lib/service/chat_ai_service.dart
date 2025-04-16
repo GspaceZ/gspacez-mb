@@ -9,14 +9,14 @@ class ChatAiService {
   // static final clientId = dotenv.env['GEMINI_API_KEY'] ?? '';
 
   ChatAiService() {
-    model = GenerativeModel(model: "gemini-1.5-flash-latest", apiKey: apiKey);
+    model = GenerativeModel(model: "gemini-1.5-flash", apiKey: apiKey);
   }
 
   Future<String> sendMessage(String message) async {
     try {
       var chat = model.startChat();
       var response = await chat.sendMessage(Content.text(message));
-      return response.text ?? "Không có phản hồi!";
+      return response.text ?? "No Response!";
     } catch (e) {
       return "Lỗi: $e";
     }

@@ -24,14 +24,15 @@ class ChatAIViewModel extends ChangeNotifier {
       role: Role.user,
       name: username,
       avatar: avatar,
-      color: Colors.blue,
+      color: const Color(0xFFF1F3F5),
     );
+
     botController = ChatAIModel(
       message: [],
       role: Role.bot,
       name: "Bot",
       avatar: AppConstants.urlImageDefault,
-      color: Colors.green,
+      color: const Color(0xFFDBE4FF),
     );
     isLoading = false;
     notifyListeners();
