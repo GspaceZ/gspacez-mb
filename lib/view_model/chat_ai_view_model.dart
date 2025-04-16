@@ -11,14 +11,15 @@ class ChatAIViewModel extends ChangeNotifier {
   late ChatAIModel userController;
   late ChatAIModel botController;
   bool isLoading = true;
+
   ChatAIViewModel() {
     _init();
   }
 
   _init() async {
-    final avatar = await LocalStorage.instance.userUrlAvatar ??
-        AppConstants.urlImageDefault;
+    final avatar = await LocalStorage.instance.userUrlAvatar ?? AppConstants.urlImageDefault;
     final username = await LocalStorage.instance.userName ?? "User";
+
     userController = ChatAIModel(
       message: [],
       role: Role.user,
@@ -58,6 +59,18 @@ class ChatAIViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> regenerateBotResponse(int index) async {
+    if (index < botController.message.length) {
+      botController.message[index] = "Regenerating...";
+      notifyListeners();
+
+      final response = await chatAiService.sendMessage(userController.message[index]);
+      botController.message[index] = response;
+      notifyListeners();
+      _scrollToBottom();
+    }
+  }
+
   void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (scrollController.hasClients) {
@@ -68,5 +81,23 @@ class ChatAIViewModel extends ChangeNotifier {
         );
       }
     });
+  }
+
+  void editUserMessage(int index, String newMessage) async {
+    if (newMessage.isEmpty) return;
+
+    userController.message[index] = newMessage;
+
+    if (index < botController.message.length) {
+      botController.message[index] = "Regenerating...";
+    } else {
+      botController.message.add("Regenerating...");
+    }
+    notifyListeners();
+
+    final response = await chatAiService.sendMessage(newMessage);
+    botController.message[index] = response;
+    notifyListeners();
+    _scrollToBottom();
   }
 }

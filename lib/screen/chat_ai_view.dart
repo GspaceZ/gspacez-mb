@@ -71,15 +71,26 @@ class ChatAIView extends StatelessWidget {
                               avatar: viewModel.userController.avatar,
                               color: viewModel.userController.color,
                               isUser: true,
+                              onEditSubmit: (newMessage) {
+                                viewModel.editUserMessage(index, newMessage);
+                              },
+                              onRegenerate: () {},
+                              index: index,
                             ),
                             if (index < viewModel.botController.message.length)
-                              ChatBubble(
-                                message: viewModel.botController.message[index],
-                                name: viewModel.botController.name,
-                                avatar: viewModel.botController.avatar,
-                                color: viewModel.botController.color,
-                                isUser: false,
-                              ),
+                              if (index < viewModel.botController.message.length)
+                                ChatBubble(
+                                  message: viewModel.botController.message[index],
+                                  name: viewModel.botController.name,
+                                  avatar: viewModel.botController.avatar,
+                                  color: viewModel.botController.color,
+                                  isUser: false,
+                                  onEditSubmit: (_) {},
+                                  onRegenerate: () {
+                                    viewModel.regenerateBotResponse(index);
+                                  },
+                                  index: index,
+                                ),
                           ],
                         );
                       },
