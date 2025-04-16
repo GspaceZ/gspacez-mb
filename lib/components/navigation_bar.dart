@@ -49,7 +49,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> aiItems = [
-      {"title": "AI", "icon": Icons.psychology, "route": AppRoutes.chatAi},
+      {"title": "AI", "icon": Icons.smart_toy, "route": AppRoutes.chatAi},
     ];
 
     final List<Map<String, dynamic>> discoverItems = [
