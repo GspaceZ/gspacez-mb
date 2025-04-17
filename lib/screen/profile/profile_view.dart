@@ -344,7 +344,12 @@ class _ProfileViewState extends State<ProfileView>
   Widget _buildPostList(
       List<PostModelResponse> posts, ProfileViewModel viewModel) {
     return (posts.isEmpty)
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(
+            child: Text(
+              'No posts available',
+              style: TextStyle(color: Colors.grey),
+            ),
+          )
         : ListView.builder(
             padding: const EdgeInsets.only(top: 10),
             itemCount: posts.length,

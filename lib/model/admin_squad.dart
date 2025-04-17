@@ -1,3 +1,5 @@
+import 'package:untitled/constants/appconstants.dart';
+
 class AdminSquad {
   final String id;
   final String profileId;
@@ -6,6 +8,7 @@ class AdminSquad {
   final String joinStatus;
   final String role;
   final DateTime joinedAt;
+  String avatarUrl = AppConstants.urlImageDefault;
 
   AdminSquad({
     required this.id,
