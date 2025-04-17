@@ -11,6 +11,7 @@ import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
+import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/screen/squad/squad_form_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String updateSquad = '/update_squad';
   static const String chatAi = '/chat_ai';
   static const String profile = '/profile';
+  static const String notification = '/notification';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -101,6 +103,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ChatAIView());
       case profile:
         return MaterialPageRoute(builder: (_) => const ProfileView());
+      case notification:
+        return MaterialPageRoute(builder: (_) => const NotificationView());
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

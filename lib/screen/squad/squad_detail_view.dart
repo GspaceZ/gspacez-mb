@@ -8,6 +8,7 @@ import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
 import '../../service/user_service.dart';
 import '../../view_model/squad_detail_view_model.dart';
+import '../profile/profile_view.dart';
 
 class SquadDetailView extends StatefulWidget {
   final String tagName;
@@ -40,6 +41,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                             _buildHeader(viewModel.squad),
                             _buildSquadActions(
                                 context, viewModel.squad, viewModel),
+                            const SizedBox(height: 16),
+                            _buildSquadAdmins(context, viewModel.squad, viewModel),
                             if (viewModel.squad.description != null &&
                                 viewModel.squad.description!.isNotEmpty)
                               _buildDescription(viewModel.squad),
@@ -97,55 +100,65 @@ class _SquadDetailViewState extends State<SquadDetailView> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
             radius: 30,
             backgroundImage: NetworkImage(avatarUrl),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(squad.name,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: privacy == 'PRIVATE'
-                          ? Colors.red[50]
-                          : Colors.blue[50],
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          privacy == 'PRIVATE' ? Icons.lock : Icons.public,
-                          size: 14,
-                          color:
-                              privacy == 'PRIVATE' ? Colors.red : Colors.blue,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Squad name with tooltip and ellipsis
+                    Expanded(
+                      child: Tooltip(
+                        message: squad.name,
+                        child: Text(
+                          squad.name,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          privacy,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                privacy == 'PRIVATE' ? Colors.red : Colors.blue,
-                            fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Privacy badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: privacy == 'PRIVATE' ? Colors.red[50] : Colors.blue[50],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            privacy == 'PRIVATE' ? Icons.lock : Icons.public,
+                            size: 14,
+                            color: privacy == 'PRIVATE' ? Colors.red : Colors.blue,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Text(
+                            privacy,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: privacy == 'PRIVATE' ? Colors.red : Colors.blue,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Text(tagName, style: const TextStyle(color: Colors.grey)),
-            ],
+                  ],
+                ),
+                Text(tagName, style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
           ),
         ],
       ),
@@ -376,6 +389,94 @@ class _SquadDetailViewState extends State<SquadDetailView> {
     return const SizedBox.shrink();
   }
 
+  Widget _buildSquadAdmins(BuildContext context, SquadResponse squad, SquadDetailViewModel viewModel) {
+    final admins = squad.adminList;
+
+    if (admins.isEmpty) return const SizedBox.shrink();
+
+    List<List<AdminSquad>> adminRows = [];
+    for (int i = 0; i < admins.length; i += 2) {
+      adminRows.add(
+        admins.sublist(i, i + 2 > admins.length ? admins.length : i + 2),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Squad Admins",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 8),
+          ...adminRows.map((row) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                children: row.map((admin) {
+                  final avatarUrl = viewModel.adminAvatars[admin.profileId];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProfileView(profileId: admin.profileId),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.grey[300],
+                              backgroundImage: avatarUrl != null
+                                  ? NetworkImage(avatarUrl)
+                                  : null,
+                              child: avatarUrl == null
+                                  ? const Icon(
+                                Icons.person,
+                                size: 16,
+                                color: Colors.grey,
+                              )
+                                  : null,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              admin.profileName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDescription(SquadResponse squad) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -403,13 +504,41 @@ class _SquadDetailViewState extends State<SquadDetailView> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
         children: [
-          const Icon(Icons.people),
-          const SizedBox(width: 4),
-          Text("${squad.totalMembers} members"),
-          const SizedBox(width: 16),
-          const Icon(Icons.post_add),
-          const SizedBox(width: 4),
-          Text("${squad.totalPosts} posts"),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.people, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  "${squad.totalMembers} members",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.post_add, size: 16),
+                const SizedBox(width: 4),
+                Text(
+                  "${squad.totalPosts} posts",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -481,51 +610,65 @@ class _SquadDetailViewState extends State<SquadDetailView> {
             itemBuilder: (context, index) {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 60 - 16,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage:
-                            NetworkImage(listAdmin[index].avatarUrl),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        listAdmin[index].profileName,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(2),
-                          color: Colors.indigo,
-                        ),
-                        child: Text(
-                          listAdmin[index].role.toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(listAdmin[index].avatarUrl),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  listAdmin[index].profileName,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(2),
+                                  color: Colors.indigo,
+                                ),
+                                child: Text(
+                                  listAdmin[index].role.toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Joined at ${DateFormat('dd/MM/yyyy').format(listAdmin[index].joinedAt)}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
-                      const Spacer(),
-                      Text(
-                        "Joined at: ${DateFormat(AppConstants.dateFormat).format(listAdmin[index].joinedAt)}",
-                        style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },
@@ -538,14 +681,14 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.indigo.shade50,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(12.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   child: const Text(
                     "Update your squad admins",
-                    style: TextStyle(fontSize: 16, color: Colors.indigo),
+                    style: TextStyle(fontSize: 16, color: Colors.indigo, fontWeight: FontWeight.bold),
                   ),
                 )
               : (listAdmin.isEmpty)

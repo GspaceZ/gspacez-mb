@@ -3,6 +3,7 @@ import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
+import '../model/notification_model.dart';
 import '../model/post_model_response.dart';
 
 class UserService {
@@ -279,6 +280,30 @@ class UserService {
     } catch (error) {
       Log.debug('Error: $error');
       rethrow;
+    }
+  }
+
+  Future<List<NotificationModel>> getNotifications(String profileId) async {
+    final response = await callApi(
+      "notification/get-notification/$profileId",
+      'GET',
+      isToken: true,
+    );
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<NotificationModel> notifications = baseResponse.result
+          .map((notification) => NotificationModel.fromJson(notification))
+          .toList()
+          .cast<NotificationModel>();
+      return notifications;
+    } else {
+      throw Exception('Failed to get notifications by profile');
     }
   }
 }
