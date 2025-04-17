@@ -9,6 +9,7 @@ import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
+import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/service/post_service.dart';
 import '../components/navigation_bar.dart';
 import 'homePage/home.dart';
@@ -112,9 +113,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
                 const HistoryView(),
 
                 /// Notification page
-                const Center(
-                  child: Text("Notifications"),
-                ),
+                const NotificationView(),
 
                 if (widget.child != null) widget.child!,
               ],

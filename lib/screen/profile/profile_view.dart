@@ -145,7 +145,7 @@ class _ProfileViewState extends State<ProfileView>
                     color: Colors.blue,
                   ),
                   SizedBox(width: 5),
-                  Text('Edit Profile', style: TextStyle(color: Colors.blue)),
+                  Text('Edit your profile', style: TextStyle(color: Colors.blue)),
                 ],
               ),
             )
@@ -198,7 +198,7 @@ class _ProfileViewState extends State<ProfileView>
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     const avatarSize = 40.0;
-                    const spacing = 16.0;
+                    const spacing = 12.0;
                     final countPerRow = (constraints.maxWidth + spacing) ~/
                         (avatarSize + spacing);
                     final totalSpacing =
@@ -283,7 +283,7 @@ class _ProfileViewState extends State<ProfileView>
             const Padding(
               padding: EdgeInsets.all(10),
               child: Text(
-                'Other Accounts',
+                'View other social accounts',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -302,7 +302,7 @@ class _ProfileViewState extends State<ProfileView>
                       child: LayoutBuilder(
                         builder: (context, constraints) {
                           const avatarSize = 40.0;
-                          const spacing = 16.0;
+                          const spacing = 12.0;
                           final countPerRow =
                               (constraints.maxWidth + spacing) ~/
                                   (avatarSize + spacing);

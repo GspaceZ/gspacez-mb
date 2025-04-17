@@ -83,6 +83,7 @@ class _CommonPostState extends State<CommonPost> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(
         decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: Colors.grey,
