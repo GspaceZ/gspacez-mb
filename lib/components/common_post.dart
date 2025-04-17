@@ -58,8 +58,8 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _checkMyPost() async {
-    final userName = await LocalStorage.instance.userName ?? "";
-    if (userName == widget.post.profileName) {
+    final userId = await LocalStorage.instance.userId ?? "";
+    if (userId == widget.post.profileId) {
       _isMyPost = true;
     }
     setState(() {});
@@ -104,18 +104,21 @@ class _CommonPostState extends State<CommonPost> {
                               padding: const EdgeInsets.all(8.0),
                               child: GestureDetector(
                                 onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ProfileView(profileId: widget.post.profileId),
-                                      ),
-                                    );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ProfileView(
+                                          profileId: widget.post.profileId),
+                                    ),
+                                  );
                                 },
                                 child: CircleAvatar(
                                   backgroundImage: CachedNetworkImageProvider(
-                                    widget.post.avatarUrl ?? AppConstants.urlImageDefault,
+                                    widget.post.avatarUrl ??
+                                        AppConstants.urlImageDefault,
                                     errorListener: (_) {
-                                      Log.error('Error loading image ${widget.post.avatarUrl}');
+                                      Log.error(
+                                          'Error loading image ${widget.post.avatarUrl}');
                                     },
                                   ),
                                 ),
@@ -190,67 +193,63 @@ class _CommonPostState extends State<CommonPost> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           GestureDetector(
-            onTap: () async {
-              if (isLiked) return;
-              try {
-                  final response = await PostService.instance.reactPost(postId, 'LIKE');
+              onTap: () async {
+                if (isLiked) return;
+                try {
+                  final response =
+                      await PostService.instance.reactPost(postId, 'LIKE');
                   setState(() {
                     post.liked = true;
                     post.disliked = false;
                     post.totalLike = response.totalLikes;
                     post.totalDislike = response.totalDislikes;
                   });
-              } catch (e) {
-                throw Exception("Failed to react post: $e");
-              }
-            },
-            child: Row(
-              children: [
+                } catch (e) {
+                  throw Exception("Failed to react post: $e");
+                }
+              },
+              child: Row(children: [
                 isLiked
-                  ? const Icon(
-                      Icons.thumb_up_alt_outlined,
-                      color: Colors.blue,
-                    )
-                  : const Icon(
-                      Icons.thumb_up_outlined,
-                      color: Colors.black,
-                    ),
-                  const SizedBox(width: 4),
-                  Text('$totalLike'),
-                ]
-              )
-            ),
+                    ? const Icon(
+                        Icons.thumb_up_alt_outlined,
+                        color: Colors.blue,
+                      )
+                    : const Icon(
+                        Icons.thumb_up_outlined,
+                        color: Colors.black,
+                      ),
+                const SizedBox(width: 4),
+                Text('$totalLike'),
+              ])),
           GestureDetector(
-            onTap: () async {
-              if (isDisliked) return;
-              try {
-                final response = await PostService.instance.reactPost(postId, 'DISLIKE');
-                setState(() {
-                  post.disliked = true;
-                  post.liked = false;
-                  post.totalLike = response.totalLikes;
-                  post.totalDislike = response.totalDislikes;
-                });
-              } catch (e) {
-                throw Exception("Failed to react post: $e");
-              }
-            },
-            child: Row(
-              children: [
+              onTap: () async {
+                if (isDisliked) return;
+                try {
+                  final response =
+                      await PostService.instance.reactPost(postId, 'DISLIKE');
+                  setState(() {
+                    post.disliked = true;
+                    post.liked = false;
+                    post.totalLike = response.totalLikes;
+                    post.totalDislike = response.totalDislikes;
+                  });
+                } catch (e) {
+                  throw Exception("Failed to react post: $e");
+                }
+              },
+              child: Row(children: [
                 isDisliked
-                  ? const Icon(
-                      Icons.thumb_down_alt_outlined,
-                      color: Colors.red,
-                    )
-                  : const Icon(
-                      Icons.thumb_down_outlined,
-                      color: Colors.black,
-                    ),
+                    ? const Icon(
+                        Icons.thumb_down_alt_outlined,
+                        color: Colors.red,
+                      )
+                    : const Icon(
+                        Icons.thumb_down_outlined,
+                        color: Colors.black,
+                      ),
                 const SizedBox(width: 4),
                 Text('$totalDislike'),
-              ]
-            )
-          ),
+              ])),
           GestureDetector(
             onTap: () {
               showModalBottomSheet(
