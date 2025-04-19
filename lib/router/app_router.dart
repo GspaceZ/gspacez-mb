@@ -12,6 +12,7 @@ import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
+import 'package:untitled/screen/squad/squad_detail_view.dart';
 import 'package:untitled/screen/squad/squad_form_view.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String chatAi = '/chat_ai';
   static const String profile = '/profile';
   static const String notification = '/notification';
+  static const String squadDetail = '/squad_detail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -105,6 +107,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const ProfileView());
       case notification:
         return MaterialPageRoute(builder: (_) => const NotificationView());
+      case squadDetail:
+        final tagName = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => SquadDetailView(tagName: tagName),
+        );
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

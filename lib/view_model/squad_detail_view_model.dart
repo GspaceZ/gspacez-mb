@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/main.dart';
+import 'package:untitled/model/admin_squad.dart';
+import 'package:untitled/model/user_role.dart';
 import 'package:untitled/service/post_service.dart';
 import '../model/comment_response.dart';
 import '../model/post_model_response.dart';
@@ -20,6 +22,8 @@ class SquadDetailViewModel extends ChangeNotifier {
   bool isAdmin = false;
   bool isLoadingPost = false;
   bool get hasMore => hasMorePosts;
+  List<AdminSquad> membersOfficial = [];
+  List<AdminSquad> membersPending = [];
 
   SquadDetailViewModel(this.tagName) {
     scrollController.addListener(_scrollListener);
@@ -27,10 +31,14 @@ class SquadDetailViewModel extends ChangeNotifier {
   }
 
   _initialize() async {
-    Future.wait([
-      _loadCurrentUser(),
-      _fetchSquad(),
-    ]);
+    await _loadCurrentUser();
+    await _fetchSquad();
+    if (isAdmin) {
+      Future.wait([
+        _fetchOfficialMember(),
+        _fetchPendingMember(),
+      ]);
+    }
     notifyListeners();
   }
 
@@ -75,9 +83,37 @@ class SquadDetailViewModel extends ChangeNotifier {
     } catch (e) {
       error = e.toString();
     } finally {
+      await _updateAvatarAdmin();
       isLoading = false;
       notifyListeners();
-      _updateAvatarAdmin();
+    }
+  }
+
+  Future<void> _fetchOfficialMember() async {
+    try {
+      final result = await SquadService.instance.getOfficialMembers(tagName);
+      membersOfficial = result.where((member) {
+        return member.role == UserRole.member.label;
+      }).toList();
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      await _updateAvatarOfficialMember();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _fetchPendingMember() async {
+    try {
+      var result = await SquadService.instance.getPendingMembers(tagName);
+      membersPending = result.where((member) {
+        return member.joinStatus == UserRole.pending.label;
+      }).toList();
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      await _updateAvatarPendingMember();
+      notifyListeners();
     }
   }
 
@@ -105,7 +141,7 @@ class SquadDetailViewModel extends ChangeNotifier {
             content: Text(response.message ?? 'Request sent successfully')),
       );
 
-      updateSquadJoinStatus("PENDING");
+      updateSquadJoinStatus(UserRole.pending.label);
     } catch (error) {
       if (!currentContext.mounted) return;
 
@@ -166,6 +202,32 @@ class SquadDetailViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _updateAvatarPendingMember() async {
+    for (var member in membersPending) {
+      try {
+        final ProfileResponse profile =
+            await UserService.instance.getProfile(member.profileId);
+        member.avatarUrl = profile.avatarUrl ?? '';
+      } catch (e) {
+        member.avatarUrl = AppConstants.urlImageDefault;
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<void> _updateAvatarOfficialMember() async {
+    for (var member in membersOfficial) {
+      try {
+        final ProfileResponse profile =
+            await UserService.instance.getProfile(member.profileId);
+        member.avatarUrl = profile.avatarUrl ?? '';
+      } catch (e) {
+        member.avatarUrl = AppConstants.urlImageDefault;
+      }
+    }
+    notifyListeners();
+  }
+
   Future<void> updateSquadJoinStatus(String newStatus) async {
     squad = SquadResponse(
       id: squad.id,
@@ -194,5 +256,13 @@ class SquadDetailViewModel extends ChangeNotifier {
   Future<List<CommentResponse>> getComment(PostModelResponse post) async {
     final response = await PostService.instance.getCommentById(post.id);
     return response;
+  }
+
+  Future<void> acceptPendingUser(AdminSquad user) async {
+    /// TODO: call api accept pending user
+  }
+
+  Future<void> rejectPendingUser(AdminSquad user) async {
+    /// TODO: call api reject pending user
   }
 }

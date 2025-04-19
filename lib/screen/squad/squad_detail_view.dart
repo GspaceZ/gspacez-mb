@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/admin_squad.dart';
+import 'package:untitled/model/user_role.dart';
 import '../../components/common_post.dart';
 import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
@@ -10,19 +11,14 @@ import '../../service/user_service.dart';
 import '../../view_model/squad_detail_view_model.dart';
 import '../profile/profile_view.dart';
 
-class SquadDetailView extends StatefulWidget {
+class SquadDetailView extends StatelessWidget {
   final String tagName;
   const SquadDetailView({super.key, required this.tagName});
 
   @override
-  State<SquadDetailView> createState() => _SquadDetailViewState();
-}
-
-class _SquadDetailViewState extends State<SquadDetailView> {
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => SquadDetailViewModel(widget.tagName),
+      create: (_) => SquadDetailViewModel(tagName),
       child: Consumer<SquadDetailViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
@@ -42,7 +38,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                             _buildSquadActions(
                                 context, viewModel.squad, viewModel),
                             const SizedBox(height: 16),
-                            _buildSquadAdmins(context, viewModel.squad, viewModel),
+                            _buildSquadAdmins(
+                                context, viewModel.squad, viewModel),
                             if (viewModel.squad.description != null &&
                                 viewModel.squad.description!.isNotEmpty)
                               _buildDescription(viewModel.squad),
@@ -52,7 +49,7 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                             SizedBox(
                               height: 400,
                               child: DefaultTabController(
-                                length: viewModel.isAdmin ? 2 : 1,
+                                length: viewModel.isAdmin ? 3 : 1,
                                 child: Column(
                                   children: [
                                     TabBar(
@@ -60,7 +57,9 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                                       tabs: [
                                         const Tab(text: "Posts"),
                                         if (viewModel.isAdmin)
-                                          const Tab(text: "Manage squad"),
+                                          const Tab(text: "Manage member"),
+                                        if (viewModel.isAdmin)
+                                          const Tab(text: "Pending request"),
                                       ],
                                     ),
                                     Expanded(
@@ -73,7 +72,13 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                                               : _buildPostList(
                                                   viewModel.squad, viewModel),
                                           if (viewModel.isAdmin)
-                                            _buildManageSquad(viewModel.squad),
+                                            _buildManageSquad(viewModel),
+                                          if (viewModel.isAdmin)
+                                            _buildListUser(
+                                                "Pending request",
+                                                viewModel: viewModel,
+                                                userRole: UserRole.pending,
+                                                viewModel.membersPending)
                                         ],
                                       ),
                                     ),
@@ -129,10 +134,13 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                     const SizedBox(width: 8),
                     // Privacy badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        color: privacy == 'PRIVATE' ? Colors.red[50] : Colors.blue[50],
+                        color: privacy == 'PRIVATE'
+                            ? Colors.red[50]
+                            : Colors.blue[50],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -140,14 +148,17 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                           Icon(
                             privacy == 'PRIVATE' ? Icons.lock : Icons.public,
                             size: 14,
-                            color: privacy == 'PRIVATE' ? Colors.red : Colors.blue,
+                            color:
+                                privacy == 'PRIVATE' ? Colors.red : Colors.blue,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             privacy,
                             style: TextStyle(
                               fontSize: 12,
-                              color: privacy == 'PRIVATE' ? Colors.red : Colors.blue,
+                              color: privacy == 'PRIVATE'
+                                  ? Colors.red
+                                  : Colors.blue,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -389,7 +400,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
     return const SizedBox.shrink();
   }
 
-  Widget _buildSquadAdmins(BuildContext context, SquadResponse squad, SquadDetailViewModel viewModel) {
+  Widget _buildSquadAdmins(BuildContext context, SquadResponse squad,
+      SquadDetailViewModel viewModel) {
     final admins = squad.adminList;
 
     if (admins.isEmpty) return const SizedBox.shrink();
@@ -429,12 +441,14 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ProfileView(profileId: admin.profileId),
+                            builder: (_) =>
+                                ProfileView(profileId: admin.profileId),
                           ),
                         );
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
                           borderRadius: BorderRadius.circular(32),
@@ -450,10 +464,10 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                                   : null,
                               child: avatarUrl == null
                                   ? const Icon(
-                                Icons.person,
-                                size: 16,
-                                color: Colors.grey,
-                              )
+                                      Icons.person,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    )
                                   : null,
                             ),
                             const SizedBox(width: 8),
@@ -471,7 +485,7 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                 }).toList(),
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -516,7 +530,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                 const SizedBox(width: 4),
                 Text(
                   "${squad.totalMembers} members",
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -534,7 +549,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                 const SizedBox(width: 4),
                 Text(
                   "${squad.totalPosts} posts",
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -575,17 +591,19 @@ class _SquadDetailViewState extends State<SquadDetailView> {
     );
   }
 
-  Widget _buildManageSquad(SquadResponse squad) {
+  Widget _buildManageSquad(SquadDetailViewModel viewModel) {
     return Column(
       children: [
-        _buildListUser("Squad Admins", squad.adminList, isAdmin: true),
-        _buildListUser("Member", []),
+        _buildListUser("Squad Admins", viewModel.squad.adminList,
+            viewModel: viewModel, userRole: UserRole.admin),
+        _buildListUser("Member", viewModel.membersOfficial,
+            viewModel: viewModel, userRole: UserRole.member),
       ],
     );
   }
 
   _buildListUser(String title, List<AdminSquad> listAdmin,
-      {bool isAdmin = false}) {
+      {required UserRole userRole, required SquadDetailViewModel viewModel}) {
     return Column(
       children: [
         Container(
@@ -636,24 +654,33 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  color: Colors.indigo,
-                                ),
-                                child: Text(
-                                  listAdmin[index].role.toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              if (userRole != UserRole.pending)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.indigo,
+                                    ),
+                                    color: (userRole == UserRole.admin)
+                                        ? Colors.indigo
+                                        : Colors.white,
+                                  ),
+                                  child: Text(
+                                    listAdmin[index].role.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: (userRole == UserRole.admin)
+                                          ? Colors.white
+                                          : Colors.indigo,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              const SizedBox(width: 8),
                             ],
                           ),
                           const SizedBox(height: 4),
@@ -668,6 +695,8 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                         ],
                       ),
                     ),
+                    if (userRole == UserRole.pending)
+                      _buildListButtonPendingUser(viewModel, listAdmin[index]),
                   ],
                 ),
               );
@@ -676,7 +705,7 @@ class _SquadDetailViewState extends State<SquadDetailView> {
         ),
         Padding(
           padding: const EdgeInsets.all(12.0),
-          child: isAdmin
+          child: userRole == UserRole.admin
               ? ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
@@ -688,7 +717,10 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                   ),
                   child: const Text(
                     "Update your squad admins",
-                    style: TextStyle(fontSize: 16, color: Colors.indigo, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.indigo,
+                        fontWeight: FontWeight.bold),
                   ),
                 )
               : (listAdmin.isEmpty)
@@ -700,6 +732,53 @@ class _SquadDetailViewState extends State<SquadDetailView> {
                     )
                   : const SizedBox.shrink(),
         )
+      ],
+    );
+  }
+
+  _buildListButtonPendingUser(SquadDetailViewModel viewModel, AdminSquad user) {
+    return Row(
+      children: [
+        IconButton(
+          onPressed: () {
+            viewModel.acceptPendingUser(user);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade50,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            side: const BorderSide(color: Colors.blue, width: 1),
+          ),
+          icon: const Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          onPressed: () {
+            viewModel.rejectPendingUser(user);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red.shade50,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            side: const BorderSide(color: Colors.red, width: 1),
+          ),
+          icon: const Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+        ),
+        const SizedBox(width: 8),
       ],
     );
   }

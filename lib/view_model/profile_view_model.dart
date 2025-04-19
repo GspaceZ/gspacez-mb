@@ -47,7 +47,7 @@ class ProfileViewModel extends ChangeNotifier {
     await _fetchData();
   }
 
-  _getUserInfo() async {
+  Future<void> _getUserInfo() async {
     final profile = _profileId == null
         ? await UserService.instance.getMe()
         : await UserService.instance.getProfile(_profileId!);
@@ -60,14 +60,16 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  _fetchData() async {
+  Future<void> _fetchData() async {
     final List<SquadModel> joinedSquads =
         await SquadService.instance.getJoinedSquads(profileId);
     involvedSquads.clear();
     involvedSquads.addAll(joinedSquads);
-
-    await fetchProfilePosts(isRefresh: true);
-    await fetchLikedPosts(isRefresh: true);
+    notifyListeners();
+    Future.wait([
+      fetchProfilePosts(isRefresh: true),
+      fetchLikedPosts(isRefresh: true),
+    ]);
   }
 
   Future<void> fetchProfilePosts({bool isRefresh = false}) async {

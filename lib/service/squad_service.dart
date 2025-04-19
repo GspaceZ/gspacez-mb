@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
@@ -28,8 +29,9 @@ class SquadService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
@@ -41,7 +43,8 @@ class SquadService {
     }
   }
 
-  Future<SquadResponse> updateSquad(ContentSquadModel contentSquad, String tagName) async {
+  Future<SquadResponse> updateSquad(
+      ContentSquadModel contentSquad, String tagName) async {
     final response = await callApi(
       "profile-service/squads/$tagName/update",
       "PUT",
@@ -51,8 +54,9 @@ class SquadService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
@@ -72,9 +76,9 @@ class SquadService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -96,9 +100,9 @@ class SquadService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -121,8 +125,9 @@ class SquadService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
-      final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
@@ -131,6 +136,56 @@ class SquadService {
       return SquadResponse.fromJson(baseResponse.result);
     } else {
       throw Exception('Failed to get squad info');
+    }
+  }
+
+  Future<List<AdminSquad>> getOfficialMembers(String tagName) async {
+    final response = await callApi(
+      "profile-service/squads/$tagName/official-members",
+      "GET",
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return (baseResponse.result["content"] as List)
+          .map((e) => AdminSquad.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Failed to get official members');
+    }
+  }
+
+  Future<List<AdminSquad>> getPendingMembers(String tagName) async {
+    final response = await callApi(
+      "profile-service/squads/$tagName/pending-members",
+      "GET",
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return (baseResponse.result["content"] as List)
+          .map((e) => AdminSquad.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('Failed to get pending members');
     }
   }
 }
