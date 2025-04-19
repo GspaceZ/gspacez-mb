@@ -583,9 +583,6 @@ class SquadDetailView extends StatelessWidget {
 
         return CommonPost(
           post: post,
-          onGetComment: () async {
-            return await viewModel.getComment(post);
-          },
         );
       },
     );

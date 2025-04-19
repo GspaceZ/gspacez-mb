@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
-import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/service/post_service.dart';
 
@@ -33,8 +32,7 @@ class HistoryViewModel extends ChangeNotifier {
         _hasMore = true;
       }
 
-      final response =
-      await PostService.instance.getHistoryPosts(_size, _page);
+      final response = await PostService.instance.getHistoryPosts(_size, _page);
 
       if (response.isNotEmpty) {
         posts.addAll(response);
@@ -74,8 +72,8 @@ class HistoryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<CommentResponse>> getComment(PostModelResponse post) async {
-    final response = await PostService.instance.getCommentById(post.id);
-    return response;
-  }
+  // Future<List<CommentResponse>> getComment(PostModelResponse post) async {
+  //   final response = await PostService.instance.getCommentById(post.id);
+  //   return response;
+  // }
 }

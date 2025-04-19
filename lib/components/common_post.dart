@@ -7,6 +7,7 @@ import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/components/privacy_modal.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
+import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/utils/content_converter.dart';
 import 'package:untitled/utils/format_time.dart';
@@ -18,16 +19,13 @@ import '../service/post_service.dart';
 
 class CommonPost extends StatefulWidget {
   final PostModelResponse post;
-  final VoidCallback? onLike;
   final Function()? onComment;
-  final Function() onGetComment;
 
-  const CommonPost(
-      {required this.post,
-      super.key,
-      this.onLike,
-      this.onComment,
-      required this.onGetComment});
+  const CommonPost({
+    required this.post,
+    super.key,
+    this.onComment,
+  });
 
   @override
   State<CommonPost> createState() => _CommonPostState();
@@ -39,6 +37,11 @@ class _CommonPostState extends State<CommonPost> {
   bool _showFullText = false;
   bool _isHide = false;
   bool _isBookmark = false;
+
+  Future<List<CommentResponse>> getComment(PostModelResponse post) async {
+    final response = await PostService.instance.getCommentById(post.id);
+    return response;
+  }
 
   @override
   void initState() {
@@ -261,7 +264,9 @@ class _CommonPostState extends State<CommonPost> {
                   height: MediaQuery.of(context).size.height * 0.8,
                   child: CommonComment(
                     onCreateComment: widget.onComment,
-                    onGetComment: widget.onGetComment,
+                    onGetComment: () async {
+                      return await getComment(widget.post);
+                    },
                   ),
                 ),
               );

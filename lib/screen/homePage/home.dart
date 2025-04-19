@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/components/common_post.dart';
+import 'package:untitled/components/common_post_simple.dart';
 import 'package:untitled/view_model/home_view_model.dart';
 
 class Home extends StatefulWidget {
@@ -25,11 +25,8 @@ class _HomeState extends State<Home> {
               itemCount: homeViewModel.posts.length,
               itemBuilder: (context, index) {
                 final post = homeViewModel.posts[index];
-                return CommonPost(
+                return CommonPostSimple(
                   post: post,
-                  onGetComment: () async {
-                    return await homeViewModel.getComment(post);
-                  },
                 );
               },
             ),

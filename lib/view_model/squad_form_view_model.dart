@@ -9,7 +9,6 @@ import '../model/squad_setting.dart';
 import '../service/cloudinary_service.dart';
 import '../service/squad_service.dart';
 
-
 class SquadFormViewModel extends ChangeNotifier {
   final SquadResponse? currentSquad;
 
@@ -53,18 +52,23 @@ class SquadFormViewModel extends ChangeNotifier {
     if (pickedFile == null) return;
 
     final context = navigatorKey.currentContext!;
-    LoadingDialog.showLoadingDialog(context);
+    if (context.mounted) {
+      LoadingDialog.showLoadingDialog(context);
+    }
 
     try {
-      uploadedImageUrl = await CloudinaryService.instance.uploadImage(pickedFile.path);
+      uploadedImageUrl =
+          await CloudinaryService.instance.uploadImage(pickedFile.path);
       notifyListeners();
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Failed to upload image"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Failed to upload image"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
       LoadingDialog.hideLoadingDialog();
     }
@@ -110,7 +114,9 @@ class SquadFormViewModel extends ChangeNotifier {
         _showSnackBar("Squad created successfully!", Colors.green);
       }
     } catch (e) {
-      _showSnackBar("Failed to ${currentSquad != null ? 'update' : 'create'} squad", Colors.red);
+      _showSnackBar(
+          "Failed to ${currentSquad != null ? 'update' : 'create'} squad",
+          Colors.red);
       throw Exception("Error: $e");
     } finally {
       LoadingDialog.hideLoadingDialog();
@@ -156,4 +162,3 @@ class SquadFormViewModel extends ChangeNotifier {
     tagNameController.dispose();
   }
 }
-
