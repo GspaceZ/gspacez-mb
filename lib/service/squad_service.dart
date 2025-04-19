@@ -5,7 +5,7 @@ import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 import '../model/content_squad_model.dart';
-import '../model/squad-access-response.dart';
+import '../model/squad_access_response.dart';
 import '../model/squad_model.dart';
 import '../model/squad_response.dart';
 

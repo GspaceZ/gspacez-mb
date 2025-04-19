@@ -352,9 +352,6 @@ class _ProfileViewState extends State<ProfileView>
               final post = posts[index];
               return CommonPost(
                 post: post,
-                onGetComment: () async {
-                  return await viewModel.getComment(post);
-                },
               );
             },
           );

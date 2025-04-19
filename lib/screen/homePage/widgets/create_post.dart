@@ -12,7 +12,7 @@ import 'package:untitled/service/cloudinary_service.dart';
 import 'package:untitled/service/squad_service.dart';
 import 'package:untitled/utils/content_converter.dart';
 
-import '../../../model/squad-access-response.dart';
+import '../../../model/squad_access_response.dart';
 
 class CreatePostDialog extends StatefulWidget {
   final Future<void> Function(PostModelRequest) onCreatePost;
@@ -58,7 +58,8 @@ class _CreatePostDialogState extends State<CreatePostDialog>
   }
 
   Future<void> _getUserInfo() async {
-    avatarUrl = await LocalStorage.instance.userUrlAvatar ?? AppConstants.urlImageDefault;
+    avatarUrl = await LocalStorage.instance.userUrlAvatar ??
+        AppConstants.urlImageDefault;
     userName = await LocalStorage.instance.userName ?? '';
     setState(() {});
   }
@@ -72,8 +73,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
       });
     } catch (e) {
       debugPrint("Failed to fetch squads: $e");
-      setState(() {
-      });
+      setState(() {});
     }
   }
 
@@ -93,7 +93,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
         children: [
           CircleAvatar(backgroundImage: NetworkImage(avatarUrl)),
           const SizedBox(width: 8),
-          Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          Text(userName,
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ],
       ),
       content: SizedBox(
@@ -105,7 +107,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Title", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const Text("Title",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 8),
                 _buildTextField(titleController, "Your Title"),
                 const SizedBox(height: 8),
@@ -127,7 +131,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(4.0),
-                        child: _buildTextField(contentController, "What do you want to share?", maxLines: 5),
+                        child: _buildTextField(
+                            contentController, "What do you want to share?",
+                            maxLines: 5),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(4),
@@ -145,9 +151,11 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    _buildButton("Cancel", Colors.grey.shade200, Colors.black, () => Navigator.of(context).pop()),
+                    _buildButton("Cancel", Colors.grey.shade200, Colors.black,
+                        () => Navigator.of(context).pop()),
                     const SizedBox(width: 8),
-                    _buildButton("Post", Colors.blue, Colors.white, _onClickPost),
+                    _buildButton(
+                        "Post", Colors.blue, Colors.white, _onClickPost),
                   ],
                 ),
               ],
@@ -194,7 +202,8 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                       },
                       child: CircleAvatar(
                         radius: 24,
-                        backgroundColor: isSelected ? Colors.blue : Colors.transparent,
+                        backgroundColor:
+                            isSelected ? Colors.blue : Colors.transparent,
                         child: CircleAvatar(
                           radius: 22,
                           backgroundImage: NetworkImage(
@@ -210,7 +219,8 @@ class _CreatePostDialogState extends State<CreatePostDialog>
           ),
         const SizedBox(height: 20),
         DropdownButtonFormField<SquadAccessResponse>(
-          decoration: CusTomInputDecoration("Select Squad").getInputDecoration(),
+          decoration:
+              CusTomInputDecoration("Select Squad").getInputDecoration(),
           value: _selectedSquad,
           items: _squads.map((squad) {
             return DropdownMenuItem<SquadAccessResponse>(
@@ -224,18 +234,19 @@ class _CreatePostDialogState extends State<CreatePostDialog>
             });
           },
         ),
-
       ],
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, {int maxLines = 1}) {
+  Widget _buildTextField(TextEditingController controller, String hint,
+      {int maxLines = 1}) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hint,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
@@ -246,15 +257,18 @@ class _CreatePostDialogState extends State<CreatePostDialog>
     );
   }
 
-  Widget _buildButton(String text, Color bgColor, Color textColor, VoidCallback onTap) {
+  Widget _buildButton(
+      String text, Color bgColor, Color textColor, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 80,
         height: 40,
-        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(8)),
+        decoration: BoxDecoration(
+            color: bgColor, borderRadius: BorderRadius.circular(8)),
         child: Center(
-          child: Text(text, style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
+          child: Text(text,
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
         ),
       ),
     );
@@ -266,7 +280,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Container(
-          decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(16)),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(16)),
           child: Row(
             children: [
               Row(
@@ -280,7 +296,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(tag,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   );
@@ -327,7 +345,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: DropdownButtonFormField<String>(
-          decoration: CusTomInputDecoration(FlutterI18n.translate(context, 'post.modal.privacy')).getInputDecoration(),
+          decoration: CusTomInputDecoration(
+                  FlutterI18n.translate(context, 'post.modal.privacy'))
+              .getInputDecoration(),
           value: _selectedPrivacy,
           items: _privacyOptions.map((String value) {
             return DropdownMenuItem<String>(
@@ -363,10 +383,14 @@ class _CreatePostDialogState extends State<CreatePostDialog>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (contentController.text.isEmpty && titleController.text.isEmpty)
-                const Text("What do you want to share?", style: TextStyle(fontSize: 16, color: Colors.grey)),
+              if (contentController.text.isEmpty &&
+                  titleController.text.isEmpty)
+                const Text("What do you want to share?",
+                    style: TextStyle(fontSize: 16, color: Colors.grey)),
               if (titleController.text.isNotEmpty)
-                Text(titleController.text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(titleController.text,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               if (text.isNotEmpty)
                 Text(text, style: const TextStyle(fontSize: 16)),
@@ -399,33 +423,35 @@ class _CreatePostDialogState extends State<CreatePostDialog>
         const SizedBox(height: 10),
         previewImage.isNotEmpty && previewImage.isNotEmpty
             ? ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: CachedNetworkImage(
-            imageUrl: previewImage,
-            height: 150,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-            errorWidget: (context, url, error) => const Center(child: Icon(Icons.error)),
-          ),
-        )
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  imageUrl: previewImage,
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) =>
+                      const Center(child: Icon(Icons.error)),
+                ),
+              )
             : GestureDetector(
-          onTap: () => _pickFiles(isPreview: true),
-          child: Container(
-            height: 150,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Text(
-                'No image selected',
-                style: TextStyle(color: Colors.black54),
+                onTap: () => _pickFiles(isPreview: true),
+                child: Container(
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'No image selected',
+                      style: TextStyle(color: Colors.black54),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -434,18 +460,21 @@ class _CreatePostDialogState extends State<CreatePostDialog>
     return Container(
       height: 50,
       width: MediaQuery.of(context).size.width * 0.8,
-      decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           InkWell(onTap: _pickFiles, child: const Icon(Icons.image)),
           InkWell(
             onTap: () => setState(() => isShowTag = !isShowTag),
-            child: Icon(Icons.tag, color: isShowTag ? Colors.deepOrange : Colors.black),
+            child: Icon(Icons.tag,
+                color: isShowTag ? Colors.deepOrange : Colors.black),
           ),
           InkWell(
             onTap: () => setState(() => isShowPrivacy = !isShowPrivacy),
-            child: Icon(Icons.lock_outline, color: isShowPrivacy ? Colors.deepOrange : Colors.black),
+            child: Icon(Icons.lock_outline,
+                color: isShowPrivacy ? Colors.deepOrange : Colors.black),
           ),
         ],
       ),
@@ -507,4 +536,3 @@ class _CreatePostDialogState extends State<CreatePostDialog>
     if (mounted) Navigator.of(context).pop();
   }
 }
-

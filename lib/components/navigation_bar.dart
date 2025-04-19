@@ -4,7 +4,7 @@ import 'package:untitled/main.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/utils/style.dart';
 
-import '../model/squad-access-response.dart';
+import '../model/squad_access_response.dart';
 import '../screen/squad/squad_detail_view.dart';
 import '../service/squad_service.dart';
 

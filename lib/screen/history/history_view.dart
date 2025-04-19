@@ -18,7 +18,8 @@ class _HistoryViewState extends State<HistoryView> {
       child: Consumer<HistoryViewModel>(
         builder: (context, historyViewModel, child) {
           return RefreshIndicator(
-            onRefresh: () => historyViewModel.fetchHistoryPosts(isRefresh: true),
+            onRefresh: () =>
+                historyViewModel.fetchHistoryPosts(isRefresh: true),
             child: ListView.builder(
               controller: historyViewModel.scrollController,
               physics: const BouncingScrollPhysics(),
@@ -27,9 +28,6 @@ class _HistoryViewState extends State<HistoryView> {
                 final post = historyViewModel.posts[index];
                 return CommonPost(
                   post: post,
-                  onGetComment: () async {
-                    return await historyViewModel.getComment(post);
-                  },
                 );
               },
             ),
