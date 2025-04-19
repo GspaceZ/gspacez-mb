@@ -14,11 +14,37 @@
   },
   "post": {
     "read_more": "Read more",
+    "read_less": "Read less",
     "like": "Like",
     "comment": "Comment",
     "share": "Share",
     "hide": "Hide post",
-    "report": "Report"
+    "privacy": {
+      "privacy_btn": "Privacy",
+      "title": "Who can see your post?",
+      "done": "Done",
+      "public_title": "Public",
+      "public_subtitle": "Anyone on or off GSpaceZ",
+      "friends_title": "Friends",
+      "friends_subtitle": "Your friends on GSpaceZ",
+      "private_title": "Private",
+      "private_subtitle": "Private"
+    },
+    "report": "Report",
+    "toggle": {
+      "hide": "Post is hidden.",
+      "restore": "Restore?"
+    },
+    "modal": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "post": "Post",
+      "tags": "Tags",
+      "location": "Location",
+      "feeling": "Feeling",
+      "privacy": "Privacy",
+      "placeholder": "What are you thinking?"
+    }
   },
   "landing": {
     "text_1": "Simpler, easier, ...",
@@ -50,6 +76,10 @@
     "recover_account": "Recover Account",
     "send_recovery_email": "Send Recovery Email",
     "description_otp": "Please enter the OTP code sent to your email",
+    "sign_in_with_google": "Sign in with Google",
+    "create_password": "Create password",
+    "create_password_success": "Create password successfully",
+    "create_password_fail": "Create password failed",
     "error_messages": {
       "email": "Please enter a valid email address.",
       "email_empty": "Please enter your email",
@@ -110,5 +140,8 @@
         "unknown": "Something happen! Try it later!"
       }
     }
+  },
+  "home": {
+    "title_create_post": "What are you thinking?"
   }
 }

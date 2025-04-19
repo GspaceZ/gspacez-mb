@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../provider/language_provider.dart';
+import 'package:untitled/components/common_post_simple.dart';
+import 'package:untitled/view_model/home_view_model.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,11 +13,26 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return  Center(
-      child: TextButton(onPressed: () {
-        context.read<LanguageProvider>().changeLocale(context, const Locale('vi'));
-      },
-          child: const Text('Change language to Vietnamese')),
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => HomeViewModel(),
+      child: Consumer<HomeViewModel>(
+        builder: (context, homeViewModel, child) {
+          return RefreshIndicator(
+            onRefresh: homeViewModel.fetchPost,
+            child: ListView.builder(
+              controller: homeViewModel.scrollController,
+              physics: const BouncingScrollPhysics(),
+              itemCount: homeViewModel.posts.length,
+              itemBuilder: (context, index) {
+                final post = homeViewModel.posts[index];
+                return CommonPostSimple(
+                  post: post,
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -14,11 +14,37 @@
   },
   "post": {
     "read_more": "Đọc thêm",
+    "read_less": "Rút gọn",
     "like": "Thích",
     "comment": "Bình luận",
     "share": "Chia sẻ",
     "hide": "Ẩn bài viết",
-    "report": "Báo cáo"
+    "privacy": {
+      "privacy_btn": "Quyền riêng tư",
+      "title": "Who can see your post?",
+      "done": "Xong",
+      "public_title": "Công khai",
+      "public_subtitle": "Bất kỳ ai ở trên hoặc ngoài GSpaceZ",
+      "friends_title": "Bạn bè",
+      "friends_subtitle": "Bạn bè của bạn trên GSpaceZ",
+      "private_title": "Riêng tư",
+      "private_subtitle": "Riêng tư"
+    },
+    "report": "Báo cáo",
+    "toggle": {
+      "hide": "Bài đăng đã bị ẩn.",
+      "restore": "Khôi phục?"
+    },
+    "modal": {
+      "cancel": "Hủy",
+      "save": "Lưu",
+      "post": "Tạo",
+      "tags": "Gắn thẻ",
+      "location": "Vị trí",
+      "feeling": "Cảm xúc",
+      "privacy": "Quyền riêng tư",
+      "placeholder": "Bạn đang nghĩ gì?"
+    }
   },
   "landing": {
     "text_1": "Đơn giản hơn, dễ hơn, ...",
@@ -50,6 +76,10 @@
     "recover_account": "Khôi phục tài khoản",
     "send_recovery_email": "Gửi email khôi phục",
     "description_otp": "Nhập mã OTP đã được gửi đến email của bạn",
+    "sign_in_with_google": "Đăng nhập với Google",
+    "create_password": "Tạo mật khẩu",
+    "create_password_success": "Tạo mật khẩu thành công",
+    "create_password_fail": "Tạo mật khẩu thất bại",
     "error_messages": {
       "email": "Vui lòng nhập địa chỉ email hợp lệ.",
       "email_empty": "Vui lòng nhập địa chỉ email.",
@@ -110,5 +140,8 @@
         "unknown": "Có lỗi xảy ra! Hãy thử lại sau!"
       }
     }
+  },
+  "home": {
+    "title_create_post": "Bạn đang nghĩ gì?"
   }
 }

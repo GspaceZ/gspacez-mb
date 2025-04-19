@@ -1,4 +1,5 @@
 class NetworkConstant {
-  static const String BASE_URL = "http://fakebook-be-f5688a2538c3.herokuapp.com/api/v1/";
-  static const String BASE_URI_ACTIVE = "https://cfakebook.vercel.app/en/auth/activate-account";
+  static const String baseURL = "https://gspacez.tech/api/v1/";
+  static const String baseURIActive =
+      "https://cfakebook.vercel.app/en/auth/activate-account";
 }
