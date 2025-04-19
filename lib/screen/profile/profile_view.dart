@@ -6,7 +6,6 @@ import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/view_model/profile_view_model.dart';
 import '../../constants/appconstants.dart';
-import '../squad/squad_detail_view.dart';
 
 class ProfileView extends StatefulWidget {
   final String? profileId;
@@ -145,7 +144,8 @@ class _ProfileViewState extends State<ProfileView>
                     color: Colors.blue,
                   ),
                   SizedBox(width: 5),
-                  Text('Edit your profile', style: TextStyle(color: Colors.blue)),
+                  Text('Edit your profile',
+                      style: TextStyle(color: Colors.blue)),
                 ],
               ),
             )
@@ -213,13 +213,8 @@ class _ProfileViewState extends State<ProfileView>
                       children: viewModel.involvedSquads.map((squad) {
                         return InkWell(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    SquadDetailView(tagName: squad.tagName),
-                              ),
-                            );
+                            Navigator.pushNamed(context, AppRoutes.squadDetail,
+                                arguments: squad.tagName);
                           },
                           borderRadius: BorderRadius.circular(8),
                           child: Column(
