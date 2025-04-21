@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:untitled/components/dialog_loading.dart';
@@ -31,10 +30,11 @@ class SigninViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  static final clientId = dotenv.env['CLIENT_ID'] ?? 'Client ID not found';
+  static final clientId =
+      "705594420748-q561dtpflfol7s25tp7f342nje4r2lse.apps.googleusercontent.com";
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // clientID is error => re-check if use serverClientId
-    serverClientId: clientId,
+    clientId: clientId,
     scopes: [
       'email',
       'profile',
