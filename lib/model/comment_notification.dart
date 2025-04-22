@@ -7,7 +7,7 @@ class CommentNotification {
   factory CommentNotification.fromJson(Map<String, dynamic> json) {
     return CommentNotification(
       content: ContentNotification.fromJson(json['content']),
-      parentId: json['parentId'],
+      parentId: json['parentId'] ?? '',
     );
   }
 }

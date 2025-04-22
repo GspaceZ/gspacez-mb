@@ -1,12 +1,12 @@
-class ContentPostModel {
+class ContentModel {
   String text;
 
-  ContentPostModel({
+  ContentModel({
     required this.text,
   });
 
-  factory ContentPostModel.fromJson(Map<String, dynamic> json) {
-    return ContentPostModel(
+  factory ContentModel.fromJson(Map<String, dynamic> json) {
+    return ContentModel(
       text: json['text'] ?? '',
     );
   }
@@ -19,6 +19,6 @@ class ContentPostModel {
 
   @override
   String toString() {
-    return 'ContentPostModel{text: $text}';
+    return 'ContentModel{text: $text}';
   }
 }

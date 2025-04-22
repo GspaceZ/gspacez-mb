@@ -30,10 +30,8 @@ class SigninViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  static final clientId =
-      "705594420748-q561dtpflfol7s25tp7f342nje4r2lse.apps.googleusercontent.com";
+  static final clientId = "705594420748-9vfd8jcfaf16lhveceq410bo64lpalv1.apps.googleusercontent.com";
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    // clientID is error => re-check if use serverClientId
     clientId: clientId,
     scopes: [
       'email',
@@ -187,7 +185,6 @@ class SigninViewModel extends ChangeNotifier {
     localStorage.saveFirstName(profile.firstName);
     localStorage.saveLastName(profile.lastName);
     localStorage.saveNation(profile.country ?? '');
-    localStorage.saveCity(profile.city ?? '');
-    localStorage.saveAddress(profile.address ?? '');
+    localStorage.saveDob(profile.dob ?? '');
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/components/common_post.dart';
 import 'package:untitled/main.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/view_model/profile_view_model.dart';
+import '../../components/common_post_simple.dart';
 import '../../constants/appconstants.dart';
 
 class ProfileView extends StatefulWidget {
@@ -112,13 +112,13 @@ class _ProfileViewState extends State<ProfileView>
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
-            if (viewModel.address.isNotEmpty)
+            if (viewModel.country.isNotEmpty)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.location_city),
                   const SizedBox(width: 5),
-                  Text(viewModel.address),
+                  Text(viewModel.country),
                 ],
               ),
             const SizedBox(height: 5),
@@ -350,7 +350,7 @@ class _ProfileViewState extends State<ProfileView>
             itemCount: posts.length,
             itemBuilder: (context, index) {
               final post = posts[index];
-              return CommonPost(
+              return CommonPostSimple(
                 post: post,
               );
             },

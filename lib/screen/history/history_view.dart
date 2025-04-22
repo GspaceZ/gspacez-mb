@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:untitled/components/common_post.dart';
 import 'package:untitled/view_model/history_view_model.dart';
+
+import '../../components/common_post_simple.dart';
 
 class HistoryView extends StatefulWidget {
   const HistoryView({super.key});
@@ -26,7 +27,7 @@ class _HistoryViewState extends State<HistoryView> {
               itemCount: historyViewModel.posts.length,
               itemBuilder: (context, index) {
                 final post = historyViewModel.posts[index];
-                return CommonPost(
+                return CommonPostSimple(
                   post: post,
                 );
               },

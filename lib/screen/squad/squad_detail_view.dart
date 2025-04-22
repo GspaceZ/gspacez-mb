@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/user_role.dart';
-import '../../components/common_post.dart';
+import '../../components/common_post_simple.dart';
 import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
 import '../../service/user_service.dart';
@@ -564,7 +564,7 @@ class SquadDetailView extends StatelessWidget {
     if (!viewModel.isLoadingPost && viewModel.posts.isEmpty) {
       return const Center(
         child: Text(
-          "Maybe this squad is empty.",
+          "This squad has no posts.",
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
       );
@@ -581,7 +581,7 @@ class SquadDetailView extends StatelessWidget {
 
         final post = viewModel.posts[index];
 
-        return CommonPost(
+        return CommonPostSimple(
           post: post,
         );
       },

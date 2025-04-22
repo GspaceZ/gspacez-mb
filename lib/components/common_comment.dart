@@ -5,18 +5,21 @@ import 'package:image_picker/image_picker.dart';
 import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
-import 'package:untitled/model/comment_model.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/service/cloudinary_service.dart';
 import 'package:untitled/utils/content_converter.dart';
 import 'package:untitled/utils/format_time.dart';
 
+import '../model/comment_request.dart';
+import '../model/content_model.dart';
+import '../service/post_service.dart';
+
 class CommonComment extends StatefulWidget {
+  final String postId;
   final Function() onGetComment;
-  final Function()? onCreateComment;
 
   const CommonComment(
-      {super.key, required this.onCreateComment, required this.onGetComment});
+      {super.key, required this.postId, required this.onGetComment});
 
   @override
   State<CommonComment> createState() => _CommonCommentState();
@@ -37,28 +40,37 @@ class _CommonCommentState extends State<CommonComment> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery
+            .of(context)
+            .viewInsets
+            .bottom,
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.7 -
-                  MediaQuery.of(context).viewInsets.bottom -
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.7 -
+                  MediaQuery
+                      .of(context)
+                      .viewInsets
+                      .bottom -
                   sizeImageComment,
               child: (isLoading)
                   ? const Center(child: CircularProgressIndicator())
                   : (comments.isEmpty)
-                      ? const Center(
-                          child: Text('No comments available'),
-                        )
-                      : ListView.builder(
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            return _buildCommentItem(comments[index]);
-                          },
-                        ),
+                  ? const Center(
+                child: Text('No comments available'),
+              )
+                  : ListView.builder(
+                itemCount: comments.length,
+                itemBuilder: (context, index) {
+                  return _buildCommentItem(comments[index]);
+                },
+              ),
             ),
             // const Spacer(),
             _buildCreateComment(),
@@ -74,7 +86,7 @@ class _CommonCommentState extends State<CommonComment> {
     final convertedContent = convertContent(comment.content.text);
     final String text = convertedContent["text"];
     final List<String> imageUrls =
-        List<String>.from(convertedContent["imageUrls"]);
+    List<String>.from(convertedContent["imageUrls"]);
     final DateTime time = comment.createdAt;
 
     return SafeArea(
@@ -146,7 +158,7 @@ class _CommonCommentState extends State<CommonComment> {
                 icon: const Icon(Icons.image),
               ),
               IconButton(
-                onPressed: _onCreateComment,
+                onPressed: () => _onCreateComment(widget.postId),
                 icon: const Icon(Icons.send),
               ),
             ],
@@ -160,28 +172,33 @@ class _CommonCommentState extends State<CommonComment> {
   _buildImagePost(CommentResponse comment) {
     final convertedContent = convertContent(comment.content.text);
     final List<String> imageUrls =
-        List<String>.from(convertedContent["imageUrls"]);
+    List<String>.from(convertedContent["imageUrls"]);
 
     return SizedBox(
-      height: MediaQuery.sizeOf(context).width / 3,
+      height: MediaQuery
+          .sizeOf(context)
+          .width / 3,
       child: Center(
         child: (imageUrls.length == 1)
             ? BaseImageNetwork(imageUrl: imageUrls[0])
             : ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: imageUrls.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SizedBox(
-                        width: MediaQuery.sizeOf(context).width / 3,
-                        child: BaseImageNetwork(imageUrl: imageUrls[0])),
-                  );
-                },
-              ),
+          scrollDirection: Axis.horizontal,
+          itemCount: imageUrls.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: SizedBox(
+                  width: MediaQuery
+                      .sizeOf(context)
+                      .width / 3,
+                  child: BaseImageNetwork(imageUrl: imageUrls[0])),
+            );
+          },
+        ),
       ),
     );
   }
+
   //
   // _buildVideoPost(CommentResponse comment) {
   //   final convertedContent = convertContent(comment.content.text);
@@ -213,53 +230,53 @@ class _CommonCommentState extends State<CommonComment> {
   _buildSelectedImage() {
     return (_selectedImages.isNotEmpty)
         ? Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 100.0, // Adjust this value as needed
-              width: double.infinity, // Adjust this value as needed
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                shrinkWrap: true,
-                itemCount: _selectedImages.length,
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1,
-                              ),
-                            ),
-                            child:
-                                Image.file(File(_selectedImages[index].path))),
-                      ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.dangerous_outlined,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _selectedImages.removeAt(index);
-                              if (_selectedImages.isEmpty) {
-                                sizeImageComment = 0;
-                              }
-                            });
-                          },
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: 100.0, // Adjust this value as needed
+        width: double.infinity, // Adjust this value as needed
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: _selectedImages.length,
+          itemBuilder: (context, index) {
+            return Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
                         ),
                       ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          )
+                      child:
+                      Image.file(File(_selectedImages[index].path))),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.dangerous_outlined,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _selectedImages.removeAt(index);
+                        if (_selectedImages.isEmpty) {
+                          sizeImageComment = 0;
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    )
         : const SizedBox.shrink();
   }
 
@@ -287,33 +304,48 @@ class _CommonCommentState extends State<CommonComment> {
     });
   }
 
-  _onCreateComment() async {
+  _onCreateComment(String postId) async {
+    if (commentController.text
+        .trim()
+        .isEmpty && _selectedImages.isEmpty) return;
+
     isLoading = true;
     setState(() {});
-    await widget.onCreateComment?.call();
+
+    String commentText = commentController.text.trim();
+
     if (_selectedImages.isNotEmpty) {
-      for (var element in _selectedImages) {
-        final response =
-            await CloudinaryService.instance.uploadImage(element.path);
-        _uploadedImages.add(response);
+      for (var file in _selectedImages) {
+        final imageUrl = await CloudinaryService.instance.uploadImage(
+            file.path);
+        _uploadedImages.add(imageUrl);
       }
     }
-    comments.add(CommentModel(
-      profileName: profileName,
-      profileImageUrl: avatarUrl,
-      contentComment: ContentComment(text: commentController.text),
-      createdAt: DateTime.now().toUtc(),
-      updatedAt: DateTime.now().toUtc(),
-    ).toCommentResponse());
 
-    commentController.clear();
-    _selectedImages.clear();
-    _uploadedImages.clear();
-    sizeImageComment = 0;
-    isLoading = false;
-    if (mounted) {
-      FocusScope.of(context).unfocus();
+    String markdownImages = _uploadedImages.map((url) => '![Image]($url)').join(
+        '\n');
+    String fullContent = [commentText, markdownImages].where((e) =>
+    e.isNotEmpty).join('\n\n');
+
+    final commentRequest = CommentRequest(
+      content: ContentModel(text: fullContent),
+    );
+
+    try {
+      final post = await PostService.instance.commentPost(
+          commentRequest, postId);
+
+      commentController.clear();
+      _selectedImages.clear();
+      _uploadedImages.clear();
+      sizeImageComment = 0;
+      comments = post.comments ?? [];
+    } catch (e) {
+      debugPrint('Failed to comment: $e');
     }
+
+    isLoading = false;
+    if (mounted) FocusScope.of(context).unfocus();
     setState(() {});
   }
 }

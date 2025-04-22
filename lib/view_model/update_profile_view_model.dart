@@ -1,9 +1,12 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:untitled/components/dialog_loading.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/service/user_service.dart';
+import '../model/country_model.dart';
 
 class UpdateProfileViewModel extends ChangeNotifier {
   UpdateProfileViewModel() {
@@ -18,23 +21,63 @@ class UpdateProfileViewModel extends ChangeNotifier {
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController nationController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
+  List<Country> countries = [];
+  bool isLoadingCountries = false;
+
+  Future<void> fetchCountries() async {
+    isLoadingCountries = true;
+    notifyListeners();
+
+    try {
+      final cached = await localStorage.getCountriesCache();
+      if (cached != null) {
+        final json = jsonDecode(cached);
+        countries = (json['data'] as List)
+            .map((e) => Country.fromJson(e))
+            .toList();
+        isLoadingCountries = false;
+        notifyListeners();
+        return;
+      }
+
+      final response = await http.get(Uri.parse('https://countriesnow.space/api/v0.1/countries/flag/images'));
+      if (response.statusCode == 200) {
+        await localStorage.saveCountriesCache(response.body); // Save to cache
+
+        final json = jsonDecode(response.body);
+        countries = (json['data'] as List)
+            .map((e) => Country.fromJson(e))
+            .toList();
+      }
+    } catch (e) {
+      Log.error('fetchCountries error: $e');
+    }
+
+    isLoadingCountries = false;
+    notifyListeners();
+  }
 
   _init() async {
+    await fetchCountries();
     pathAvatar =
         await localStorage.userUrlAvatar ?? AppConstants.urlImageDefault;
     firstNameController.text = await localStorage.firstName ?? '';
     lastNameController.text = await localStorage.lastName ?? '';
     nationController.text = await localStorage.nation ?? '';
-    cityController.text = await localStorage.city ?? '';
-    addressController.text = await localStorage.address ?? '';
+    descriptionController.text = await localStorage.description ?? '';
+    dateOfBirthController.text = await localStorage.dob ?? '';
     notifyListeners();
   }
 
   changeIsEdit({bool? newValue}) {
     isEdit = newValue ?? !isEdit;
+    notifyListeners();
+  }
+
+  updateCountry(String countryName) {
+    nationController.text = countryName;
     notifyListeners();
   }
 
@@ -47,9 +90,8 @@ class UpdateProfileViewModel extends ChangeNotifier {
             firstNameController.text,
             lastNameController.text,
             nationController.text,
-            cityController.text,
             dateOfBirthController.text,
-            addressController.text);
+            descriptionController.text);
         Log.debug(response.toString());
         if (response['code'] == 1000) {
           LoadingDialog.hideLoadingDialog();
@@ -85,8 +127,8 @@ class UpdateProfileViewModel extends ChangeNotifier {
       localStorage.saveFirstName(firstNameController.text),
       localStorage.saveLastName(lastNameController.text),
       localStorage.saveNation(nationController.text),
-      localStorage.saveCity(cityController.text),
-      localStorage.saveAddress(addressController.text),
+      localStorage.saveDescription(descriptionController.text),
+      localStorage.saveDob(dateOfBirthController.text),
     ]);
   }
 }

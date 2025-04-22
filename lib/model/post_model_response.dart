@@ -1,4 +1,4 @@
-import 'package:untitled/model/content_post_model.dart';
+import 'package:untitled/model/content_model.dart';
 import 'package:untitled/model/squad_model.dart';
 import 'comment_response.dart';
 
@@ -7,7 +7,7 @@ class PostModelResponse {
   String profileId;
   String profileName;
   String? avatarUrl;
-  ContentPostModel content;
+  ContentModel content;
   SquadModel squad;
   List<CommentResponse>? comments;
   List<String>? hashTags;
@@ -49,7 +49,7 @@ class PostModelResponse {
       profileId: json['profileId'],
       profileName: json['profileName'],
       avatarUrl: json['avatarUrl'],
-      content: ContentPostModel.fromJson(json['content']),
+      content: ContentModel.fromJson(json['content']),
         comments: json['comments'] != null
             ? (json['comments'] as List)
             .map((e) => CommentResponse.fromJson(e as Map<String, dynamic>))

@@ -13,6 +13,9 @@ class LocalStorage {
   static const String _kNation = 'nation';
   static const String _kCity = 'city';
   static const String _kAddress = 'address';
+  static const String _kDescription = 'description';
+  static const String _kCountriesCache = 'countries';
+  static const String _kDob = 'dob';
 
   final _secureStorage = const FlutterSecureStorage();
 
@@ -25,6 +28,32 @@ class LocalStorage {
   static LocalStorage get instance => _instance;
 
   FlutterSecureStorage get secureStorage => _secureStorage;
+
+  // List of countries
+  Future<void> saveCountriesCache(String jsonData) {
+    return secureStorage.write(key: _kCountriesCache, value: jsonData);
+  }
+
+  Future<String?> getCountriesCache() {
+    return secureStorage.read(key: _kCountriesCache);
+  }
+
+  Future<void> removeCountriesCache() {
+    return secureStorage.delete(key: _kCountriesCache);
+  }
+
+  // Dob
+  Future<String?> get dob {
+    return secureStorage.read(key: _kDob);
+  }
+
+  Future<void> saveDob(String dob) {
+    return secureStorage.write(key: _kDob, value: dob);
+  }
+
+  Future<void> removeDob() {
+    return secureStorage.delete(key: _kDob);
+  }
 
   // User token
   Future<String?> get userToken {
@@ -136,6 +165,18 @@ class LocalStorage {
 
   Future<void> removeAddress() {
     return secureStorage.delete(key: _kAddress);
+  }
+
+  Future<String?> get description {
+    return secureStorage.read(key: _kDescription);
+  }
+
+  Future<void> saveDescription(String description) {
+    return secureStorage.write(key: _kDescription, value: description);
+  }
+
+  Future<void> removeDescription() {
+    return secureStorage.delete(key: _kDescription);
   }
 
   // User url avatar
