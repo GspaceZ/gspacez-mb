@@ -3,6 +3,7 @@ import 'package:untitled/model/user_notification.dart';
 import 'comment_notification.dart';
 
 enum NotificationType {
+  REQUEST_JOIN,
   COMMENT,
   LIKE,
   DISLIKE,
@@ -50,24 +51,28 @@ class NotificationModel {
 }
 
 class Entity {
-  final String id;
+  final String? id;
   final String? postId;
   final String? commentId;
   final CommentNotification? commentRequest;
+  final String? type;
   final String? reactType;
   final UserNotification sender;
-  final UserNotification receiver;
-  final String createdAt;
+  final UserNotification? receiver;
+  final List<UserNotification>? receivers;
+  final String? createdAt;
 
   Entity({
-    required this.id,
+    this.id,
     this.postId,
     this.commentId,
     this.commentRequest,
+    this.type,
     this.reactType,
     required this.sender,
-    required this.receiver,
-    required this.createdAt,
+    this.receiver,
+    this.receivers,
+    this.createdAt,
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) {
@@ -78,9 +83,13 @@ class Entity {
       commentRequest: json['commentRequest'] != null
           ? CommentNotification.fromJson(json['commentRequest'])
           : null,
+      type: json['type'],
       reactType: json['reactType'],
       sender: UserNotification.fromJson(json['sender']),
-      receiver: UserNotification.fromJson(json['receiver']),
+      receiver: json['receiver'] != null ? UserNotification.fromJson(json['receiver']) : null,
+      receivers: (json['receivers'] as List<dynamic>?)
+          ?.map((e) => UserNotification.fromJson(e))
+          .toList(),
       createdAt: json['createdAt'],
     );
   }

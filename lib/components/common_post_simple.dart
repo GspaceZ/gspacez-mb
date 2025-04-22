@@ -226,7 +226,7 @@ class _CommonPostState extends State<CommonPostSimple> {
                 builder: (context) => SizedBox(
                   height: MediaQuery.of(context).size.height * 0.8,
                   child: CommonComment(
-                    onCreateComment: null,
+                    postId: widget.post.id,
                     onGetComment: () async {
                       return await getComment(widget.post);
                     },

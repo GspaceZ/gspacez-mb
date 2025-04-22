@@ -19,12 +19,10 @@ import '../service/post_service.dart';
 
 class CommonPost extends StatefulWidget {
   final PostModelResponse post;
-  final Function()? onComment;
 
   const CommonPost({
     required this.post,
     super.key,
-    this.onComment,
   });
 
   @override
@@ -263,7 +261,7 @@ class _CommonPostState extends State<CommonPost> {
                 builder: (context) => SizedBox(
                   height: MediaQuery.of(context).size.height * 0.8,
                   child: CommonComment(
-                    onCreateComment: widget.onComment,
+                    postId: widget.post.id,
                     onGetComment: () async {
                       return await getComment(widget.post);
                     },

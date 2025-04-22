@@ -124,7 +124,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                 ),
                 const SizedBox(height: 8),
                 SizedBox(
-                  height: 200,
+                  height: 150,
                   child: TabBarView(
                     controller: _tabController,
                     key: ValueKey(_tabController.index),
@@ -136,18 +136,20 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                             maxLines: 5),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(4.0),
                         child: _buildPreview(),
                       ),
                     ],
                   ),
                 ),
-                _buildPreviewImage(),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 _getListOptions(),
                 const SizedBox(height: 8),
                 _buildShowTag(),
                 _buildPrivacy(),
+                const SizedBox(height: 8),
+                _buildPreviewImage(),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

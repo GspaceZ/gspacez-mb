@@ -116,13 +116,14 @@
     }
   },
   "profile": {
-    "choose_avatar": "Choose another avatar",
+    "choose_avatar": "Upload new photo",
     "first_name": "First name",
     "last_name": "Last name",
     "country": "Country",
     "city": "City",
     "address": "Address",
     "dob": "Date of birth",
+    "description": "About me",
     "save": "Save profile",
     "cancel": "Cancel",
     "error_messages": {

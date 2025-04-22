@@ -123,6 +123,7 @@
     "city": "Thành phố",
     "address": "Địa chỉ",
     "dob": "Ngày sinh",
+    "description": "Mô tả",
     "save": "Lưu hồ sơ",
     "cancel": "Hủy",
     "error_messages": {

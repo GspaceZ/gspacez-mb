@@ -12,6 +12,7 @@ import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/service/post_service.dart';
 import '../components/navigation_bar.dart';
+import '../service/user_service.dart';
 import 'homePage/home.dart';
 
 class DefaultLayout extends StatefulWidget {
@@ -30,6 +31,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
     with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
   String urlAvatar = AppConstants.urlImageDefault;
+  String profileId = "";
   late AnimationController _hideBottomBarAnimationController;
   final iconList = <IconData>[
     Icons.home_outlined,
@@ -37,6 +39,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
     Icons.history,
     Icons.notifications_none,
   ];
+  int streakCount = 0;
 
   @override
   void initState() {
@@ -44,15 +47,33 @@ class _DefaultLayoutState extends State<DefaultLayout>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    getUrlAvatar();
+    getProfile();
     _selectedIndex = widget.selectedIndex;
     super.initState();
   }
 
-  getUrlAvatar() async {
+  getProfile() async {
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
+    profileId =  await LocalStorage.instance.userId ?? "";
     setState(() {});
+
+    if (profileId.isNotEmpty) {
+      getStreak();
+    }
+  }
+
+  getStreak() async {
+    if (profileId.isEmpty) return;
+
+    try {
+      final result = await UserService.instance.getStreak(profileId);
+      setState(() {
+        streakCount = result.currentStreak;
+      });
+    } catch (e) {
+      print('Error getting streak: $e');
+    }
   }
 
   @override
@@ -173,61 +194,85 @@ class _DefaultLayoutState extends State<DefaultLayout>
   }
 
   _buildProfile() {
-    return PopupMenuButton(
-      offset: const Offset(0, 50),
-      icon: CircleAvatar(
-        radius: 20,
-        backgroundImage: NetworkImage(urlAvatar),
-      ),
-      itemBuilder: (context) => const [
-        PopupMenuItem(
-          value: 1,
-          child: Row(
-            children: [
-              Icon(Icons.person_2_outlined),
-              Text(" Profile"),
-            ],
+    return Row(
+      children: [
+        const SizedBox(width: 8),
+        _buildStreak(),
+        PopupMenuButton(
+          offset: const Offset(0, 50),
+          icon: CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(urlAvatar),
           ),
-        ),
-        PopupMenuItem(
-          value: 2,
-          child: Row(
-            children: [
-              Icon(Icons.settings_outlined),
-              Text(" Settings"),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          value: 3,
-          child: Row(
-            children: [
-              Icon(
-                Icons.logout_outlined,
-                color: Colors.red,
+          itemBuilder: (context) => const [
+            PopupMenuItem(
+              value: 1,
+              child: Row(
+                children: [
+                  Icon(Icons.person_2_outlined),
+                  Text(" Profile"),
+                ],
               ),
-              Text(" Sign out", style: TextStyle(color: Colors.red)),
-            ],
-          ),
+            ),
+            PopupMenuItem(
+              value: 2,
+              child: Row(
+                children: [
+                  Icon(Icons.settings_outlined),
+                  Text(" Settings"),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: 3,
+              child: Row(
+                children: [
+                  Icon(Icons.logout_outlined, color: Colors.red),
+                  Text(" Sign out", style: TextStyle(color: Colors.red)),
+                ],
+              ),
+            ),
+          ],
+          onSelected: (value) {
+            switch (value) {
+              case 1:
+                Navigator.pushNamed(context, AppRoutes.profile);
+                break;
+              case 2:
+                break;
+              case 3:
+                _logOut();
+                break;
+            }
+          },
         ),
       ],
-      onSelected: (value) {
-        switch (value) {
-          case 1:
-            Navigator.pushNamed(
-              context,
-              AppRoutes.profile,
-            );
-            break;
-          case 2:
+    );
+  }
 
-            /// TODO: Navigate to Settings page
-            break;
-          case 3:
-            _logOut();
-            break;
-        }
-      },
+  _buildStreak() {
+    return Tooltip(
+      message: "You have $streakCount days of streak",
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF3E0),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.local_fire_department, color: Colors.orange),
+            const SizedBox(width: 4),
+            Text(
+              "$streakCount",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

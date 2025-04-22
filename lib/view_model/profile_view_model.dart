@@ -14,7 +14,7 @@ class ProfileViewModel extends ChangeNotifier {
   String avatarUrl = '';
   String userName = '';
   String dateOfBirth = '';
-  String address = '';
+  String country = '';
 
   final List<PostModelResponse> listProfilePosts = [];
   final List<PostModelResponse> listLikedPosts = [];
@@ -56,7 +56,7 @@ class ProfileViewModel extends ChangeNotifier {
     avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
     userName = "${profile.firstName} ${profile.lastName}".trim();
     dateOfBirth = profile.dob ?? '';
-    address = profile.address ?? '';
+    country = profile.country ?? '';
     notifyListeners();
   }
 

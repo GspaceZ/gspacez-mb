@@ -40,6 +40,8 @@ class CommonNotification extends StatelessWidget {
       title = "${sender.profileName} has liked your post";
     } else if (notification.type == NotificationType.DISLIKE) {
       title = "${sender.profileName} has disliked your post";
+    } else if (notification.type == NotificationType.REQUEST_JOIN) {
+      title = "${sender.profileName} has requested to join your squad";
     } else {
       title = "";
     }

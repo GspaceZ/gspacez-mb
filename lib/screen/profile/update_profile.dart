@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/screen/auth/widgets/input_decoration.dart';
 import 'package:untitled/screen/validators/index.dart';
@@ -29,7 +30,7 @@ class UpdateProfile extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Row(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircleAvatar(
@@ -102,76 +103,22 @@ class UpdateProfile extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
-                              controller: viewModel.nationController,
-                              decoration: CusTomInputDecoration(
-                                      FlutterI18n.translate(
-                                          context, "profile.country"))
-                                  .getInputDecoration(),
-                              validator: (value) =>
-                                  InputDefaultValidator.validate(value!),
-                              enabled: viewModel.isEdit,
-                              style: (viewModel.isEdit)
-                                  ? const TextStyle()
-                                  : const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: viewModel.cityController,
-                              decoration: CusTomInputDecoration(
-                                      FlutterI18n.translate(
-                                          context, "profile.city"))
-                                  .getInputDecoration(),
-                              validator: (value) =>
-                                  InputDefaultValidator.validate(value!),
-                              enabled: viewModel.isEdit,
-                              style: (viewModel.isEdit)
-                                  ? const TextStyle()
-                                  : const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: viewModel.addressController,
-                              decoration: CusTomInputDecoration(
-                                FlutterI18n.translate(
-                                    context, "profile.address"),
-                              ).getInputDecoration(),
-                              validator: (value) =>
-                                  InputDefaultValidator.validate(value!),
-                              enabled: viewModel.isEdit,
-                              style: (viewModel.isEdit)
-                                  ? const TextStyle()
-                                  : const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
                               controller: viewModel.dateOfBirthController,
                               decoration: CusTomInputDecoration(
-                                      FlutterI18n.translate(
-                                          context, "profile.dob"))
+                                  FlutterI18n.translate(
+                                      context, "profile.dob"))
                                   .getInputDecoration()
                                   .copyWith(
-                                    suffixIcon:
-                                        const Icon(Icons.calendar_month),
-                                  ),
+                                suffixIcon:
+                                const Icon(Icons.calendar_month),
+                              ),
                               onTap: () async {
                                 FocusScope.of(context).requestFocus(
                                     FocusNode()); // to prevent opening default keyboard
                                 final DateTime? pickedDate =
-                                    await showDatePicker(
+                                await showDatePicker(
                                   context: context,
-                                  initialDate: DateTime.now(),
+                                  initialDate: DateTime.tryParse(viewModel.dateOfBirthController.text) ?? DateTime.now(),
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now(),
                                 );
@@ -185,8 +132,94 @@ class UpdateProfile extends StatelessWidget {
                               style: (viewModel.isEdit)
                                   ? const TextStyle()
                                   : const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: viewModel.isLoadingCountries
+                                ? const CircularProgressIndicator()
+                                : DropdownButtonFormField<String>(
+                              value: viewModel.nationController.text.isNotEmpty
+                                  ? viewModel.nationController.text
+                                  : null,
+                              isExpanded: true,
+                              decoration: CusTomInputDecoration(
+                                FlutterI18n.translate(context, "profile.country"),
+                              ).getInputDecoration(),
+                              items: viewModel.countries.map((country) {
+                                return DropdownMenuItem(
+                                  value: country.name,
+                                  child: Row(
+                                    children: [
+                                      SvgPicture.network(
+                                        country.flag,
+                                        width: 24,
+                                        height: 16,
+                                        placeholderBuilder: (context) => const SizedBox(
+                                          width: 24,
+                                          height: 16,
+                                          child: CircularProgressIndicator(strokeWidth: 1),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          country.name,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: viewModel.isEdit
+                                  ? (value) {
+                                if (value != null) {
+                                  viewModel.updateCountry(value);
+                                }
+                              }
+                                  : null,
+                              validator: (value) =>
+                                  InputDefaultValidator.validate(value ?? ''),
+                              disabledHint: viewModel.nationController.text.isNotEmpty
+                                  ? Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      viewModel.nationController.text,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              )
+                                  : null,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              controller: viewModel.descriptionController,
+                              decoration: CusTomInputDecoration(
+                                FlutterI18n.translate(context, "profile.description"),
+                              ).getInputDecoration(),
+                              validator: (value) =>
+                                  InputDefaultValidator.validate(value!),
+                              enabled: viewModel.isEdit,
+                              maxLines: viewModel.isEdit ? 5 : null,
+                              minLines: 3,
+                              style: (viewModel.isEdit)
+                                  ? const TextStyle()
+                                  : const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              readOnly: !viewModel.isEdit,
                             ),
                           ),
                           Row(
