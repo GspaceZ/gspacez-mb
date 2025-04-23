@@ -61,7 +61,7 @@ class ChatAIViewModel extends ChangeNotifier {
 
   Future<void> regenerateBotResponse(int index) async {
     if (index < botController.message.length) {
-      botController.message[index] = "Regenerating...";
+      botController.message[index] = "Regenerating answer...";
       notifyListeners();
 
       final response = await chatAiService.sendMessage(userController.message[index]);
@@ -89,9 +89,9 @@ class ChatAIViewModel extends ChangeNotifier {
     userController.message[index] = newMessage;
 
     if (index < botController.message.length) {
-      botController.message[index] = "Regenerating...";
+      botController.message[index] = "Regenerating answer...";
     } else {
-      botController.message.add("Regenerating...");
+      botController.message.add("Regenerating answer...");
     }
     notifyListeners();
 
