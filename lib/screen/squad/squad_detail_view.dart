@@ -29,66 +29,82 @@ class SquadDetailView extends StatelessWidget {
             body: viewModel.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : (viewModel.error != null)
-                    ? Center(child: Text(viewModel.error!))
-                    : SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildHeader(viewModel.squad),
-                            _buildSquadActions(
-                                context, viewModel.squad, viewModel),
-                            const SizedBox(height: 16),
-                            _buildSquadAdmins(
-                                context, viewModel.squad, viewModel),
-                            if (viewModel.squad.description != null &&
-                                viewModel.squad.description!.isNotEmpty)
-                              _buildDescription(viewModel.squad),
-                            const SizedBox(height: 16),
-                            _buildStats(viewModel.squad),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              height: 400,
-                              child: DefaultTabController(
-                                length: viewModel.isAdmin ? 3 : 1,
-                                child: Column(
-                                  children: [
-                                    TabBar(
-                                      isScrollable: true,
-                                      tabs: [
-                                        const Tab(text: "Posts"),
-                                        if (viewModel.isAdmin)
-                                          const Tab(text: "Manage member"),
-                                        if (viewModel.isAdmin)
-                                          const Tab(text: "Pending request"),
-                                      ],
-                                    ),
-                                    Expanded(
-                                      child: TabBarView(
-                                        children: [
-                                          viewModel.isLoadingPost
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : _buildPostList(
-                                                  viewModel.squad, viewModel),
-                                          if (viewModel.isAdmin)
-                                            _buildManageSquad(viewModel),
-                                          if (viewModel.isAdmin)
-                                            _buildListUser(
-                                                "Pending request",
-                                                viewModel: viewModel,
-                                                userRole: UserRole.pending,
-                                                viewModel.membersPending)
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                ? Center(child: Text(viewModel.error!))
+                : DefaultTabController(
+              length: viewModel.isAdmin ? 3 : 1,
+              child: NestedScrollView(
+                controller: viewModel.scrollController,
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverToBoxAdapter(child: _buildHeader(viewModel.squad)),
+                  SliverToBoxAdapter(child: _buildSquadActions(context, viewModel.squad, viewModel)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(child: _buildSquadAdmins(context, viewModel.squad, viewModel)),
+                  if (viewModel.squad.description?.isNotEmpty ?? false)
+                    SliverToBoxAdapter(child: _buildDescription(viewModel.squad)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(child: _buildStats(viewModel.squad)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(
+                    child: TabBar(
+                      isScrollable: true,
+                      labelColor: Colors.indigo,
+                      unselectedLabelColor: Colors.grey,
+                      tabs: [
+                        const Tab(text: "Posts"),
+                        if (viewModel.isAdmin) const Tab(text: "Manage member"),
+                        if (viewModel.isAdmin) const Tab(text: "Pending request"),
+                      ],
+                    ),
+                  ),
+                ],
+                body: TabBarView(
+                  children: [
+                    CustomScrollView(
+                      slivers: [
+                        if (viewModel.posts.isEmpty && !viewModel.isLoadingPost)
+                          const SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Center(
+                              child: Text(
+                                "This squad has no posts.",
+                                style: TextStyle(fontSize: 16, color: Colors.grey),
                               ),
                             ),
-                          ],
-                        ),
+                          )
+                        else
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                if (index == viewModel.posts.length) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Center(child: CircularProgressIndicator()),
+                                  );
+                                }
+                                final post = viewModel.posts[index];
+                                return CommonPostSimple(post: post);
+                              },
+                              childCount: viewModel.posts.length +
+                                  (viewModel.isLoadingPost ? 1 : 0),
+                            ),
+                          ),
+                      ],
+                    ),
+
+                    if (viewModel.isAdmin)
+                      _buildManageSquad(viewModel),
+
+                    if (viewModel.isAdmin)
+                      _buildListUser(
+                        "Pending request",
+                        viewModel: viewModel,
+                        userRole: UserRole.pending,
+                        viewModel.membersPending,
                       ),
+                  ],
+                ),
+              ),
+            ),
           );
         },
       ),
@@ -560,48 +576,35 @@ class SquadDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildPostList(SquadResponse squad, SquadDetailViewModel viewModel) {
-    if (!viewModel.isLoadingPost && viewModel.posts.isEmpty) {
-      return const Center(
-        child: Text(
-          "This squad has no posts.",
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      controller: viewModel.scrollController,
-      physics: const BouncingScrollPhysics(),
-      itemCount: viewModel.posts.length + (viewModel.isLoadingPost ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == viewModel.posts.length) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final post = viewModel.posts[index];
-
-        return CommonPostSimple(
-          post: post,
-        );
-      },
-    );
-  }
-
   Widget _buildManageSquad(SquadDetailViewModel viewModel) {
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(12.0),
       children: [
-        _buildListUser("Squad Admins", viewModel.squad.adminList,
-            viewModel: viewModel, userRole: UserRole.admin),
-        _buildListUser("Member", viewModel.membersOfficial,
-            viewModel: viewModel, userRole: UserRole.member),
+        _buildListUser(
+          "Squad Admins",
+          viewModel.squad.adminList,
+          viewModel: viewModel,
+          userRole: UserRole.admin,
+        ),
+        const SizedBox(height: 16),
+        _buildListUser(
+          "Member",
+          viewModel.membersOfficial,
+          viewModel: viewModel,
+          userRole: UserRole.member,
+        ),
       ],
     );
   }
 
-  _buildListUser(String title, List<AdminSquad> listAdmin,
-      {required UserRole userRole, required SquadDetailViewModel viewModel}) {
+  Widget _buildListUser(
+      String title,
+      List<AdminSquad> listAdmin, {
+        required UserRole userRole,
+        required SquadDetailViewModel viewModel,
+      }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: double.infinity,
@@ -618,117 +621,113 @@ class SquadDetailView extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: listAdmin.length * 60.0,
-          child: ListView.builder(
-            itemCount: listAdmin.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(listAdmin[index].avatarUrl),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: listAdmin.length,
+          itemBuilder: (context, index) {
+            final user = listAdmin[index];
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundImage: NetworkImage(user.avatarUrl),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                user.profileName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            if (userRole != UserRole.pending)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.indigo),
+                                  color: (userRole == UserRole.admin)
+                                      ? Colors.indigo
+                                      : Colors.white,
+                                ),
                                 child: Text(
-                                  listAdmin[index].profileName,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                  user.role.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: (userRole == UserRole.admin)
+                                        ? Colors.white
+                                        : Colors.indigo,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              if (userRole != UserRole.pending)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 2,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.indigo,
-                                    ),
-                                    color: (userRole == UserRole.admin)
-                                        ? Colors.indigo
-                                        : Colors.white,
-                                  ),
-                                  child: Text(
-                                    listAdmin[index].role.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: (userRole == UserRole.admin)
-                                          ? Colors.white
-                                          : Colors.indigo,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              const SizedBox(width: 8),
-                            ],
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Joined at ${DateFormat('dd/MM/yyyy').format(user.joinedAt)}",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            "Joined at ${DateFormat('dd/MM/yyyy').format(listAdmin[index].joinedAt)}",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    if (userRole == UserRole.pending)
-                      _buildListButtonPendingUser(viewModel, listAdmin[index]),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                  if (userRole == UserRole.pending)
+                    _buildListButtonPendingUser(viewModel, user),
+                ],
+              ),
+            );
+          },
         ),
         Padding(
           padding: const EdgeInsets.all(12.0),
           child: userRole == UserRole.admin
               ? ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo.shade50,
-                    padding: const EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: const Text(
-                    "Update your squad admins",
-                    style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.indigo,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              : (listAdmin.isEmpty)
-                  ? const Center(
-                      child: Text(
-                        "No members found",
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-        )
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo.shade50,
+              padding: const EdgeInsets.all(12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            child: const Text(
+              "Update your squad admins",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.indigo,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+              : listAdmin.isEmpty
+              ? const Center(
+            child: Text(
+              "No members found",
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }

@@ -332,4 +332,28 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<void> sendFeedback(String content, int rate) async {
+    try {
+      final response = await callApi(
+        "profile-service/feedback/create",
+        'POST',
+        data: {
+          'content': content,
+          'rate': rate,
+        },
+        isToken: true,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Log.debug('Feedback sent successfully');
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to send feedback');
+      }
+    } catch (error) {
+      Log.debug('Error sending feedback: $error');
+      rethrow;
+    }
+  }
 }
