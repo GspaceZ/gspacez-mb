@@ -45,16 +45,13 @@ class _CommonCommentState extends State<CommonComment> {
             ? const Center(child: CircularProgressIndicator())
             : (comments.isEmpty)
                 ? const SizedBox.shrink()
-                : SizedBox(
-                    height: comments.length * 100,
-                    child: ListView.builder(
-                      itemCount: comments.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return _buildCommentItem(comments[index]);
-                      },
-                    ),
+                : ListView.builder(
+                    itemCount: comments.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return _buildCommentItem(comments[index]);
+                    },
                   ),
         // const Spacer(),
         _buildCreateComment(),

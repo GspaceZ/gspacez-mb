@@ -146,8 +146,7 @@ class _CommonPostState extends State<CommonPost> {
                           ],
                         ),
                       ),
-                      if(_isMyPost)
-                        _buildEditPost(),
+                      if (_isMyPost) _buildEditPost(),
                     ],
                   ),
                   _buildTitle(),
@@ -441,27 +440,26 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildEditPost() {
-   return Padding(
-     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-     child: TextButton(
-         onPressed: () {
-           /// TODO: edit post
-         },
-         style: TextButton.styleFrom(
-           shape: RoundedRectangleBorder(
-             borderRadius: BorderRadius.circular(10),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TextButton(
+          onPressed: () {
+            /// TODO: edit post
+          },
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
               side: const BorderSide(
                 color: Colors.blue,
                 width: 0.5,
               ),
-           ),
-         ),
-         child: const Text(
-           "Edit post",
-           style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
-         )
-     ),
-   );
+            ),
+          ),
+          child: const Text(
+            "Edit post",
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+          )),
+    );
   }
 
   _buildHidePost() {

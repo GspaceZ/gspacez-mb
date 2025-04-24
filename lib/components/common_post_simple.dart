@@ -356,13 +356,19 @@ class _CommonPostState extends State<CommonPostSimple> {
   }
 
   _buildTitle() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        widget.post.title ?? "",
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, AppRoutes.postDetail,
+            arguments: widget.post);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          widget.post.title ?? "",
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
