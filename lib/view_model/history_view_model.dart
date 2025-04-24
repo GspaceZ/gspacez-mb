@@ -27,7 +27,7 @@ class HistoryViewModel extends ChangeNotifier {
 
     try {
       if (isRefresh) {
-        _page = 1;
+        _page = 0;
         posts.clear();
         _hasMore = true;
       }

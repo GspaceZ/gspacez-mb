@@ -112,9 +112,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 8),
                 _buildTextField(titleController, "Your Title"),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 _buildSquadDropdown(),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 TabBar(
                   controller: _tabController,
                   labelColor: Colors.black,
@@ -221,8 +221,13 @@ class _CreatePostDialogState extends State<CreatePostDialog>
           ),
         const SizedBox(height: 20),
         DropdownButtonFormField<SquadAccessResponse>(
-          decoration:
-              CusTomInputDecoration("Select Squad").getInputDecoration(),
+          decoration: CusTomInputDecoration("Select squad")
+              .getInputDecoration()
+              .copyWith(
+            icon: null,
+            suffixIcon: null,
+          ),
+          icon: const Icon(Icons.arrow_drop_down),
           value: _selectedSquad,
           items: _squads.map((squad) {
             return DropdownMenuItem<SquadAccessResponse>(
@@ -235,7 +240,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
               _selectedSquad = newValue;
             });
           },
-        ),
+        )
       ],
     );
   }

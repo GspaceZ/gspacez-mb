@@ -53,12 +53,12 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
     ];
 
     final List<Map<String, dynamic>> discoverItems = [
-      {"title": "Tags", "icon": Icons.tag},
+      {"title": "Tags", "icon": Icons.tag, "route": AppRoutes.tags},
       {"title": "Discussions", "icon": Icons.chat},
     ];
 
     final List<Map<String, dynamic>> feedbackItems = [
-      {"title": "Feedback", "icon": Icons.feedback_outlined},
+      {"title": "Feedback", "icon": Icons.feedback_outlined, "route": AppRoutes.feedBack},
     ];
 
     final filteredSquads = searchQuery.isEmpty

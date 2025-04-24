@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/base_image_network.dart';
-import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
@@ -237,11 +235,11 @@ class _CommonPostState extends State<CommonPostSimple> {
     final imageUrl = widget.post.previewImage;
     return (imageUrl != null)
         ? GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-            context, AppRoutes.postDetail, arguments: widget.post);
-      },
-          child: Padding(
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.postDetail,
+                  arguments: widget.post);
+            },
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Container(
                   constraints: BoxConstraints(
@@ -275,7 +273,7 @@ class _CommonPostState extends State<CommonPostSimple> {
                     ],
                   )),
             ),
-        )
+          )
         : const SizedBox.shrink();
   }
 
@@ -356,7 +354,6 @@ class _CommonPostState extends State<CommonPostSimple> {
       ),
     );
   }
-
 
   _buildTitle() {
     return Padding(

@@ -233,4 +233,51 @@ class PostService {
       throw Exception('Failed to get posts in squad');
     }
   }
+
+  Future<List<String>> searchTags(String query) async {
+    final response = await callApi(
+      "post-service/tags/search?searchText=$query",
+      'GET',
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<String> tags = List<String>.from(baseResponse.result);
+      return tags;
+    } else {
+      throw Exception('Failed to search tags');
+    }
+  }
+
+  Future<List<PostModelResponse>> getPostsByHashtag(String hashtag, int size, int page) async {
+    final response = await callApi(
+      "post-service/posts/posts-by-hashtag?hashTag=$hashtag&size=$size&page=$page",
+      'GET',
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<PostModelResponse> posts = baseResponse.result['content']
+          .map((post) => PostModelResponse.fromJson(post))
+          .toList()
+          .cast<PostModelResponse>();
+      return posts;
+    } else {
+      throw Exception('Failed to get posts by hashtag');
+    }
+  }
 }

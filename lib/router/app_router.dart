@@ -11,6 +11,7 @@ import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
+import 'package:untitled/screen/feedback/feedback_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/post_detail_view.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
@@ -22,6 +23,7 @@ import 'package:untitled/screen/profile/profile_view.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../model/squad_response.dart';
 import '../screen/profile/update_avatar.dart';
+import '../screen/tags/tag_view.dart';
 
 class AppRoutes {
   static const String splashScreen = '/';
@@ -43,6 +45,8 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String squadDetail = '/squad_detail';
   static const String postDetail = '/post_detail';
+  static const String feedBack = '/feedback';
+  static const String tags = '/tags';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -118,6 +122,14 @@ class AppRoutes {
       case postDetail:
         final post = settings.arguments as PostModelResponse;
         return MaterialPageRoute(builder: (_) => PostDetailView(post: post));
+      case feedBack:
+        return MaterialPageRoute(
+          builder: (_) => const FeedbackView(),
+        );
+      case tags:
+        return MaterialPageRoute(
+          builder: (_) => const TagView(),
+        );
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));
