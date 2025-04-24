@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
@@ -11,6 +12,7 @@ import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/service/post_service.dart';
+
 import '../components/navigation_bar.dart';
 import '../service/user_service.dart';
 import 'homePage/home.dart';
@@ -55,7 +57,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   getProfile() async {
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
-    profileId =  await LocalStorage.instance.userId ?? "";
+    profileId = await LocalStorage.instance.userId ?? "";
     setState(() {});
 
     if (profileId.isNotEmpty) {
@@ -72,7 +74,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
         streakCount = result.currentStreak;
       });
     } catch (e) {
-      print('Error getting streak: $e');
+      Log.error('Error getting streak: $e');
     }
   }
 
@@ -130,6 +132,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
 
                 /// Explore page
                 const ExploreView(),
+
                 /// History page
                 const HistoryView(),
 

@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/base_image_network.dart';
-import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
+import 'package:untitled/router/app_router.dart';
 import 'package:untitled/utils/format_time.dart';
 
 import '../constants/appconstants.dart';
@@ -217,25 +216,6 @@ class _CommonPostState extends State<CommonPostSimple> {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
-                isScrollControlled: true,
-                useSafeArea: true,
-                context: context,
-                builder: (context) => SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  child: CommonComment(
-                    postId: widget.post.id,
-                    onGetComment: () async {
-                      return await getComment(widget.post);
-                    },
-                  ),
-                ),
-              );
-            },
-            child: SvgPicture.asset("assets/svg/ic_comment.svg"),
-          ),
           IconButton(
             onPressed: () {
               _isBookmark = !_isBookmark;
@@ -254,38 +234,45 @@ class _CommonPostState extends State<CommonPostSimple> {
   _buildImagePost() {
     final imageUrl = widget.post.previewImage;
     return (imageUrl != null)
-        ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.sizeOf(context).width / 1.5,
-                ),
-                child: Stack(
-                  children: [
-                    BaseImageNetwork(imageUrl: imageUrl),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            "@${widget.post.squad.name.toUpperCase()}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+        ? GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.postDetail,
+                  arguments: widget.post);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.sizeOf(context).width / 1.5,
+                  ),
+                  child: Stack(
+                    children: [
+                      BaseImageNetwork(imageUrl: imageUrl),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Container(
+                            padding: const EdgeInsets.all(4.0),
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              "@${widget.post.squad.name.toUpperCase()}",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
-                )),
+                      )
+                    ],
+                  )),
+            ),
           )
         : const SizedBox.shrink();
   }
@@ -325,22 +312,45 @@ class _CommonPostState extends State<CommonPostSimple> {
     );
   }
 
-  _buildHashTags() {
+  Widget _buildHashTags() {
     final List<String> hashTags = widget.post.hashTags ?? [];
+    const int maxVisible = 2;
+
+    final List<Widget> chips = [];
+
+    for (int i = 0; i < hashTags.length && i < maxVisible; i++) {
+      chips.add(
+        Chip(
+          padding: const EdgeInsets.all(0.0),
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          label: Text("#${hashTags[i]}"),
+        ),
+      );
+    }
+    if (hashTags.length > maxVisible) {
+      chips.add(
+        Chip(
+          padding: const EdgeInsets.all(0.0),
+          backgroundColor: Colors.grey.shade300,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          label: Text("+${hashTags.length - maxVisible}"),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 8.0,
-        children: hashTags
-            .map((e) => Chip(
-                  backgroundColor: Colors.grey.shade200,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  label: Text("#$e"),
-                ))
-            .toList(),
+        children: chips,
       ),
     );
   }
