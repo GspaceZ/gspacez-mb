@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/screen/auth/active_success.dart';
 import 'package:untitled/screen/auth/create_password_view.dart';
 import 'package:untitled/screen/auth/forgot_password.dart';
@@ -11,6 +12,7 @@ import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
+import 'package:untitled/screen/homePage/post_detail_view.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/screen/squad/squad_detail_view.dart';
 import 'package:untitled/screen/squad/squad_form_view.dart';
@@ -40,6 +42,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String notification = '/notification';
   static const String squadDetail = '/squad_detail';
+  static const String postDetail = '/post_detail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -112,6 +115,9 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => SquadDetailView(tagName: tagName),
         );
+      case postDetail:
+        final post = settings.arguments as PostModelResponse;
+        return MaterialPageRoute(builder: (_) => PostDetailView(post: post));
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

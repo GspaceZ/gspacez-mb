@@ -13,7 +13,7 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   final List<PostModelResponse> posts = [];
-  int _pageNum = 1;
+  int _pageNum = 0;
   final int _pageSize = 20;
   bool _isLoading = false;
   bool _hasMore = true;
@@ -28,7 +28,7 @@ class HomeViewModel extends ChangeNotifier {
 
     try {
       if (isRefresh) {
-        _pageNum = 1;
+        _pageNum = 0;
         posts.clear();
         _hasMore = true;
       }
