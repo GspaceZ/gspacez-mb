@@ -19,17 +19,21 @@ class _HomeState extends State<Home> {
         builder: (context, homeViewModel, child) {
           return RefreshIndicator(
             onRefresh: homeViewModel.fetchPost,
-            child: ListView.builder(
-              controller: homeViewModel.scrollController,
-              physics: const BouncingScrollPhysics(),
-              itemCount: homeViewModel.posts.length,
-              itemBuilder: (context, index) {
-                final post = homeViewModel.posts[index];
-                return CommonPostSimple(
-                  post: post,
-                );
-              },
-            ),
+            child: (homeViewModel.posts.isNotEmpty)
+                ? ListView.builder(
+                    controller: homeViewModel.scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: homeViewModel.posts.length,
+                    itemBuilder: (context, index) {
+                      final post = homeViewModel.posts[index];
+                      return CommonPostSimple(
+                        post: post,
+                      );
+                    },
+                  )
+                : const Center(
+                    child: CircularProgressIndicator(),
+                  ),
           );
         },
       ),
