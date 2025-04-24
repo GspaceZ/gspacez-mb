@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -13,6 +14,7 @@ import 'provider/language_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   final i18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
       useCountryCode: false,
@@ -21,10 +23,16 @@ void main() async {
       forcedLocale: const Locale('en'),
     ),
   );
-  await dotenv.load(fileName: ".env");
-  await i18nDelegate.load(
-      const Locale('en')); // Load initial translations with non-null locale
+
+  // ✅ Chỉ load .env nếu không phải web
+  if (!kIsWeb) {
+    await dotenv.load(fileName: ".env");
+  }
+
+  await i18nDelegate.load(const Locale('en'));
+
   final isAuth = await TokenDataSource.instance.getToken() != null;
+
   runApp(
     MultiProvider(
       providers: [
@@ -77,14 +85,13 @@ class _MyAppState extends State<MyApp> {
             popupMenuTheme: PopupMenuThemeData(
               shape: RoundedRectangleBorder(
                 side: const BorderSide(
-                    color: Colors.grey,
-                    width: 0.5), // Set border color and width
-                borderRadius:
-                    BorderRadius.circular(10.0), // Set border radius if needed
+                  color: Colors.grey,
+                  width: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
             fontFamily: 'NotoSans',
-            // Set font chữ mặc định cho app
           ),
           debugShowCheckedModeBanner: false,
         );
