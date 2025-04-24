@@ -82,7 +82,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       extendBody: true,
       appBar: AppBar(
         title: Text(
