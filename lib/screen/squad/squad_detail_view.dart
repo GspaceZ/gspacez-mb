@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:untitled/constants/appconstants.dart';
+import 'package:untitled/main.dart';
 import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/user_role.dart';
+import 'package:untitled/screen/squad/update_squad_admin_view.dart';
+
 import '../../components/common_post_simple.dart';
 import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
@@ -13,6 +16,7 @@ import '../profile/profile_view.dart';
 
 class SquadDetailView extends StatelessWidget {
   final String tagName;
+
   const SquadDetailView({super.key, required this.tagName});
 
   @override
@@ -29,82 +33,98 @@ class SquadDetailView extends StatelessWidget {
             body: viewModel.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : (viewModel.error != null)
-                ? Center(child: Text(viewModel.error!))
-                : DefaultTabController(
-              length: viewModel.isAdmin ? 3 : 1,
-              child: NestedScrollView(
-                controller: viewModel.scrollController,
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverToBoxAdapter(child: _buildHeader(viewModel.squad)),
-                  SliverToBoxAdapter(child: _buildSquadActions(context, viewModel.squad, viewModel)),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverToBoxAdapter(child: _buildSquadAdmins(context, viewModel.squad, viewModel)),
-                  if (viewModel.squad.description?.isNotEmpty ?? false)
-                    SliverToBoxAdapter(child: _buildDescription(viewModel.squad)),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverToBoxAdapter(child: _buildStats(viewModel.squad)),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  SliverToBoxAdapter(
-                    child: TabBar(
-                      isScrollable: true,
-                      labelColor: Colors.indigo,
-                      unselectedLabelColor: Colors.grey,
-                      tabs: [
-                        const Tab(text: "Posts"),
-                        if (viewModel.isAdmin) const Tab(text: "Manage member"),
-                        if (viewModel.isAdmin) const Tab(text: "Pending request"),
-                      ],
-                    ),
-                  ),
-                ],
-                body: TabBarView(
-                  children: [
-                    CustomScrollView(
-                      slivers: [
-                        if (viewModel.posts.isEmpty && !viewModel.isLoadingPost)
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: Text(
-                                "This squad has no posts.",
-                                style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ? Center(child: Text(viewModel.error!))
+                    : DefaultTabController(
+                        length: viewModel.isAdmin ? 3 : 1,
+                        child: NestedScrollView(
+                          controller: viewModel.scrollController,
+                          headerSliverBuilder: (context, innerBoxIsScrolled) =>
+                              [
+                            SliverToBoxAdapter(
+                                child: _buildHeader(viewModel.squad)),
+                            SliverToBoxAdapter(
+                                child: _buildSquadActions(
+                                    context, viewModel.squad, viewModel)),
+                            const SliverToBoxAdapter(
+                                child: SizedBox(height: 16)),
+                            SliverToBoxAdapter(
+                                child: _buildSquadAdmins(
+                                    context, viewModel.squad, viewModel)),
+                            if (viewModel.squad.description?.isNotEmpty ??
+                                false)
+                              SliverToBoxAdapter(
+                                  child: _buildDescription(viewModel.squad)),
+                            const SliverToBoxAdapter(
+                                child: SizedBox(height: 16)),
+                            SliverToBoxAdapter(
+                                child: _buildStats(viewModel.squad)),
+                            const SliverToBoxAdapter(
+                                child: SizedBox(height: 16)),
+                            SliverToBoxAdapter(
+                              child: TabBar(
+                                isScrollable: true,
+                                labelColor: Colors.indigo,
+                                unselectedLabelColor: Colors.grey,
+                                tabs: [
+                                  const Tab(text: "Posts"),
+                                  if (viewModel.isAdmin)
+                                    const Tab(text: "Manage member"),
+                                  if (viewModel.isAdmin)
+                                    const Tab(text: "Pending request"),
+                                ],
                               ),
                             ),
-                          )
-                        else
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                if (index == viewModel.posts.length) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Center(child: CircularProgressIndicator()),
-                                  );
-                                }
-                                final post = viewModel.posts[index];
-                                return CommonPostSimple(post: post);
-                              },
-                              childCount: viewModel.posts.length +
-                                  (viewModel.isLoadingPost ? 1 : 0),
-                            ),
+                          ],
+                          body: TabBarView(
+                            children: [
+                              CustomScrollView(
+                                slivers: [
+                                  if (viewModel.posts.isEmpty &&
+                                      !viewModel.isLoadingPost)
+                                    const SliverFillRemaining(
+                                      hasScrollBody: false,
+                                      child: Center(
+                                        child: Text(
+                                          "This squad has no posts.",
+                                          style: TextStyle(
+                                              fontSize: 16, color: Colors.grey),
+                                        ),
+                                      ),
+                                    )
+                                  else
+                                    SliverList(
+                                      delegate: SliverChildBuilderDelegate(
+                                        (context, index) {
+                                          if (index == viewModel.posts.length) {
+                                            return const Padding(
+                                              padding: EdgeInsets.all(16),
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator()),
+                                            );
+                                          }
+                                          final post = viewModel.posts[index];
+                                          return CommonPostSimple(post: post);
+                                        },
+                                        childCount: viewModel.posts.length +
+                                            (viewModel.isLoadingPost ? 1 : 0),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              if (viewModel.isAdmin)
+                                _buildManageSquad(viewModel),
+                              if (viewModel.isAdmin)
+                                _buildListUser(
+                                  "Pending request",
+                                  viewModel: viewModel,
+                                  userRole: UserRole.pending,
+                                  viewModel.membersPending,
+                                ),
+                            ],
                           ),
-                      ],
-                    ),
-
-                    if (viewModel.isAdmin)
-                      _buildManageSquad(viewModel),
-
-                    if (viewModel.isAdmin)
-                      _buildListUser(
-                        "Pending request",
-                        viewModel: viewModel,
-                        userRole: UserRole.pending,
-                        viewModel.membersPending,
+                        ),
                       ),
-                  ],
-                ),
-              ),
-            ),
           );
         },
       ),
@@ -598,11 +618,11 @@ class SquadDetailView extends StatelessWidget {
   }
 
   Widget _buildListUser(
-      String title,
-      List<AdminSquad> listAdmin, {
-        required UserRole userRole,
-        required SquadDetailViewModel viewModel,
-      }) {
+    String title,
+    List<AdminSquad> listAdmin, {
+    required UserRole userRole,
+    required SquadDetailViewModel viewModel,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -702,31 +722,33 @@ class SquadDetailView extends StatelessWidget {
           padding: const EdgeInsets.all(12.0),
           child: userRole == UserRole.admin
               ? ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.indigo.shade50,
-              padding: const EdgeInsets.all(12.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            child: const Text(
-              "Update your squad admins",
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.indigo,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
+                  onPressed: () {
+                    _showDialogUpdateSquad(viewModel);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigo.shade50,
+                    padding: const EdgeInsets.all(12.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  child: const Text(
+                    "Update your squad admins",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.indigo,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
               : listAdmin.isEmpty
-              ? const Center(
-            child: Text(
-              "No members found",
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          )
-              : const SizedBox.shrink(),
+                  ? const Center(
+                      child: Text(
+                        "No members found",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
         ),
       ],
     );
@@ -776,6 +798,42 @@ class SquadDetailView extends StatelessWidget {
         ),
         const SizedBox(width: 8),
       ],
+    );
+  }
+
+  _showDialogUpdateSquad(SquadDetailViewModel viewModel) {
+    final List<AdminSquad> listAllUsers =
+        viewModel.squad.adminList + (viewModel.membersOfficial);
+    showDialog(
+      context: navigatorKey.currentContext!,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Update member role"),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 350,
+            child: UpdateSquadAdmin(
+              allUsers: listAllUsers,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(color: Colors.grey),
+                ),
+              ),
+              child: const Text("Cancel"),
+            ),
+          ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        );
+      },
     );
   }
 }

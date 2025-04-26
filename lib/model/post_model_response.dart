@@ -1,5 +1,6 @@
 import 'package:untitled/model/content_model.dart';
 import 'package:untitled/model/squad_model.dart';
+
 import 'comment_response.dart';
 
 class PostModelResponse {
@@ -21,6 +22,7 @@ class PostModelResponse {
   int totalDislike;
   bool liked;
   bool disliked;
+  bool? canBeInteracted;
 
   PostModelResponse({
     required this.id,
@@ -41,6 +43,7 @@ class PostModelResponse {
     required this.totalDislike,
     required this.liked,
     required this.disliked,
+    this.canBeInteracted,
   });
 
   factory PostModelResponse.fromJson(Map<String, dynamic> json) {
@@ -50,12 +53,14 @@ class PostModelResponse {
       profileName: json['profileName'],
       avatarUrl: json['avatarUrl'],
       content: ContentModel.fromJson(json['content']),
-        comments: json['comments'] != null
-            ? (json['comments'] as List)
-            .map((e) => CommentResponse.fromJson(e as Map<String, dynamic>))
-            .toList()
-            : null,
-      squad: json['squad'] != null ? SquadModel.fromJson(json['squad']) : SquadModel.fromProfileJson(json['squad']),
+      comments: json['comments'] != null
+          ? (json['comments'] as List)
+              .map((e) => CommentResponse.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : null,
+      squad: json['squad'] != null
+          ? SquadModel.fromJson(json['squad'])
+          : SquadModel.fromProfileJson(json['squad']),
       hashTags: List<String>.from(json['hashTags'] ?? []),
       privacy: json['privacy'],
       type: json['type'],
@@ -66,7 +71,8 @@ class PostModelResponse {
       totalLike: json['totalLike'],
       totalDislike: json['totalDislike'],
       liked: json['liked'],
-      disliked: json['disliked']
+      disliked: json['disliked'],
+      canBeInteracted: json['canBeInteracted'],
     );
   }
 
@@ -90,11 +96,12 @@ class PostModelResponse {
       'totalDislike': totalDislike,
       'liked': liked,
       'disliked': disliked,
+      'canBeInteracted': canBeInteracted,
     };
   }
 
   @override
   String toString() {
-    return 'PostModel{id: $id, type: $type, privacy: $privacy, content: $content, squad: $squad, profileId: $profileId, profileName: $profileName, avatarUrl: $avatarUrl, comments: $comments, title: $title, previewImage: $previewImage, hashTags: $hashTags, totalLike: $totalLike, totalDislike: $totalDislike, liked: $liked, createdAt: $createdAt, updatedAt: $updatedAt, disliked: $disliked}';
+    return 'PostModel{id: $id, type: $type, privacy: $privacy, content: $content, squad: $squad, profileId: $profileId, profileName: $profileName, avatarUrl: $avatarUrl, comments: $comments, title: $title, previewImage: $previewImage, hashTags: $hashTags, totalLike: $totalLike, totalDislike: $totalDislike, liked: $liked, createdAt: $createdAt, updatedAt: $updatedAt, disliked: $disliked, canBeInteracted: $canBeInteracted}';
   }
 }

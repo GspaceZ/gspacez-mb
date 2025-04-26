@@ -11,6 +11,7 @@ import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
 import 'package:untitled/service/post_service.dart';
+
 import '../components/navigation_bar.dart';
 import '../service/user_service.dart';
 import 'homePage/home.dart';
@@ -55,7 +56,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   getProfile() async {
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
-    profileId =  await LocalStorage.instance.userId ?? "";
+    profileId = await LocalStorage.instance.userId ?? "";
     setState(() {});
 
     if (profileId.isNotEmpty) {
@@ -80,7 +81,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       extendBody: true,
       appBar: AppBar(
         title: Text(
@@ -130,6 +131,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
 
                 /// Explore page
                 const ExploreView(),
+
                 /// History page
                 const HistoryView(),
 

@@ -1,10 +1,13 @@
 import 'dart:convert';
+
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/explore_model.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/model/react_post_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
+
 import '../model/comment_request.dart';
 import '../model/post_model_request.dart';
 
@@ -24,12 +27,14 @@ class PostService {
       'GET',
       isToken: true,
     );
+    Log.error(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
           jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
           BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
+        Log.error(baseResponse.message);
         throw Exception(baseResponse.message);
       }
       final List<PostModelResponse> posts = baseResponse.result['content']
@@ -102,9 +107,9 @@ class PostService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
 
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
@@ -243,9 +248,9 @@ class PostService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -256,7 +261,8 @@ class PostService {
     }
   }
 
-  Future<List<PostModelResponse>> getPostsByHashtag(String hashtag, int size, int page) async {
+  Future<List<PostModelResponse>> getPostsByHashtag(
+      String hashtag, int size, int page) async {
     final response = await callApi(
       "post-service/posts/posts-by-hashtag?hashTag=$hashtag&size=$size&page=$page",
       'GET',
@@ -265,9 +271,9 @@ class PostService {
 
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
