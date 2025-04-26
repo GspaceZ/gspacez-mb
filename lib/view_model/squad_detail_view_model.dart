@@ -5,6 +5,7 @@ import 'package:untitled/main.dart';
 import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/user_role.dart';
 import 'package:untitled/service/post_service.dart';
+
 import '../model/comment_response.dart';
 import '../model/post_model_response.dart';
 import '../model/profile_response.dart';
@@ -21,6 +22,7 @@ class SquadDetailViewModel extends ChangeNotifier {
   String? currentUserId;
   bool isAdmin = false;
   bool isLoadingPost = false;
+
   bool get hasMore => hasMorePosts;
   List<AdminSquad> membersOfficial = [];
   List<AdminSquad> membersPending = [];
@@ -31,6 +33,8 @@ class SquadDetailViewModel extends ChangeNotifier {
   }
 
   _initialize() async {
+    isLoading = true;
+    notifyListeners();
     await _loadCurrentUser();
     await _fetchSquad();
     if (isAdmin) {
@@ -39,6 +43,7 @@ class SquadDetailViewModel extends ChangeNotifier {
         _fetchPendingMember(),
       ]);
     }
+    isLoading = false;
     notifyListeners();
   }
 
@@ -62,7 +67,6 @@ class SquadDetailViewModel extends ChangeNotifier {
 
   Future<void> _fetchSquad() async {
     try {
-      isLoading = true;
       notifyListeners();
 
       final result = await SquadService.instance.getSquadInfo(tagName);
@@ -84,7 +88,6 @@ class SquadDetailViewModel extends ChangeNotifier {
       error = e.toString();
     } finally {
       await _updateAvatarAdmin();
-      isLoading = false;
       notifyListeners();
     }
   }

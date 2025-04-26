@@ -11,9 +11,10 @@ class SquadSetting {
 
   factory SquadSetting.fromJson(Map<String, dynamic> json) {
     return SquadSetting(
-      allowPostModeration: json['allowPostModeration'] as bool,
-      allowChangeProfileAccessibility: json['allowChangeProfileAccessibility'] as bool,
-      allowPostInteraction: json['allowPostInteraction'] as bool,
+      allowPostModeration: json['allowPostModeration'] as bool? ?? false,
+      allowChangeProfileAccessibility:
+          json['allowChangeProfileAccessibility'] as bool? ?? false,
+      allowPostInteraction: json['allowPostInteraction'] as bool? ?? false,
     );
   }
 

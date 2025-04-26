@@ -49,7 +49,7 @@ Future<http.Response> callApi<T>(
       response = await http.get(fullUrl, headers: headers);
       break;
   }
-  Log.info('Response: ${utf8.decode(response.bodyBytes)}');
+  Log.info('Domain: $fullUrl \nResponse: ${utf8.decode(response.bodyBytes)}');
   Map<String, dynamic> responseMap =
       jsonDecode(utf8.decode(response.bodyBytes));
   final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
