@@ -1,9 +1,15 @@
-name: Dart
+name: Flutter CI + Firebase Preview
 
 on:
+  pull_request:
+    types: [opened, synchronize, reopened]
   push:
     branches:
       - "**"
+
+permissions:
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -11,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Cài đặt Flutter SDK
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -19,19 +24,67 @@ jobs:
 
       - name: Install dependencies
         run: dart pub get
-      - name: Update Depencies
+
+      - name: Update dependencies
         run: flutter pub upgrade
+
       - name: Run lint check
         run: dart analyze
 
-      # Uncomment this step to verify the use of 'dart format' on each commit.
-      # - name: Verify formatting
-      #   run: dart format --output=none --set-exit-if-changed .
-
-
-
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
       - name: Run tests
         run: flutter test
+
+  deploy-preview:
+    if: github.event_name == 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.3'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        run: |
+          flutter build web \
+            --dart-define=BASE_URL=https://gspacez.tech/api/v1/ \
+            --dart-define=BASE_URI_ACTIVE=https://cfakebook.vercel.app/en/auth/activate-account \
+            --dart-define=CLIENT_ID=705594420748-vui4a7jrqgnl7h7qki40l0pscm92ibhj.apps.googleusercontent.com \
+            --dart-define=GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Deploy to Firebase Hosting (Preview)
+        id: deploy
+        run: |
+          output=$(firebase hosting:channel:deploy pr-${{ github.event.pull_request.number }} \
+            --project gspacez-66a0e \
+            --token "${{ secrets.FIREBASE_TOKEN }}" \
+            --expires 7d)
+
+          echo "$output" > deploy_output.log
+
+          preview_url=$(echo "$output" | grep -oP 'https://[^\s]+--pr-[0-9]+-[a-z0-9]+\.web\.app' | head -n 1)
+          echo "Preview URL: $preview_url"
+          echo "PREVIEW_URL=$preview_url" >> $GITHUB_ENV
+        working-directory: ./ # nếu firebase.json nằm trong root
+
+      - name: Comment Preview URL on PR
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            ✅ Your PR has been deployed!  
+            🔗 [Click to view preview](${{ env.PREVIEW_URL }})
+        env:
+          PREVIEW_URL: ${{ env.PREVIEW_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -38,45 +38,24 @@ class _CommonCommentState extends State<CommonComment> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery
-            .of(context)
-            .viewInsets
-            .bottom,
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.7 -
-                  MediaQuery
-                      .of(context)
-                      .viewInsets
-                      .bottom -
-                  sizeImageComment,
-              child: (isLoading)
-                  ? const Center(child: CircularProgressIndicator())
-                  : (comments.isEmpty)
-                  ? const Center(
-                child: Text('No comments available'),
-              )
-                  : ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  return _buildCommentItem(comments[index]);
-                },
-              ),
-            ),
-            // const Spacer(),
-            _buildCreateComment(),
-          ],
-        ),
-      ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        (isLoading)
+            ? const Center(child: CircularProgressIndicator())
+            : (comments.isEmpty)
+                ? const SizedBox.shrink()
+                : ListView.builder(
+                    itemCount: comments.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return _buildCommentItem(comments[index]);
+                    },
+                  ),
+        // const Spacer(),
+        _buildCreateComment(),
+      ],
     );
   }
 
@@ -86,7 +65,7 @@ class _CommonCommentState extends State<CommonComment> {
     final convertedContent = convertContent(comment.content.text);
     final String text = convertedContent["text"];
     final List<String> imageUrls =
-    List<String>.from(convertedContent["imageUrls"]);
+        List<String>.from(convertedContent["imageUrls"]);
     final DateTime time = comment.createdAt;
 
     return SafeArea(
@@ -172,111 +151,79 @@ class _CommonCommentState extends State<CommonComment> {
   _buildImagePost(CommentResponse comment) {
     final convertedContent = convertContent(comment.content.text);
     final List<String> imageUrls =
-    List<String>.from(convertedContent["imageUrls"]);
+        List<String>.from(convertedContent["imageUrls"]);
 
     return SizedBox(
-      height: MediaQuery
-          .sizeOf(context)
-          .width / 3,
+      height: MediaQuery.sizeOf(context).width / 3,
       child: Center(
         child: (imageUrls.length == 1)
             ? BaseImageNetwork(imageUrl: imageUrls[0])
             : ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: imageUrls.length,
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: SizedBox(
-                  width: MediaQuery
-                      .sizeOf(context)
-                      .width / 3,
-                  child: BaseImageNetwork(imageUrl: imageUrls[0])),
-            );
-          },
-        ),
+                scrollDirection: Axis.horizontal,
+                itemCount: imageUrls.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width / 3,
+                        child: BaseImageNetwork(imageUrl: imageUrls[0])),
+                  );
+                },
+              ),
       ),
     );
   }
 
-  //
-  // _buildVideoPost(CommentResponse comment) {
-  //   final convertedContent = convertContent(comment.content.text);
-  //   final List<String> videoUrls = List<String>.from(convertedContent["videoUrls"]);
-  //
-  //   return SizedBox(
-  //     height: MediaQuery.sizeOf(context).width / 3,
-  //     child: Center(
-  //       child: (videoUrls.length == 1)
-  //           ? BaseVideoPlayer(url: videoUrls[0])
-  //           : ListView.builder(
-  //               scrollDirection: Axis.horizontal,
-  //               itemCount: videoUrls.length,
-  //               itemBuilder: (context, index) {
-  //                 return Padding(
-  //                   padding: const EdgeInsets.all(2.0),
-  //                   child: SizedBox(
-  //                     width: MediaQuery.sizeOf(context).width / 3,
-  //                     child:
-  //                         BaseVideoPlayer(url: videoUrls[index]),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //     ),
-  //   );
-  // }
-
   _buildSelectedImage() {
     return (_selectedImages.isNotEmpty)
         ? Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SizedBox(
-        height: 100.0, // Adjust this value as needed
-        width: double.infinity, // Adjust this value as needed
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: _selectedImages.length,
-          itemBuilder: (context, index) {
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: 100.0, // Adjust this value as needed
+              width: double.infinity, // Adjust this value as needed
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: _selectedImages.length,
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1,
+                              ),
+                            ),
+                            child:
+                                Image.file(File(_selectedImages[index].path))),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.dangerous_outlined,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _selectedImages.removeAt(index);
+                              if (_selectedImages.isEmpty) {
+                                sizeImageComment = 0;
+                              }
+                            });
+                          },
                         ),
                       ),
-                      child:
-                      Image.file(File(_selectedImages[index].path))),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.dangerous_outlined,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _selectedImages.removeAt(index);
-                        if (_selectedImages.isEmpty) {
-                          sizeImageComment = 0;
-                        }
-                      });
-                    },
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    )
+                    ],
+                  );
+                },
+              ),
+            ),
+          )
         : const SizedBox.shrink();
   }
 
@@ -305,9 +252,9 @@ class _CommonCommentState extends State<CommonComment> {
   }
 
   _onCreateComment(String postId) async {
-    if (commentController.text
-        .trim()
-        .isEmpty && _selectedImages.isEmpty) return;
+    if (commentController.text.trim().isEmpty && _selectedImages.isEmpty) {
+      return;
+    }
 
     isLoading = true;
     setState(() {});
@@ -316,24 +263,24 @@ class _CommonCommentState extends State<CommonComment> {
 
     if (_selectedImages.isNotEmpty) {
       for (var file in _selectedImages) {
-        final imageUrl = await CloudinaryService.instance.uploadImage(
-            file.path);
+        final imageUrl =
+            await CloudinaryService.instance.uploadImage(file.path);
         _uploadedImages.add(imageUrl);
       }
     }
 
-    String markdownImages = _uploadedImages.map((url) => '![Image]($url)').join(
-        '\n');
-    String fullContent = [commentText, markdownImages].where((e) =>
-    e.isNotEmpty).join('\n\n');
+    String markdownImages =
+        _uploadedImages.map((url) => '![Image]($url)').join('\n');
+    String fullContent =
+        [commentText, markdownImages].where((e) => e.isNotEmpty).join('\n\n');
 
     final commentRequest = CommentRequest(
       content: ContentModel(text: fullContent),
     );
 
     try {
-      final post = await PostService.instance.commentPost(
-          commentRequest, postId);
+      final post =
+          await PostService.instance.commentPost(commentRequest, postId);
 
       commentController.clear();
       _selectedImages.clear();

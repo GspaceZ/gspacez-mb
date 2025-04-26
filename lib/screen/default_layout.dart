@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/data/local/token_data_source.dart';
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/post_model_request.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
@@ -73,7 +74,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
         streakCount = result.currentStreak;
       });
     } catch (e) {
-      print('Error getting streak: $e');
+      Log.error('Error getting streak: $e');
     }
   }
 

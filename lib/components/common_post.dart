@@ -4,7 +4,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
-import 'package:untitled/components/privacy_modal.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/comment_response.dart';
@@ -35,6 +34,7 @@ class _CommonPostState extends State<CommonPost> {
   bool _showFullText = false;
   bool _isHide = false;
   bool _isBookmark = false;
+  bool _isShowComment = false;
 
   Future<List<CommentResponse>> getComment(PostModelResponse post) async {
     final response = await PostService.instance.getCommentById(post.id);
@@ -146,7 +146,7 @@ class _CommonPostState extends State<CommonPost> {
                           ],
                         ),
                       ),
-                      _buildPopupMenu(),
+                      if (_isMyPost) _buildEditPost(),
                     ],
                   ),
                   _buildTitle(),
@@ -174,7 +174,14 @@ class _CommonPostState extends State<CommonPost> {
                       ),
                     ),
                   ),
-                  _buildRowIcon(widget.post)
+                  _buildRowIcon(widget.post),
+                  if (_isShowComment)
+                    CommonComment(
+                      postId: widget.post.id,
+                      onGetComment: () async {
+                        return await getComment(widget.post);
+                      },
+                    ),
                 ],
               )
             : _buildHidePost(),
@@ -224,22 +231,23 @@ class _CommonPostState extends State<CommonPost> {
                 Text('$totalLike'),
               ])),
           GestureDetector(
-              onTap: () async {
-                if (isDisliked) return;
-                try {
-                  final response =
-                      await PostService.instance.reactPost(postId, 'DISLIKE');
-                  setState(() {
-                    post.disliked = true;
-                    post.liked = false;
-                    post.totalLike = response.totalLikes;
-                    post.totalDislike = response.totalDislikes;
-                  });
-                } catch (e) {
-                  throw Exception("Failed to react post: $e");
-                }
-              },
-              child: Row(children: [
+            onTap: () async {
+              if (isDisliked) return;
+              try {
+                final response =
+                    await PostService.instance.reactPost(postId, 'DISLIKE');
+                setState(() {
+                  post.disliked = true;
+                  post.liked = false;
+                  post.totalLike = response.totalLikes;
+                  post.totalDislike = response.totalDislikes;
+                });
+              } catch (e) {
+                throw Exception("Failed to react post: $e");
+              }
+            },
+            child: Row(
+              children: [
                 isDisliked
                     ? const Icon(
                         Icons.thumb_down_alt_outlined,
@@ -251,25 +259,18 @@ class _CommonPostState extends State<CommonPost> {
                       ),
                 const SizedBox(width: 4),
                 Text('$totalDislike'),
-              ])),
+              ],
+            ),
+          ),
           GestureDetector(
             onTap: () {
-              showModalBottomSheet(
-                isScrollControlled: true,
-                useSafeArea: true,
-                context: context,
-                builder: (context) => SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  child: CommonComment(
-                    postId: widget.post.id,
-                    onGetComment: () async {
-                      return await getComment(widget.post);
-                    },
-                  ),
-                ),
-              );
+              _isShowComment = !_isShowComment;
+              setState(() {});
             },
-            child: SvgPicture.asset("assets/svg/ic_comment.svg"),
+            child: SvgPicture.asset(
+              "assets/svg/ic_comment.svg",
+              color: _isShowComment ? Colors.blue : Colors.black,
+            ),
           ),
           IconButton(
             onPressed: () {
@@ -438,66 +439,26 @@ class _CommonPostState extends State<CommonPost> {
     );
   }
 
-  _buildPopupMenu() {
+  _buildEditPost() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: PopupMenuButton<String>(
-        onSelected: (String value) {
-          switch (value) {
-            case "hide":
-              _hidePost();
-              break;
-            case "privacy":
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return PrivacyModal(postId: widget.post.id);
-                },
-              );
-              break;
-            case "report":
-              break;
-            case "edit":
-              break;
-          }
-          setState(() {
-            // _selectedOption = value;
-          });
-        },
-        itemBuilder: (BuildContext context) {
-          return [
-            PopupMenuItem<String>(
-              padding: EdgeInsets.zero,
-              value: "hide",
-              child: Center(
-                  child: Text(FlutterI18n.translate(context, "post.hide"))),
-            ),
-            if (_isMyPost)
-              PopupMenuItem<String>(
-                padding: EdgeInsets.zero,
-                value: "privacy",
-                child: Center(
-                    child: Text(FlutterI18n.translate(
-                        context, "post.privacy.privacy_btn"))),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: TextButton(
+          onPressed: () {
+            /// TODO: edit post
+          },
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+              side: const BorderSide(
+                color: Colors.blue,
+                width: 0.5,
               ),
-            if (_isMyPost)
-              const PopupMenuItem<String>(
-                padding: EdgeInsets.zero,
-                value: "edit",
-                child: Center(child: Text("Edit Post")),
-              ),
-            PopupMenuItem<String>(
-              padding: EdgeInsets.zero,
-              value: "report",
-              child: Center(
-                  child: Text(FlutterI18n.translate(context, "post.report"))),
             ),
-          ];
-        },
-        child: SvgPicture.asset(
-          'assets/svg/ic_show_more.svg',
-        ),
-      ),
+          ),
+          child: const Text(
+            "Edit post",
+            style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+          )),
     );
   }
 
@@ -567,11 +528,5 @@ class _CommonPostState extends State<CommonPost> {
         ),
       ),
     );
-  }
-
-  void _hidePost() {
-    // call api hide post
-    _isHide = true;
-    setState(() {});
   }
 }
