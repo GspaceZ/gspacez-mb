@@ -58,6 +58,7 @@ dependencies:
   animated_bottom_navigation_bar: ^1.4.0
   intl: ^0.19.0
   url_launcher: ^6.3.1
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

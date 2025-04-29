@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:untitled/components/explore_post.dart';
 import 'package:untitled/view_model/explore_view_model.dart';
 
+import '../../components/explore_skeleton.dart';
+
 class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
 
@@ -22,10 +24,14 @@ class _ExploreViewState extends State<ExploreView> {
             child: ListView.builder(
               controller: exploreViewModel.scrollController,
               physics: const BouncingScrollPhysics(),
-              itemCount: exploreViewModel.posts.length,
+              itemCount: exploreViewModel.posts.length + (exploreViewModel.isLoading && exploreViewModel.posts.isNotEmpty ? 1 : 0),
               itemBuilder: (context, index) {
-                final post = exploreViewModel.posts[index];
-                return ExplorePost(post: post);
+                if (index < exploreViewModel.posts.length) {
+                  final post = exploreViewModel.posts[index];
+                  return ExplorePost(post: post);
+                } else {
+                  return const ExploreSkeleton();
+                }
               },
             ),
           );

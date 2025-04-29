@@ -36,12 +36,12 @@ class HomeViewModel extends ChangeNotifier {
       final response =
           await PostService.instance.getNewFeed(_pageNum, _pageSize);
 
-      if (response.isNotEmpty) {
-        posts.addAll(response);
+      if (response.content.isNotEmpty) {
+        posts.addAll(response.content);
         _pageNum++;
       }
 
-      if (response.length < _pageSize) {
+      if (_pageNum >= response.totalPages) {
         _hasMore = false;
       }
     } catch (e) {

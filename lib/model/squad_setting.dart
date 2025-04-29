@@ -1,20 +1,19 @@
 class SquadSetting {
   bool allowPostModeration;
   bool allowChangeProfileAccessibility;
-  bool allowPostInteraction;
+  bool allowChangeInteraction;
 
   SquadSetting({
     required this.allowPostModeration,
     required this.allowChangeProfileAccessibility,
-    required this.allowPostInteraction,
+    required this.allowChangeInteraction,
   });
 
   factory SquadSetting.fromJson(Map<String, dynamic> json) {
     return SquadSetting(
-      allowPostModeration: json['allowPostModeration'] as bool? ?? false,
-      allowChangeProfileAccessibility:
-          json['allowChangeProfileAccessibility'] as bool? ?? false,
-      allowPostInteraction: json['allowPostInteraction'] as bool? ?? false,
+      allowPostModeration: json['allowPostModeration'] as bool,
+      allowChangeProfileAccessibility: json['allowChangeProfileAccessibility'] as bool,
+      allowChangeInteraction: json['allowChangeInteraction'] as bool,
     );
   }
 
@@ -22,12 +21,12 @@ class SquadSetting {
     return {
       'allowPostModeration': allowPostModeration,
       'allowChangeProfileAccessibility': allowChangeProfileAccessibility,
-      'allowPostInteraction': allowPostInteraction,
+      'allowChangeInteraction': allowChangeInteraction,
     };
   }
 
   @override
   String toString() {
-    return 'SquadSetting(allowPostModeration: $allowPostModeration, allowChangeProfileAccessibility: $allowChangeProfileAccessibility, allowPostInteraction: $allowPostInteraction)';
+    return 'SquadSetting(allowPostModeration: $allowPostModeration, allowChangeProfileAccessibility: $allowChangeProfileAccessibility, allowChangeInteraction: $allowChangeInteraction)';
   }
 }

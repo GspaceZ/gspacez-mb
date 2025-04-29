@@ -9,6 +9,7 @@ import 'package:untitled/model/react_post_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 import '../model/comment_request.dart';
+import '../model/paging_result.dart';
 import '../model/post_model_request.dart';
 
 class PostService {
@@ -21,7 +22,7 @@ class PostService {
   //static getter for the instance
   static PostService get instance => _instance;
 
-  Future<List<PostModelResponse>> getNewFeed(int pageNum, int pageSize) async {
+  Future<PagingResult> getNewFeed(int pageNum, int pageSize) async {
     final response = await callApi(
       "post-service/posts/newsfeed?pageNum=$pageNum&pageSize=$pageSize",
       'GET',
@@ -37,11 +38,12 @@ class PostService {
         Log.error(baseResponse.message);
         throw Exception(baseResponse.message);
       }
-      final List<PostModelResponse> posts = baseResponse.result['content']
-          .map((post) => PostModelResponse.fromJson(post))
-          .toList()
-          .cast<PostModelResponse>();
-      return posts;
+      final resultMap = baseResponse.result as Map<String, dynamic>;
+
+      return PagingResult<PostModelResponse>.fromJson(
+        resultMap,
+            (json) => PostModelResponse.fromJson(json),
+      );
     } else {
       throw Exception('Failed to get new feed');
     }

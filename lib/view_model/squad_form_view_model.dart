@@ -38,7 +38,7 @@ class SquadFormViewModel extends ChangeNotifier {
       isPublic = (squad.privacy) == "PUBLIC";
 
       isAllowChangeProfile = squad.setting.allowChangeProfileAccessibility;
-      isAllowChangePost = squad.setting.allowPostInteraction;
+      isAllowChangePost = squad.setting.allowChangeInteraction;
       isAllowPostUnder = squad.setting.allowPostModeration;
     }
 
@@ -102,7 +102,7 @@ class SquadFormViewModel extends ChangeNotifier {
         setting: SquadSetting(
           allowPostModeration: isAllowPostUnder,
           allowChangeProfileAccessibility: isAllowChangeProfile,
-          allowPostInteraction: isAllowChangePost,
+          allowChangeInteraction: isAllowChangePost,
         ),
       );
 
