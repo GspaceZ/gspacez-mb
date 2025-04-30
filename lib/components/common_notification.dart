@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:untitled/model/notification_model.dart';
-
-import '../constants/appconstants.dart';
+import 'package:untitled/utils/format_time.dart';
 
 class CommonNotification extends StatelessWidget {
   final NotificationModel notification;
@@ -34,8 +32,8 @@ class CommonNotification extends StatelessWidget {
         }
       }
 
-      commentText = commentText?.replaceAll(RegExp(r'!\[.*?\]\(.*?\)'), "").trim();
-
+      commentText =
+          commentText?.replaceAll(RegExp(r'!\[.*?\]\(.*?\)'), "").trim();
     } else if (notification.type == NotificationType.LIKE) {
       title = "${sender.profileName} has liked your post";
     } else if (notification.type == NotificationType.DISLIKE) {
@@ -49,8 +47,7 @@ class CommonNotification extends StatelessWidget {
     final avatarUrl = sender.profileImageUrl ?? "";
 
     return InkWell(
-      onTap: () {
-      },
+      onTap: () {},
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
@@ -78,7 +75,8 @@ class CommonNotification extends StatelessWidget {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextSpan(
-                          text: ' ${title.replaceFirst(sender.profileName ?? '', '')}',
+                          text:
+                              ' ${title.replaceFirst(sender.profileName ?? '', '')}',
                         ),
                       ],
                     ),
@@ -107,11 +105,13 @@ class CommonNotification extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                      const Icon(Icons.access_time,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
-                        DateFormat(AppConstants.dateFormat).format(DateTime.parse(notification.createdAt)),
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        formatTime(DateTime.parse(notification.createdAt)),
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                     ],
                   ),

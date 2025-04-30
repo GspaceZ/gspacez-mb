@@ -28,7 +28,6 @@ class PostService {
       'GET',
       isToken: true,
     );
-    Log.error(response.body);
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
           jsonDecode(utf8.decode(response.bodyBytes));
@@ -42,7 +41,7 @@ class PostService {
 
       return PagingResult<PostModelResponse>.fromJson(
         resultMap,
-            (json) => PostModelResponse.fromJson(json),
+        (json) => PostModelResponse.fromJson(json),
       );
     } else {
       throw Exception('Failed to get new feed');
