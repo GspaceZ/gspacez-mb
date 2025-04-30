@@ -10,11 +10,12 @@ import 'package:untitled/router/app_router.dart';
 import 'package:untitled/screen/auth/introduce.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
+import 'package:untitled/service/notification_service.dart';
 import 'provider/language_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await NotificationService().init();
   final i18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
       useCountryCode: false,
@@ -24,7 +25,6 @@ void main() async {
     ),
   );
 
-  // ✅ Chỉ load .env nếu không phải web
   if (!kIsWeb) {
     await dotenv.load(fileName: ".env");
   }

@@ -30,7 +30,8 @@ class SigninViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  static final clientId = "705594420748-9vfd8jcfaf16lhveceq410bo64lpalv1.apps.googleusercontent.com";
+  static const clientId =
+      "705594420748-9vfd8jcfaf16lhveceq410bo64lpalv1.apps.googleusercontent.com";
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     clientId: clientId,
     scopes: [
