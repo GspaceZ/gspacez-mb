@@ -10,4 +10,5 @@ class AppConstants {
   static const notification = 3;
   static const createSquads = 4;
   static const dateFormat = 'MMM dd, yyyy';
+  static const keyNotification = 'notification';
 }

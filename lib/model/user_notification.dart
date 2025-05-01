@@ -1,3 +1,5 @@
+import 'package:untitled/constants/appconstants.dart';
+
 class UserNotification {
   final String? id;
   final String profileId;
@@ -19,7 +21,7 @@ class UserNotification {
       profileId: json['profileId'],
       profileName: json['profileName'] ?? '',
       email: json['email'] ?? '',
-      profileImageUrl: json['profileImageUrl'] ?? '',
+      profileImageUrl: json['profileImageUrl'] ?? AppConstants.urlImageDefault,
     );
   }
 }
