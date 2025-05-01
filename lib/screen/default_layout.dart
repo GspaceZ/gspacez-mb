@@ -11,6 +11,7 @@ import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/widgets/create_post.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
+import 'package:untitled/service/event_bus_service.dart';
 import 'package:untitled/service/post_service.dart';
 
 import '../components/navigation_bar.dart';
@@ -42,9 +43,16 @@ class _DefaultLayoutState extends State<DefaultLayout>
     Icons.notifications_none,
   ];
   int streakCount = 0;
+  bool isNotificationBadge = false;
+  final eventBus = KeyedEventBus();
 
   @override
   void initState() {
+    eventBus.listener<int>(AppConstants.keyNotification).listen((data) {
+      Log.info("Received notification: $data");
+      isNotificationBadge = true;
+      setState(() {});
+    });
     _hideBottomBarAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -52,6 +60,13 @@ class _DefaultLayoutState extends State<DefaultLayout>
     getProfile();
     _selectedIndex = widget.selectedIndex;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _hideBottomBarAnimationController.dispose();
+    eventBus.disposeAll();
+    super.dispose();
   }
 
   getProfile() async {
@@ -156,10 +171,39 @@ class _DefaultLayoutState extends State<DefaultLayout>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: AnimatedBottomNavigationBar(
-        icons: iconList,
-        activeColor: Colors.black,
-        inactiveColor: Colors.grey,
+      bottomNavigationBar: AnimatedBottomNavigationBar.builder(
+        itemCount: iconList.length,
+        tabBuilder: (int index, bool isActive) {
+          final color = isActive ? Colors.black : Colors.grey;
+
+          Widget icon = Icon(
+            iconList[index],
+            color: color,
+            size: 24,
+          );
+
+          // Nếu là tab notification + có badge
+          if (index == 3 && isNotificationBadge) {
+            icon = Badge(
+              alignment: Alignment.topRight,
+              offset: const Offset(3, -3),
+              backgroundColor: Colors.red,
+              label: const Text(
+                '!',
+                style: TextStyle(fontSize: 10, color: Colors.white),
+              ),
+              child: icon,
+            );
+          }
+
+          return Center(
+            child: SizedBox(
+              height: 32,
+              width: 32,
+              child: icon,
+            ),
+          );
+        },
         activeIndex: _selectedIndex,
         gapLocation: GapLocation.center,
         borderColor: Colors.grey,
@@ -168,7 +212,11 @@ class _DefaultLayoutState extends State<DefaultLayout>
         notchSmoothness: NotchSmoothness.verySmoothEdge,
         backgroundColor: Colors.white,
         hideAnimationController: _hideBottomBarAnimationController,
-        onTap: (index) => setState(() => _selectedIndex = index),
+        onTap: (index) => setState(() {
+          // eventBus.sink(AppConstants.keyNotification, 1);
+          _selectedIndex = index;
+          isNotificationBadge = false; // Reset notification badge
+        }),
         //other params
       ),
     );

@@ -6,6 +6,7 @@ import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/notification_model.dart';
+import 'package:untitled/service/event_bus_service.dart';
 import 'package:untitled/service/notification_service.dart';
 
 import '../service/user_service.dart';
@@ -28,7 +29,7 @@ class NotificationViewModel extends ChangeNotifier {
     profileId = await LocalStorage.instance.userId ?? '';
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
-    Log.warning("WebSocket connected");
+    Log.info("WebSocket connecting with profileId: $profileId");
     token = await LocalStorage.instance.userToken ?? '';
     connectWithToken(
       "wss://gspacez.tech/api/v1/notification/ws",
@@ -67,11 +68,12 @@ class NotificationViewModel extends ChangeNotifier {
         heartbeatIncoming: const Duration(seconds: 5),
         heartbeatOutgoing: const Duration(seconds: 5),
         onConnect: (frame) {
-          Log.info('Connected');
+          Log.info('Websocket Connected');
           stompClient.subscribe(
             destination: topic,
             callback: (frame) {
-              Log.info('Received message: ${frame.body}');
+              Log.info('Notification response: ${frame.body}');
+              KeyedEventBus().sink(AppConstants.keyNotification, 1);
               final notification = NotificationModel.fromJson(
                 jsonDecode(frame.body ?? '{}'),
               );
