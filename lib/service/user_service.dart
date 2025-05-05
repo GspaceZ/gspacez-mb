@@ -140,7 +140,8 @@ class UserService {
         isToken: true,
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
             BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
@@ -291,9 +292,9 @@ class UserService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -317,7 +318,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
@@ -353,6 +354,35 @@ class UserService {
       }
     } catch (error) {
       Log.debug('Error sending feedback: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<ProfileResponse>> searchUser(String query) async {
+    try {
+      final response = await callApi(
+        "profile-service/info/search?size=100&page=0&searchText=$query",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final List<ProfileResponse> users = baseResponse.result['content']
+            .map((user) => ProfileResponse.fromJson(user))
+            .toList()
+            .cast<ProfileResponse>();
+        return users;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to search user');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
       rethrow;
     }
   }

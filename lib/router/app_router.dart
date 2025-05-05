@@ -15,6 +15,7 @@ import 'package:untitled/screen/feedback/feedback_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
 import 'package:untitled/screen/homePage/post_detail_view.dart';
 import 'package:untitled/screen/notification/notification_view.dart';
+import 'package:untitled/screen/search/search_view.dart';
 import 'package:untitled/screen/squad/squad_detail_view.dart';
 import 'package:untitled/screen/squad/squad_form_view.dart';
 import 'package:untitled/screen/default_layout.dart';
@@ -47,6 +48,7 @@ class AppRoutes {
   static const String postDetail = '/post_detail';
   static const String feedBack = '/feedback';
   static const String tags = '/tags';
+  static const String search = '/search';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -111,7 +113,9 @@ class AppRoutes {
       case chatAi:
         return MaterialPageRoute(builder: (_) => const ChatAIView());
       case profile:
-        return MaterialPageRoute(builder: (_) => const ProfileView());
+        final profileId = settings.arguments as String?;
+        return MaterialPageRoute(
+            builder: (_) => ProfileView(profileId: profileId));
       case notification:
         return MaterialPageRoute(builder: (_) => const NotificationView());
       case squadDetail:
@@ -129,6 +133,10 @@ class AppRoutes {
       case tags:
         return MaterialPageRoute(
           builder: (_) => const TagView(),
+        );
+      case search:
+        return MaterialPageRoute(
+          builder: (_) => const SearchView(),
         );
       default:
         return MaterialPageRoute(

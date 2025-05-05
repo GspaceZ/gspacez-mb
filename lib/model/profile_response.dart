@@ -29,7 +29,7 @@ class ProfileResponse {
     return ProfileResponse(
       id: json['id'] as String,
       firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      lastName: json['lastName'] as String? ?? '',
       dob: json['dob'] as String?,
       phone: json['phone'] as String?,
       country: json['country'] as String?,
