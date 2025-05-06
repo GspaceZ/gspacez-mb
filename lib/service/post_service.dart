@@ -287,4 +287,34 @@ class PostService {
       throw Exception('Failed to get posts by hashtag');
     }
   }
+
+  Future<List<PostModelResponse>> searchPost(String query, int size) async {
+    try {
+      final response = await callApi(
+        "post-service/posts/search?size=$size&page=0&searchText=$query",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final List<PostModelResponse> posts = baseResponse.result['content']
+            .map((user) => PostModelResponse.fromJson(user))
+            .toList()
+            .cast<PostModelResponse>();
+        return posts;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to search Post');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
 }

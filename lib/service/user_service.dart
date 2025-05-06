@@ -358,15 +358,16 @@ class UserService {
     }
   }
 
-  Future<List<ProfileResponse>> searchUser(String query) async {
+  Future<List<ProfileResponse>> searchUser(String query, int size) async {
     try {
       final response = await callApi(
-        "profile-service/info/search?size=100&page=0&searchText=$query",
+        "identity/users/search?size=$size&page=0&searchText=$query",
         'GET',
         isToken: true,
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
             BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {

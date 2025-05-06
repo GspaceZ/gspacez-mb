@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
-          initialRoute: widget.isAuth ? AppRoutes.search : AppRoutes.signIn,
+          initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.signIn,
           onGenerateRoute: AppRoutes.generateRoute,
           home: (widget.isAuth)
               ? const DefaultLayout(selectedIndex: AppConstants.home)

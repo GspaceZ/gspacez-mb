@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/components/common_post_simple.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/search_item.dart';
 import 'package:untitled/router/app_router.dart';
@@ -73,10 +74,11 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
                                         // Posts Tab
                                         ListView.builder(
                                           itemCount:
-                                              viewModel.searchResults.length,
+                                              viewModel.searchPost.length,
                                           itemBuilder: (context, index) {
-                                            return _buildSearchItem(viewModel,
-                                                viewModel.searchResults[index]);
+                                            return CommonPostSimple(
+                                                post: viewModel
+                                                    .listPostModel[index]);
                                           },
                                         ),
                                       ],
@@ -135,14 +137,8 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
         backgroundImage:
             NetworkImage(item.imageUrl ?? AppConstants.urlImageDefault),
       ),
-      title: Text(item.name),
-      trailing: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: () {
-          viewModel.removeFromSearchHistory(item);
-          viewModel.removeSearchResults(item);
-        },
-      ),
+      title: Text(item.title ?? item.name),
+      trailing: _buildChip(item.type.name),
       onTap: () {
         viewModel.addToSearchHistory(item);
         if (item.type == SearchType.profile) {
@@ -151,14 +147,40 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
             AppRoutes.profile,
             arguments: item.id,
           );
-        } else {
+        } else if (item.type == SearchType.squad) {
           Navigator.pushNamed(
             context,
             AppRoutes.squadDetail,
             arguments: item.id,
           );
+        } else if (item.type == SearchType.post) {
+          final post = viewModel.listPostModel
+              .firstWhere((element) => element.id == item.id);
+          Navigator.pushNamed(
+            context,
+            AppRoutes.postDetail,
+            arguments: post,
+          );
         }
       },
+    );
+  }
+
+  _buildChip(String name) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.indigo),
+          color: Colors.white),
+      child: Text(
+        name.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.indigo,
+        ),
+      ),
     );
   }
 }
