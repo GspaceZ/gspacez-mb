@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/service/config_api/config_api.dart';
@@ -186,6 +187,31 @@ class SquadService {
           .toList();
     } else {
       throw Exception('Failed to get pending members');
+    }
+  }
+
+  Future<List<SquadResponse>> searchSquad(String query, int size) async {
+    final response = await callApi(
+      "profile-service/squads/search?size=$size&page=0&searchText=$query",
+      "GET",
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap = jsonDecode(response.body);
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<SquadResponse> squads = baseResponse.result['content']
+          .map((user) => SquadResponse.fromJson(user))
+          .toList()
+          .cast<SquadResponse>();
+      return squads;
+    } else {
+      Log.debug(response.body);
+      throw Exception('Failed to search squads');
     }
   }
 }

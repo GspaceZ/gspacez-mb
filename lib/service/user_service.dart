@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
+import 'package:untitled/model/user_response_model.dart';
 import 'package:untitled/service/config_api/config_api.dart';
+
 import '../model/notification_model.dart';
 import '../model/post_model_response.dart';
 
@@ -140,7 +143,8 @@ class UserService {
         isToken: true,
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
             BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
@@ -291,9 +295,9 @@ class UserService {
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> responseMap =
-      jsonDecode(utf8.decode(response.bodyBytes));
+          jsonDecode(utf8.decode(response.bodyBytes));
       final BaseResponseApi baseResponse =
-      BaseResponseApi.fromJson(responseMap);
+          BaseResponseApi.fromJson(responseMap);
       if (baseResponse.code != 1000) {
         throw Exception(baseResponse.message);
       }
@@ -317,7 +321,7 @@ class UserService {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
@@ -353,6 +357,36 @@ class UserService {
       }
     } catch (error) {
       Log.debug('Error sending feedback: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<UserResponseModel>> searchUser(String query, int size) async {
+    try {
+      final response = await callApi(
+        "identity/users/search?size=$size&page=0&searchText=$query",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final List<UserResponseModel> users = baseResponse.result['content']
+            .map((user) => UserResponseModel.fromJson(user))
+            .toList()
+            .cast<UserResponseModel>();
+        return users;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to search user');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
       rethrow;
     }
   }

@@ -8,6 +8,7 @@ class ProfileResponse {
   final String? city;
   final String? address;
   final String? description;
+  final String profileTag;
   final String? avatarUrl;
   final String updatedAt;
 
@@ -22,14 +23,15 @@ class ProfileResponse {
     this.address,
     this.description,
     this.avatarUrl,
+    required this.profileTag,
     required this.updatedAt,
   });
 
   factory ProfileResponse.fromJson(Map<String, dynamic> json) {
     return ProfileResponse(
       id: json['id'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      firstName: json['firstName'] as String? ?? '',
+      lastName: json['lastName'] as String? ?? '',
       dob: json['dob'] as String?,
       phone: json['phone'] as String?,
       country: json['country'] as String?,
@@ -37,7 +39,8 @@ class ProfileResponse {
       address: json['address'] as String?,
       description: json['description'] as String?,
       avatarUrl: json['avatarUrl'] as String?,
-      updatedAt: json['updatedAt'] as String,
+      profileTag: json['profileTag'] as String? ?? '',
+      updatedAt: json['updatedAt'] as String? ?? '',
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/admin_squad.dart';
 import 'package:untitled/model/squad_setting.dart';
 
@@ -39,7 +40,7 @@ class SquadResponse {
       id: json['id'],
       name: json['name'],
       privacy: json['privacy'],
-      avatarUrl: json['avatarUrl'] as String?,
+      avatarUrl: json['avatarUrl'] as String? ?? AppConstants.urlImageDefault,
       description: json['description'] as String?,
       tagName: json['tagName'] as String,
       setting: SquadSetting.fromJson(json['setting']),
@@ -51,7 +52,8 @@ class SquadResponse {
       canBeEdited: json['canBeEdited'],
       joinStatus: json['joinStatus'],
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
     );
   }
 
