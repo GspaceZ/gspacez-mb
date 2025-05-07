@@ -288,6 +288,28 @@ class PostService {
     }
   }
 
+  Future<PostModelResponse> getPostDetailById(String postId) async {
+    final response = await callApi(
+      "post-service/posts/$postId",
+      'GET',
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final post = PostModelResponse.fromJson(baseResponse.result);
+      return post;
+    } else {
+      throw Exception('Failed to get posts by id');
+    }
+  }
+
   Future<List<PostModelResponse>> searchPost(String query, int size) async {
     try {
       final response = await callApi(

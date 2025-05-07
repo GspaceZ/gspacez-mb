@@ -9,6 +9,7 @@ class SearchItemService {
   static void registerAdapter() {
     if (!_adapterRegistered) {
       Hive.registerAdapter(SearchItemAdapter());
+      Hive.registerAdapter(SearchTypeAdapter());
       _adapterRegistered = true;
     }
   }

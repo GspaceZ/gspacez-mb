@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
+import 'package:untitled/model/user_response_model.dart';
 import 'package:untitled/service/config_api/config_api.dart';
+
 import '../model/notification_model.dart';
 import '../model/post_model_response.dart';
 
@@ -358,7 +361,7 @@ class UserService {
     }
   }
 
-  Future<List<ProfileResponse>> searchUser(String query, int size) async {
+  Future<List<UserResponseModel>> searchUser(String query, int size) async {
     try {
       final response = await callApi(
         "identity/users/search?size=$size&page=0&searchText=$query",
@@ -373,10 +376,10 @@ class UserService {
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
-        final List<ProfileResponse> users = baseResponse.result['content']
-            .map((user) => ProfileResponse.fromJson(user))
+        final List<UserResponseModel> users = baseResponse.result['content']
+            .map((user) => UserResponseModel.fromJson(user))
             .toList()
-            .cast<ProfileResponse>();
+            .cast<UserResponseModel>();
         return users;
       } else {
         Log.debug(response.body);

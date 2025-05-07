@@ -33,3 +33,18 @@ enum SearchType {
   squad,
   post,
 }
+
+class SearchTypeAdapter extends TypeAdapter<SearchType> {
+  @override
+  final int typeId = 1;
+
+  @override
+  SearchType read(BinaryReader reader) {
+    return SearchType.values[reader.readInt()];
+  }
+
+  @override
+  void write(BinaryWriter writer, SearchType obj) {
+    writer.writeInt(obj.index);
+  }
+}
