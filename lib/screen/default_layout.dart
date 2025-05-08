@@ -330,7 +330,10 @@ class _DefaultLayoutState extends State<DefaultLayout>
   void _logOut() {
     LocalStorage.instance.removeUserData();
     TokenDataSource.instance.deleteToken();
-    Navigator.pushReplacementNamed(
-        context, AppRoutes.signIn); // Navigate to login page
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.signIn,
+      (Route<dynamic> route) => false,
+    ); // Navigate to login page
   }
 }

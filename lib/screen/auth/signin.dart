@@ -86,7 +86,7 @@ class SignIn extends StatelessWidget {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushReplacementNamed(
+                                  Navigator.pushNamed(
                                       context, AppRoutes.forgotPassword);
                                 },
                                 child: Text(
