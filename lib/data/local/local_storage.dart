@@ -16,6 +16,7 @@ class LocalStorage {
   static const String _kDescription = 'description';
   static const String _kCountriesCache = 'countries';
   static const String _kDob = 'dob';
+  static const String _kUserTag = 'user_tag';
 
   final _secureStorage = const FlutterSecureStorage();
 
@@ -79,6 +80,19 @@ class LocalStorage {
 
   Future<void> removeUserId() {
     return secureStorage.delete(key: _kUserId);
+  }
+
+  // User tag
+  Future<String?> get userTag {
+    return secureStorage.read(key: _kUserTag);
+  }
+
+  Future<void> saveUserTag(String? userTag) {
+    return secureStorage.write(key: _kUserTag, value: userTag);
+  }
+
+  Future<void> removeUserTag() {
+    return secureStorage.delete(key: _kUserTag);
   }
 
   // User email

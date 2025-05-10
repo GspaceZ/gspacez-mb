@@ -339,4 +339,26 @@ class PostService {
       rethrow;
     }
   }
+
+  Future<List<String>> getPopularsTags() async {
+    final response = await callApi(
+      "post-service/tags/populars",
+      'GET',
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+      jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+      BaseResponseApi.fromJson(responseMap);
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+      final List<String> popularsTags = List<String>.from(baseResponse.result);
+      return popularsTags;
+    } else {
+      throw Exception('Failed to get populars tags');
+    }
+  }
 }

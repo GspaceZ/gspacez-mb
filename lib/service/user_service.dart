@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
+import 'package:untitled/model/feedback_response.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
 import 'package:untitled/model/user_response_model.dart';
@@ -163,9 +164,9 @@ class UserService {
   }
 
   Future<List<PostModelResponse>> getPostsByProfile(
-      String profileId, int pageNum, int pageSize) async {
+      String profileTag, int pageNum, int pageSize) async {
     final response = await callApi(
-      "post-service/posts/own-post/$profileId?pageNum=$pageNum&pageSize=$pageSize",
+      "post-service/posts/own-post/$profileTag?pageNum=$pageNum&pageSize=$pageSize",
       'GET',
       isToken: true,
     );
@@ -311,10 +312,10 @@ class UserService {
     }
   }
 
-  Future<StreakResponse> getStreak(String profileId) async {
+  Future<StreakResponse> getStreak(String profileTag) async {
     try {
       final response = await callApi(
-        "profile-service/info/$profileId/streak",
+        "profile-service/info/$profileTag/streak",
         'GET',
         isToken: true,
       );
@@ -384,6 +385,92 @@ class UserService {
       } else {
         Log.debug(response.body);
         throw Exception('Failed to search user');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<FeedbackResponse>> getAllFeedbacks() async {
+    try {
+      final response = await callApi(
+        "profile-service/feedback/all",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+        jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+        final List<FeedbackResponse> feedbacks = baseResponse.result
+            .map((item) => FeedbackResponse.fromJson(item))
+            .toList()
+            .cast<FeedbackResponse>();
+        return feedbacks;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get all feedbacks');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<FeedbackResponse>> getMyFeedbacks() async {
+    try {
+      final response = await callApi(
+        "profile-service/feedback/me",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+        jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+        final List<FeedbackResponse> feedbacks = baseResponse.result
+            .map((item) => FeedbackResponse.fromJson(item))
+            .toList()
+            .cast<FeedbackResponse>();
+        return feedbacks;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get my feedbacks');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<BaseResponseApi> deleteMyFeedback(String id) async {
+    try {
+      final response = await callApi(
+        "profile-service/feedback/$id",
+        'DELETE',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+
+        return baseResponse;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to delete my feedback');
       }
     } catch (error) {
       Log.debug('Error: $error');

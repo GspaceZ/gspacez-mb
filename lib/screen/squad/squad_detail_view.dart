@@ -12,7 +12,6 @@ import '../../model/squad_response.dart';
 import '../../router/app_router.dart';
 import '../../service/user_service.dart';
 import '../../view_model/squad_detail_view_model.dart';
-import '../profile/profile_view.dart';
 
 class SquadDetailView extends StatelessWidget {
   final String tagName;
@@ -474,13 +473,6 @@ class SquadDetailView extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                ProfileView(profileId: admin.profileId),
-                          ),
-                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(

@@ -35,6 +35,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   int _selectedIndex = 0;
   String urlAvatar = AppConstants.urlImageDefault;
   String profileId = "";
+  String profileTag = "";
   late AnimationController _hideBottomBarAnimationController;
   final iconList = <IconData>[
     Icons.home_outlined,
@@ -73,6 +74,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
     profileId = await LocalStorage.instance.userId ?? "";
+    profileTag = await LocalStorage.instance.userTag ?? "";
     setState(() {});
 
     if (profileId.isNotEmpty) {
@@ -84,7 +86,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
     if (profileId.isEmpty) return;
 
     try {
-      final result = await UserService.instance.getStreak(profileId);
+      final result = await UserService.instance.getStreak(profileTag);
       setState(() {
         streakCount = result.currentStreak;
       });
