@@ -49,7 +49,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> aiItems = [
-      {"title": "AI", "icon": Icons.smart_toy, "route": AppRoutes.chatAi},
+      {"title": "AI Chat", "icon": Icons.smart_toy, "route": AppRoutes.chatAi},
     ];
 
     final List<Map<String, dynamic>> discoverItems = [
@@ -112,7 +112,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
                     )
                   : const SizedBox.shrink(),
             ),
-            _buildTabToggleButton("AI", () {
+            _buildTabToggleButton("AI Chat", () {
               setState(() {
                 isAiTabOpen = !isAiTabOpen;
               });

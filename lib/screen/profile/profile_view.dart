@@ -8,8 +8,8 @@ import '../../components/common_post_simple.dart';
 import '../../constants/appconstants.dart';
 
 class ProfileView extends StatefulWidget {
-  final String? profileId;
-  const ProfileView({super.key, this.profileId});
+  final String? profileTag;
+  const ProfileView({super.key, this.profileTag});
 
   @override
   State<ProfileView> createState() => _ProfileViewState();
@@ -30,7 +30,7 @@ class _ProfileViewState extends State<ProfileView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _viewModel = ProfileViewModel(profileId: widget.profileId);
+    _viewModel = ProfileViewModel(profileTag: widget.profileTag);
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         _viewModel.updateCurrentTab(
@@ -112,6 +112,31 @@ class _ProfileViewState extends State<ProfileView>
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
+            if (viewModel.profileTag.isNotEmpty)
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: '@ ',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    TextSpan(
+                      text: viewModel.profileTag,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const Divider(),
+            const SizedBox(height: 15),
             if (viewModel.country.isNotEmpty)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -155,8 +180,14 @@ class _ProfileViewState extends State<ProfileView>
     );
   }
 
-  _buildInvolvedSquad(ProfileViewModel viewModel) {
+  Widget _buildInvolvedSquad(ProfileViewModel viewModel) {
     final context = navigatorKey.currentContext!;
+    const maxDisplay = 10;
+    final squads = viewModel.involvedSquads;
+    final showMore = squads.length > maxDisplay;
+    final displayedSquads = showMore ? squads.take(maxDisplay - 1).toList() : squads;
+    final hiddenSquadsCount = squads.length - displayedSquads.length;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
@@ -179,78 +210,101 @@ class _ProfileViewState extends State<ProfileView>
               padding: EdgeInsets.all(10),
               child: Text(
                 'Involved Squads',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
             const Divider(),
-            (viewModel.involvedSquads.isEmpty)
-                ? const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                        'You haven\'t joined any squads yet. \n Join one to start your journey!',
-                        style: TextStyle(color: Colors.grey)),
-                  )
-                : const SizedBox.shrink(),
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    const avatarSize = 40.0;
-                    const spacing = 12.0;
-                    final countPerRow = (constraints.maxWidth + spacing) ~/
-                        (avatarSize + spacing);
-                    final totalSpacing =
-                        constraints.maxWidth - (countPerRow * avatarSize);
-                    final spacingBetween = countPerRow > 1
-                        ? totalSpacing / (countPerRow - 1)
-                        : totalSpacing;
-
-                    return Wrap(
-                      spacing: spacingBetween,
-                      runSpacing: 12,
-                      children: viewModel.involvedSquads.map((squad) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.squadDetail,
-                                arguments: squad.tagName);
-                          },
-                          borderRadius: BorderRadius.circular(8),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              CircleAvatar(
-                                radius: avatarSize / 2,
-                                backgroundImage: NetworkImage(
-                                  squad.avatarUrl.isNotEmpty
-                                      ? squad.avatarUrl
-                                      : AppConstants.urlImageDefault,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Tooltip(
-                                message: squad.name,
-                                child: SizedBox(
-                                  width: avatarSize + 20,
-                                  child: Text(
-                                    squad.name,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                              ),
-                            ],
+            if (squads.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  'You haven\'t joined any squads yet. \n Join one to start your journey!',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    ...displayedSquads.map((squad) => GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppRoutes.squadDetail,
+                          arguments: squad.tagName,
+                        );
+                      },
+                      onLongPress: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(squad.name),
+                            duration: const Duration(seconds: 2),
                           ),
                         );
-                      }).toList(),
-                    );
-                  },
+                      },
+                      child: CircleAvatar(
+                        radius: 24,
+                        backgroundImage: NetworkImage(
+                          squad.avatarUrl.isNotEmpty
+                              ? squad.avatarUrl
+                              : AppConstants.urlImageDefault,
+                        ),
+                      ),
+                    )),
+                    if (showMore)
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: Colors.grey.shade300,
+                        child: Text(
+                          '+$hiddenSquadsCount',
+                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-            ),
+            if (squads.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.search);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Find more squads',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              color: Colors.blue,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
           ],
         ),
       ),
@@ -278,59 +332,77 @@ class _ProfileViewState extends State<ProfileView>
             const Padding(
               padding: EdgeInsets.all(10),
               child: Text(
-                'View other social accounts',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Social Accounts',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
             const Divider(),
-            (viewModel.otherUser.isEmpty)
+            (viewModel.socialMedias.isEmpty)
                 ? const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text(
-                        'Add other accounts to your profile to manage them easily.',
-                        style: TextStyle(color: Colors.grey)),
-                  )
+              padding: EdgeInsets.all(20),
+              child: Text(
+                  'Add other accounts to your profile to manage them easily.',
+                  style: TextStyle(color: Colors.grey)),
+            )
                 : SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          const avatarSize = 40.0;
-                          const spacing = 12.0;
-                          final countPerRow =
-                              (constraints.maxWidth + spacing) ~/
-                                  (avatarSize + spacing);
-                          final totalSpacing =
-                              constraints.maxWidth - (countPerRow * avatarSize);
-                          final spacingBetween = countPerRow > 1
-                              ? totalSpacing / (countPerRow - 1)
-                              : totalSpacing;
-
-                          return Wrap(
-                            spacing: spacingBetween,
-                            runSpacing: 12,
-                            children: viewModel.involvedSquads.map((squad) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CircleAvatar(
-                                    radius: avatarSize / 2,
-                                    backgroundImage: NetworkImage(
-                                      squad.avatarUrl.isNotEmpty == true
-                                          ? squad.avatarUrl
-                                          : AppConstants.urlImageDefault,
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          );
-                        },
-                      ),
+              width: MediaQuery.of(context).size.width,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSocialButton(
+                      text: 'Connect Twitter',
+                      iconPath: 'assets/images/twitter.png',
+                      backgroundColor: const Color(0xFFE8F5FE),
+                      textColor: const Color(0xFF228BE6),
                     ),
-                  ),
+                    _buildSocialButton(
+                      text: 'Connect LinkedIn',
+                      iconPath: 'assets/images/linkedin.png',
+                      backgroundColor: const Color(0xFFE6F0FA),
+                      textColor: const Color(0xFF4C6EF5),
+                    ),
+                    _buildSocialButton(
+                      text: 'Connect GitHub',
+                      iconPath: 'assets/images/github.png',
+                      backgroundColor: const Color(0xFFF2F2F2),
+                      textColor: const Color(0xFF886E96),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  _buildSocialButton({
+    required String text,
+    required String iconPath,
+    required Color backgroundColor,
+    required Color textColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: ElevatedButton.icon(
+        onPressed: () {},
+        icon: Image.asset(iconPath, width: 20, height: 20),
+        label: Text(
+          text,
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+        ),
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: backgroundColor,
+          foregroundColor: textColor,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          minimumSize: const Size(double.infinity, 50),
         ),
       ),
     );

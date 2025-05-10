@@ -74,7 +74,7 @@ class SearchViewModel extends ChangeNotifier {
               id: element.id,
               imageUrl: element.avatarUrl,
               type: SearchType.profile,
-              title: element.id);
+              title: element.email);
           searchResults.add(searchItem);
           notifyListeners();
         }

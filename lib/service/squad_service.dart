@@ -69,9 +69,9 @@ class SquadService {
     }
   }
 
-  Future<List<SquadModel>> getJoinedSquads(String profileId) async {
+  Future<List<SquadModel>> getJoinedSquads(String profileTag) async {
     final response = await callApi(
-      "profile-service/squads/joined/$profileId",
+      "profile-service/squads/joined/$profileTag",
       'GET',
       isToken: true,
     );

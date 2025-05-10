@@ -11,6 +11,7 @@ class ProfileResponse {
   final String profileTag;
   final String? avatarUrl;
   final String updatedAt;
+  final List<SocialMedia> socialMedias;
 
   ProfileResponse({
     required this.id,
@@ -25,9 +26,15 @@ class ProfileResponse {
     this.avatarUrl,
     required this.profileTag,
     required this.updatedAt,
+    required this.socialMedias,
   });
 
   factory ProfileResponse.fromJson(Map<String, dynamic> json) {
+    var socialMediaList = json['socialMedias'] as List? ?? [];
+    List<SocialMedia> socialMedias = socialMediaList.map((item) {
+      return SocialMedia.fromJson(item as Map<String, dynamic>);
+    }).toList();
+
     return ProfileResponse(
       id: json['id'] as String,
       firstName: json['firstName'] as String? ?? '',
@@ -41,6 +48,7 @@ class ProfileResponse {
       avatarUrl: json['avatarUrl'] as String?,
       profileTag: json['profileTag'] as String? ?? '',
       updatedAt: json['updatedAt'] as String? ?? '',
+      socialMedias: socialMedias,
     );
   }
 
@@ -57,6 +65,31 @@ class ProfileResponse {
       'description': description,
       'avatarUrl': avatarUrl,
       'updatedAt': updatedAt,
+      'socialMedias': socialMedias.map((socialMedia) => socialMedia.toJson()).toList(),
+    };
+  }
+}
+
+class SocialMedia {
+  final String platform;
+  final String url;
+
+  SocialMedia({
+    required this.platform,
+    required this.url,
+  });
+
+  factory SocialMedia.fromJson(Map<String, dynamic> json) {
+    return SocialMedia(
+      platform: json['platform'] as String,
+      url: json['url'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'platform': platform,
+      'url': url,
     };
   }
 }

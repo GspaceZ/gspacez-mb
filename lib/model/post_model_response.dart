@@ -6,6 +6,7 @@ import 'comment_response.dart';
 class PostModelResponse {
   String id;
   String profileId;
+  String profileTag;
   String profileName;
   String? avatarUrl;
   ContentModel content;
@@ -27,6 +28,7 @@ class PostModelResponse {
   PostModelResponse({
     required this.id,
     required this.profileId,
+    required this.profileTag,
     required this.profileName,
     this.avatarUrl,
     required this.content,
@@ -50,6 +52,7 @@ class PostModelResponse {
     return PostModelResponse(
       id: json['id'],
       profileId: json['profileId'],
+      profileTag: json['profileTag'],
       profileName: json['profileName'],
       avatarUrl: json['avatarUrl'],
       content: ContentModel.fromJson(json['content']),
@@ -80,6 +83,7 @@ class PostModelResponse {
     return {
       'id': id,
       'profileId': profileId,
+      'profileTag': profileTag,
       'profileName': profileName,
       'avatarUrl': avatarUrl,
       'comments': comments,
@@ -102,6 +106,6 @@ class PostModelResponse {
 
   @override
   String toString() {
-    return 'PostModel{id: $id, type: $type, privacy: $privacy, content: $content, squad: $squad, profileId: $profileId, profileName: $profileName, avatarUrl: $avatarUrl, comments: $comments, title: $title, previewImage: $previewImage, hashTags: $hashTags, totalLike: $totalLike, totalDislike: $totalDislike, liked: $liked, createdAt: $createdAt, updatedAt: $updatedAt, disliked: $disliked, canBeInteracted: $canBeInteracted}';
+    return 'PostModel{id: $id, type: $type, privacy: $privacy, content: $content, squad: $squad, profileId: $profileId, profileTag: $profileTag, profileName: $profileName, avatarUrl: $avatarUrl, comments: $comments, title: $title, previewImage: $previewImage, hashTags: $hashTags, totalLike: $totalLike, totalDislike: $totalDislike, liked: $liked, createdAt: $createdAt, updatedAt: $updatedAt, disliked: $disliked, canBeInteracted: $canBeInteracted}';
   }
 }

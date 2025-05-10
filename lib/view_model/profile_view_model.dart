@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
+import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/squad_model.dart';
 import 'package:untitled/service/post_service.dart';
 import 'package:untitled/service/squad_service.dart';
@@ -9,13 +10,15 @@ import 'package:untitled/service/squad_service.dart';
 import '../service/user_service.dart';
 
 class ProfileViewModel extends ChangeNotifier {
-  String? _profileId;
+  String? _profileTag;
   String profileId = '';
   String avatarUrl = '';
   String userName = '';
   String dateOfBirth = '';
   String country = '';
+  String profileTag = '';
 
+  List<SocialMedia> socialMedias = [];
   final List<PostModelResponse> listProfilePosts = [];
   final List<PostModelResponse> listLikedPosts = [];
   final List<SquadModel> involvedSquads = [];
@@ -27,8 +30,6 @@ class ProfileViewModel extends ChangeNotifier {
   bool _hasMoreLikedPosts = true;
   final ScrollController scrollController = ScrollController();
 
-  final List<SquadModel> otherUser = [];
-
   int _currentTabIndex = 0; // defaul tab: posts
 
   void updateCurrentTab(int index) {
@@ -36,8 +37,8 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  ProfileViewModel({String? profileId}) {
-    _profileId = profileId;
+  ProfileViewModel({String? profileTag}) {
+    _profileTag = profileTag;
     scrollController.addListener(_onScroll);
     _init();
   }
@@ -48,21 +49,23 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   Future<void> _getUserInfo() async {
-    final profile = _profileId == null
+    final profile = _profileTag == null
         ? await UserService.instance.getMe()
-        : await UserService.instance.getProfile(_profileId!);
+        : await UserService.instance.getProfile(_profileTag!);
 
     profileId = profile.id;
+    profileTag = profile.profileTag;
     avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
     userName = "${profile.firstName} ${profile.lastName}".trim();
     dateOfBirth = profile.dob ?? '';
     country = profile.country ?? '';
+    socialMedias = profile.socialMedias;
     notifyListeners();
   }
 
   Future<void> _fetchData() async {
     final List<SquadModel> joinedSquads =
-        await SquadService.instance.getJoinedSquads(profileId);
+        await SquadService.instance.getJoinedSquads(profileTag);
     involvedSquads.clear();
     involvedSquads.addAll(joinedSquads);
     notifyListeners();
@@ -86,7 +89,7 @@ class ProfileViewModel extends ChangeNotifier {
       }
 
       final response = await UserService.instance
-          .getPostsByProfile(profileId, _pageNum, _pageSize);
+          .getPostsByProfile(profileTag, _pageNum, _pageSize);
 
       if (response.isNotEmpty) {
         listProfilePosts.addAll(response);

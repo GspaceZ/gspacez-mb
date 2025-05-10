@@ -8,6 +8,7 @@ class TagViewModel extends ChangeNotifier {
 
   List<String> searchResults = [];
   List<PostModelResponse> posts = [];
+  List<String> popularsTags = [];
 
   String _currentTag = '';
   int _page = 0;
@@ -18,10 +19,26 @@ class TagViewModel extends ChangeNotifier {
 
   TagViewModel() {
     scrollController.addListener(_onScroll);
+    _init();
+  }
+
+  Future<void> _init() async {
+    await fetchPopularTags();
   }
 
   bool get isLoading => _isLoading;
-  bool get isLoadingPosts => _loadingPosts;
+
+  Future<void> fetchPopularTags() async {
+    _isLoading = true;
+    try {
+      popularsTags = await PostService.instance.getPopularsTags();
+    } catch (e) {
+      popularsTags = [];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> searchTags(String query) async {
     _currentTag = query;

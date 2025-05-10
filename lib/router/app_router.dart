@@ -113,9 +113,9 @@ class AppRoutes {
       case chatAi:
         return MaterialPageRoute(builder: (_) => const ChatAIView());
       case profile:
-        final profileId = settings.arguments as String?;
+        final profileTag = settings.arguments as String?;
         return MaterialPageRoute(
-            builder: (_) => ProfileView(profileId: profileId));
+            builder: (_) => ProfileView(profileTag: profileTag));
       case notification:
         return MaterialPageRoute(builder: (_) => const NotificationView());
       case squadDetail:

@@ -67,22 +67,22 @@ class TagView extends StatelessWidget {
                       },
                     ),
                   )
-                else
+                else if (viewModel.currentTag.isNotEmpty)
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (viewModel.posts.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-                            child: Text(
-                              'All posts with tag #${viewModel.currentTag}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        Padding(
+                          padding:
+                          const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                          child: Text(
+                            'All posts with tag #${viewModel.currentTag}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                        ),
                         Expanded(
                           child: RefreshIndicator(
                             onRefresh: viewModel.refreshPosts,
@@ -94,6 +94,49 @@ class TagView extends StatelessWidget {
                                 final post = viewModel.posts[index];
                                 return CommonPostSimple(post: post);
                               },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                          child: Text(
+                            'Populars Tags',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: GridView.count(
+                              crossAxisCount: 2,
+                              childAspectRatio: 4,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 16,
+                              children: viewModel.popularsTags.map((tag) {
+                                return GestureDetector(
+                                  onTap: () => viewModel.selectTag(tag),
+                                  child: Text(
+                                    "#$tag",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),

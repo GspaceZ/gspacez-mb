@@ -77,7 +77,7 @@ class _CommonPostState extends State<CommonPostSimple> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (_) => ProfileView(
-                                          profileId: widget.post.profileId),
+                                          profileTag: widget.post.profileTag),
                                     ),
                                   );
                                 },
