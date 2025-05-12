@@ -29,10 +29,10 @@ class SquadDetailViewModel extends ChangeNotifier {
 
   SquadDetailViewModel(this.tagName) {
     scrollController.addListener(_scrollListener);
-    _initialize();
+    initialize();
   }
 
-  _initialize() async {
+  initialize() async {
     isLoading = true;
     notifyListeners();
     await _loadCurrentUser();
@@ -262,10 +262,23 @@ class SquadDetailViewModel extends ChangeNotifier {
   }
 
   Future<void> acceptPendingUser(AdminSquad user) async {
-    /// TODO: call api accept pending user
+    final response = await SquadService.instance
+        .approveSquadMember(squad.tagName, user.profileId);
+    if (response) {
+      membersPending
+          .removeWhere((member) => member.profileId == user.profileId);
+      membersOfficial.add(user);
+      notifyListeners();
+    }
   }
 
   Future<void> rejectPendingUser(AdminSquad user) async {
-    /// TODO: call api reject pending user
+    final response = await SquadService.instance
+        .rejectSquadMember(squad.tagName, user.profileId);
+    if (response) {
+      membersPending
+          .removeWhere((member) => member.profileId == user.profileId);
+      notifyListeners();
+    }
   }
 }

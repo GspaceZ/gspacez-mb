@@ -118,7 +118,8 @@ class UserService {
         isToken: true,
       );
       if (response.statusCode == 200) {
-        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
             BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000) {
@@ -401,9 +402,9 @@ class UserService {
       );
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap =
-        jsonDecode(utf8.decode(response.bodyBytes));
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000 && baseResponse.code != 200) {
           throw Exception(baseResponse.message);
         }
@@ -431,9 +432,9 @@ class UserService {
       );
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap =
-        jsonDecode(utf8.decode(response.bodyBytes));
+            jsonDecode(utf8.decode(response.bodyBytes));
         final BaseResponseApi baseResponse =
-        BaseResponseApi.fromJson(responseMap);
+            BaseResponseApi.fromJson(responseMap);
         if (baseResponse.code != 1000 && baseResponse.code != 200) {
           throw Exception(baseResponse.message);
         }
@@ -461,7 +462,8 @@ class UserService {
       );
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
-        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
 
         if (baseResponse.code != 1000 && baseResponse.code != 200) {
           throw Exception(baseResponse.message);

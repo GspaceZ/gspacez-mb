@@ -224,9 +224,9 @@ class _CreatePostDialogState extends State<CreatePostDialog>
           decoration: CusTomInputDecoration("Select squad")
               .getInputDecoration()
               .copyWith(
-            icon: null,
-            suffixIcon: null,
-          ),
+                icon: null,
+                suffixIcon: null,
+              ),
           icon: const Icon(Icons.arrow_drop_down),
           value: _selectedSquad,
           items: _squads.map((squad) {
@@ -524,6 +524,8 @@ class _CreatePostDialogState extends State<CreatePostDialog>
   Future<void> _onClickPost() async {
     final result = convertContent(contentController.text);
     final text = result['text'];
+    List<String> cleanedList =
+        _hashTags.map((s) => s.replaceAll('#', '')).toList();
 
     final post = PostModelRequest(
       text: convertToMarkdown({
@@ -533,7 +535,7 @@ class _CreatePostDialogState extends State<CreatePostDialog>
       privacy: _selectedPrivacy,
       previewImage: previewImage,
       squadTagName: _selectedSquad!.tagName,
-      hashTags: _hashTags,
+      hashTags: cleanedList,
       title: titleController.text,
     );
 

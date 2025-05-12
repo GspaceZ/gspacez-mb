@@ -33,94 +33,102 @@ class SquadDetailView extends StatelessWidget {
                 ? const Center(child: CircularProgressIndicator())
                 : (viewModel.error != null)
                     ? Center(child: Text(viewModel.error!))
-                    : DefaultTabController(
-                        length: viewModel.isAdmin ? 3 : 1,
-                        child: NestedScrollView(
-                          controller: viewModel.scrollController,
-                          headerSliverBuilder: (context, innerBoxIsScrolled) =>
-                              [
-                            SliverToBoxAdapter(
-                                child: _buildHeader(viewModel.squad)),
-                            SliverToBoxAdapter(
-                                child: _buildSquadActions(
-                                    context, viewModel.squad, viewModel)),
-                            const SliverToBoxAdapter(
-                                child: SizedBox(height: 16)),
-                            SliverToBoxAdapter(
-                                child: _buildSquadAdmins(
-                                    context, viewModel.squad, viewModel)),
-                            if (viewModel.squad.description?.isNotEmpty ??
-                                false)
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          viewModel.isLoading = true;
+                          await viewModel.initialize();
+                        },
+                        child: DefaultTabController(
+                          length: viewModel.isAdmin ? 3 : 1,
+                          child: NestedScrollView(
+                            controller: viewModel.scrollController,
+                            headerSliverBuilder:
+                                (context, innerBoxIsScrolled) => [
                               SliverToBoxAdapter(
-                                  child: _buildDescription(viewModel.squad)),
-                            const SliverToBoxAdapter(
-                                child: SizedBox(height: 16)),
-                            SliverToBoxAdapter(
-                                child: _buildStats(viewModel.squad)),
-                            const SliverToBoxAdapter(
-                                child: SizedBox(height: 16)),
-                            SliverToBoxAdapter(
-                              child: TabBar(
-                                isScrollable: true,
-                                labelColor: Colors.indigo,
-                                unselectedLabelColor: Colors.grey,
-                                tabs: [
-                                  const Tab(text: "Posts"),
-                                  if (viewModel.isAdmin)
-                                    const Tab(text: "Manage member"),
-                                  if (viewModel.isAdmin)
-                                    const Tab(text: "Pending request"),
-                                ],
+                                  child: _buildHeader(viewModel.squad)),
+                              SliverToBoxAdapter(
+                                  child: _buildSquadActions(
+                                      context, viewModel.squad, viewModel)),
+                              const SliverToBoxAdapter(
+                                  child: SizedBox(height: 16)),
+                              SliverToBoxAdapter(
+                                  child: _buildSquadAdmins(
+                                      context, viewModel.squad, viewModel)),
+                              if (viewModel.squad.description?.isNotEmpty ??
+                                  false)
+                                SliverToBoxAdapter(
+                                    child: _buildDescription(viewModel.squad)),
+                              const SliverToBoxAdapter(
+                                  child: SizedBox(height: 16)),
+                              SliverToBoxAdapter(
+                                  child: _buildStats(viewModel.squad)),
+                              const SliverToBoxAdapter(
+                                  child: SizedBox(height: 16)),
+                              SliverToBoxAdapter(
+                                child: TabBar(
+                                  isScrollable: true,
+                                  labelColor: Colors.indigo,
+                                  unselectedLabelColor: Colors.grey,
+                                  tabs: [
+                                    const Tab(text: "Posts"),
+                                    if (viewModel.isAdmin)
+                                      const Tab(text: "Manage member"),
+                                    if (viewModel.isAdmin)
+                                      const Tab(text: "Pending request"),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                          body: TabBarView(
-                            children: [
-                              CustomScrollView(
-                                slivers: [
-                                  if (viewModel.posts.isEmpty &&
-                                      !viewModel.isLoadingPost)
-                                    const SliverFillRemaining(
-                                      hasScrollBody: false,
-                                      child: Center(
-                                        child: Text(
-                                          "This squad has no posts.",
-                                          style: TextStyle(
-                                              fontSize: 16, color: Colors.grey),
+                            ],
+                            body: TabBarView(
+                              children: [
+                                CustomScrollView(
+                                  slivers: [
+                                    if (viewModel.posts.isEmpty &&
+                                        !viewModel.isLoadingPost)
+                                      const SliverFillRemaining(
+                                        hasScrollBody: false,
+                                        child: Center(
+                                          child: Text(
+                                            "This squad has no posts.",
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey),
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      SliverList(
+                                        delegate: SliverChildBuilderDelegate(
+                                          (context, index) {
+                                            if (index ==
+                                                viewModel.posts.length) {
+                                              return const Padding(
+                                                padding: EdgeInsets.all(16),
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                              );
+                                            }
+                                            final post = viewModel.posts[index];
+                                            return CommonPostSimple(post: post);
+                                          },
+                                          childCount: viewModel.posts.length +
+                                              (viewModel.isLoadingPost ? 1 : 0),
                                         ),
                                       ),
-                                    )
-                                  else
-                                    SliverList(
-                                      delegate: SliverChildBuilderDelegate(
-                                        (context, index) {
-                                          if (index == viewModel.posts.length) {
-                                            return const Padding(
-                                              padding: EdgeInsets.all(16),
-                                              child: Center(
-                                                  child:
-                                                      CircularProgressIndicator()),
-                                            );
-                                          }
-                                          final post = viewModel.posts[index];
-                                          return CommonPostSimple(post: post);
-                                        },
-                                        childCount: viewModel.posts.length +
-                                            (viewModel.isLoadingPost ? 1 : 0),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              if (viewModel.isAdmin)
-                                _buildManageSquad(viewModel),
-                              if (viewModel.isAdmin)
-                                _buildListUser(
-                                  "Pending request",
-                                  viewModel: viewModel,
-                                  userRole: UserRole.pending,
-                                  viewModel.membersPending,
+                                  ],
                                 ),
-                            ],
+                                if (viewModel.isAdmin)
+                                  _buildManageSquad(viewModel),
+                                if (viewModel.isAdmin)
+                                  _buildListUser(
+                                    "Pending request",
+                                    viewModel: viewModel,
+                                    userRole: UserRole.pending,
+                                    viewModel.membersPending,
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -472,8 +480,7 @@ class SquadDetailView extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: GestureDetector(
-                      onTap: () {
-                      },
+                      onTap: () {},
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
