@@ -5,7 +5,6 @@ import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/feedback_response.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
-import 'package:untitled/model/user_response_model.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 import '../model/notification_model.dart';
@@ -137,10 +136,10 @@ class UserService {
     }
   }
 
-  Future<ProfileResponse> getProfile(String profileId) async {
+  Future<ProfileResponse> getProfile(String profileTag) async {
     try {
       final response = await callApi(
-        "profile-service/info/$profileId",
+        "profile-service/info/$profileTag",
         'GET',
         isToken: true,
       );
@@ -363,11 +362,11 @@ class UserService {
     }
   }
 
-  Future<List<UserResponseModel>> searchUser(
+  Future<List<ProfileResponse>> searchUser(
       String query, int size, int page) async {
     try {
       final response = await callApi(
-        "identity/users/search?size=$size&page=$page&searchText=$query",
+        "profile-service/info/search?size=$size&page=$page&searchText=$query",
         'GET',
         isToken: true,
       );
@@ -379,10 +378,10 @@ class UserService {
         if (baseResponse.code != 1000) {
           throw Exception(baseResponse.message);
         }
-        final List<UserResponseModel> users = baseResponse.result['content']
-            .map((user) => UserResponseModel.fromJson(user))
+        final List<ProfileResponse> users = baseResponse.result['content']
+            .map((user) => ProfileResponse.fromJson(user))
             .toList()
-            .cast<UserResponseModel>();
+            .cast<ProfileResponse>();
         return users;
       } else {
         Log.debug(response.body);

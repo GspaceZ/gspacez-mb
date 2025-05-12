@@ -161,7 +161,13 @@ class _FeedbackViewState extends State<FeedbackView> {
                 : _submitFeedback,
             icon: _isSubmitting
                 ? const SizedBox(
-                height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              height: 16,
+              width: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
                 : const Icon(Icons.send),
             label: const Text("Submit Feedback"),
             style: ElevatedButton.styleFrom(
@@ -169,10 +175,12 @@ class _FeedbackViewState extends State<FeedbackView> {
               foregroundColor: Colors.white,
               disabledBackgroundColor: Colors.grey[300],
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
-        )
+        ),
       ],
     );
   }

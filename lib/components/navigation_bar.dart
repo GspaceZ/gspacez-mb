@@ -54,7 +54,7 @@ class _NavigationSidebarState extends State<NavigationSidebar> {
 
     final List<Map<String, dynamic>> discoverItems = [
       {"title": "Tags", "icon": Icons.tag, "route": AppRoutes.tags},
-      {"title": "Discussions", "icon": Icons.chat},
+      {"title": "Discussions", "icon": Icons.chat, "route": AppRoutes.discussions},
     ];
 
     final List<Map<String, dynamic>> feedbackItems = [

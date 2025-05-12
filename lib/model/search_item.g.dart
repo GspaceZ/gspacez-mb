@@ -22,13 +22,14 @@ class SearchItemAdapter extends TypeAdapter<SearchItem> {
       imageUrl: fields[2] as String?,
       type: fields[3] as SearchType,
       title: fields[4] as String?,
+      profileTag: fields[5] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, SearchItem obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class SearchItemAdapter extends TypeAdapter<SearchItem> {
       ..writeByte(3)
       ..write(obj.type)
       ..writeByte(4)
-      ..write(obj.title);
+      ..write(obj.title)
+      ..writeByte(5)
+      ..write(obj.profileTag);
   }
 
   @override

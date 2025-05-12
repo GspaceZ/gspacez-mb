@@ -15,7 +15,7 @@ class NotificationViewModel extends ChangeNotifier {
   final List<NotificationModel> notifications = [];
   bool _isLoading = false;
   String urlAvatar = AppConstants.urlImageDefault;
-  String profileId = '';
+  String profileTag = '';
   String token = '';
   late StompClient stompClient;
 
@@ -26,15 +26,15 @@ class NotificationViewModel extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    profileId = await LocalStorage.instance.userId ?? '';
+    profileTag = await LocalStorage.instance.userTag ?? '';
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
-    Log.info("WebSocket connecting with profileId: $profileId");
+    Log.info("WebSocket connecting with profileId: $profileTag");
     token = await LocalStorage.instance.userToken ?? '';
     connectWithToken(
       "wss://gspacez.tech/api/v1/notification/ws",
       token,
-      "/queue/notifications/$profileId",
+      "/queue/notifications/$profileTag",
     );
     await fetchNotifications();
   }
@@ -46,7 +46,7 @@ class NotificationViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final fetched = await UserService.instance.getNotifications(profileId);
+      final fetched = await UserService.instance.getNotifications(profileTag);
       notifications.clear();
       notifications.addAll(fetched);
     } catch (e) {

@@ -107,10 +107,10 @@ class SearchViewModel extends ChangeNotifier {
     if (listUser.isEmpty) return;
     final newItems = listUser.map((element) => SearchItem(
           name: '${element.firstName} ${element.lastName}',
-          id: element.id,
+          id: element.profileTag,
           imageUrl: element.avatarUrl,
           type: SearchType.profile,
-          title: element.email,
+          title: element.profileTag,
         ));
     searchResults.addAll(newItems);
     notifyListeners();
@@ -256,10 +256,10 @@ class SearchViewModel extends ChangeNotifier {
     final listUser = await UserService.instance.searchUser(query, 2, 0);
     final newItems = listUser.map((element) => SearchItem(
           name: '${element.firstName} ${element.lastName}',
-          id: element.id,
+          id: element.profileTag,
           imageUrl: element.avatarUrl,
           type: SearchType.profile,
-          title: element.email,
+          title: element.profileTag,
         ));
     recommendedUserSearch.addAll(newItems);
   }
