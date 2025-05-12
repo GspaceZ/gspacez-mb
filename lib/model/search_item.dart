@@ -19,12 +19,16 @@ class SearchItem extends HiveObject {
   @HiveField(4)
   String? title;
 
+  @HiveField(5)
+  String? profileTag;
+
   SearchItem({
     required this.id,
     required this.name,
     this.imageUrl,
     required this.type,
     this.title,
+    this.profileTag,
   });
 }
 

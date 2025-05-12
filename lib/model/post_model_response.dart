@@ -6,7 +6,7 @@ import 'comment_response.dart';
 class PostModelResponse {
   String id;
   String profileId;
-  String profileTag;
+  String? profileTag;
   String profileName;
   String? avatarUrl;
   ContentModel content;
@@ -28,7 +28,7 @@ class PostModelResponse {
   PostModelResponse({
     required this.id,
     required this.profileId,
-    required this.profileTag,
+    this.profileTag,
     required this.profileName,
     this.avatarUrl,
     required this.content,
@@ -52,7 +52,7 @@ class PostModelResponse {
     return PostModelResponse(
       id: json['id'],
       profileId: json['profileId'],
-      profileTag: json['profileTag'],
+      profileTag: json['profileTag'] ?? "",
       profileName: json['profileName'],
       avatarUrl: json['avatarUrl'],
       content: ContentModel.fromJson(json['content']),

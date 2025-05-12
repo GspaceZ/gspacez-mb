@@ -10,6 +10,7 @@ import 'package:untitled/screen/auth/signin.dart';
 import 'package:untitled/screen/auth/signup.dart';
 import 'package:untitled/screen/auth/waiting_active.dart';
 import 'package:untitled/screen/chat_ai_view.dart';
+import 'package:untitled/screen/discussions/discussion_view.dart';
 import 'package:untitled/screen/explore/explore_view.dart';
 import 'package:untitled/screen/feedback/feedback_view.dart';
 import 'package:untitled/screen/history/history_view.dart';
@@ -23,6 +24,8 @@ import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/screen/profile/profile_view.dart';
 import 'package:untitled/screen/profile/update_profile.dart';
 import '../model/squad_response.dart';
+import '../screen/discussions/discussion_detail.dart';
+import '../screen/discussions/discussion_form.dart';
 import '../screen/profile/update_avatar.dart';
 import '../screen/tags/tag_view.dart';
 
@@ -49,6 +52,10 @@ class AppRoutes {
   static const String feedBack = '/feedback';
   static const String tags = '/tags';
   static const String search = '/search';
+  static const String discussions = '/discussions';
+  static const String createDiscussion = '/discussions/create';
+  static const String updateDiscussion = '/discussions/update';
+  static const String detailDiscussion = '/discussions/detail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -138,6 +145,22 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => const SearchView(),
         );
+      case discussions:
+        return MaterialPageRoute(
+          builder: (_) => const DiscussionView(),
+        );
+      case createDiscussion:
+        return MaterialPageRoute(
+          builder: (_) => const DiscussionForm(),
+        );
+      case updateDiscussion:
+        final id = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => DiscussionForm(id: id),
+        );
+      case detailDiscussion:
+        final id = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => DiscussionDetail(id: id));
       default:
         return MaterialPageRoute(
             builder: (_) => const LayoutLanding(child: Introduce()));

@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/comment_response.dart';
+import 'package:untitled/model/discussion_form_request.dart';
+import 'package:untitled/model/discussion_response.dart';
 import 'package:untitled/model/explore_model.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/model/react_post_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
 
 import '../model/comment_request.dart';
+import '../model/discussion_comment_response.dart';
 import '../model/paging_result.dart';
 import '../model/post_model_request.dart';
 
@@ -360,6 +363,237 @@ class PostService {
       return popularsTags;
     } else {
       throw Exception('Failed to get populars tags');
+    }
+  }
+
+  Future<List<DiscussionResponse>> searchDiscussions(String query, int size, int page) async {
+    try {
+      final response = await callApi(
+        "post-service/discussions/search?searchText=$query&size=$size&page=$page",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+        jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+        BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+        final List<DiscussionResponse> discussions = baseResponse.result['content']
+            .map((item) => DiscussionResponse.fromJson(item))
+            .toList()
+            .cast<DiscussionResponse>();
+        return discussions;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to search discussions');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<DiscussionResponse> getDetailDiscussion(String id) async {
+    try {
+      final response = await callApi(
+        "post-service/discussions/$id",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+
+        return DiscussionResponse.fromJson(baseResponse.result);
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get detail discussion');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<DiscussionResponse> createDiscussion(DiscussionFormRequest request) async {
+    final response = await callApi(
+      "post-service/discussions/create",
+      "POST",
+      isToken: true,
+      data: request.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      final responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+      final baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return DiscussionResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to create discussion');
+    }
+  }
+
+  Future<DiscussionResponse> updateDiscussion(DiscussionFormRequest request, String id) async {
+    final response = await callApi(
+      "post-service/discussions/$id/update",
+      "PUT",
+      isToken: true,
+      data: request.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      final responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+      final baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return DiscussionResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to update discussion');
+    }
+  }
+
+  Future<DiscussionResponse> toggleDiscussion(String id, bool isOpen) async {
+    final response = await callApi(
+      "post-service/discussions/$id/status",
+      "PATCH",
+      isToken: true,
+      data: {
+        "isOpen": isOpen,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+      final baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return DiscussionResponse.fromJson(baseResponse.result);
+    } else {
+      throw Exception('Failed to toggle discussion');
+    }
+  }
+
+  Future<VoteResponse> votePoll(String id, String optionId) async {
+    final response = await callApi(
+      "post-service/discussions/$id/vote",
+      "POST",
+      isToken: true,
+      data: {
+        "optionId": optionId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+      final baseResponse = BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return VoteResponse.fromJson(baseResponse.result as Map<String, dynamic>);
+    } else {
+      throw Exception('Failed to vote in discussion');
+    }
+  }
+
+  Future<DiscussionCommentResponse> getCommentDiscussion(String id, int page, int size) async {
+    try {
+      final response = await callApi(
+        "post-service/discussions/$id/comments?page=$page&size=$size",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+
+        return DiscussionCommentResponse.fromJson(baseResponse.result);
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get comment of discussion');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<DiscussionCommentContent> postComment(String discussionId, String content) async {
+    try {
+      final response = await callApi(
+        "post-service/discussions/$discussionId/comments/create",
+        'POST',
+        data: {
+          "commentContent": content,
+        },
+        isToken: true,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+
+        return DiscussionCommentContent.fromJson(baseResponse.result);
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to post comment');
+      }
+    } catch (error) {
+      Log.debug('Error posting comment: $error');
+      rethrow;
+    }
+  }
+
+  Future<DiscussionCommentContent> upvoteComment(String commentId) async {
+    try {
+      final response = await callApi(
+        "post-service/discussions/comments/$commentId/upvote",
+        'PUT',
+        isToken: true,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> responseMap = jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse = BaseResponseApi.fromJson(responseMap);
+
+        if (baseResponse.code != 1000) {
+          throw Exception(baseResponse.message);
+        }
+
+        return DiscussionCommentContent.fromJson(baseResponse.result);
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to upvote comment');
+      }
+    } catch (error) {
+      Log.debug('Error upvoting comment: $error');
+      rethrow;
     }
   }
 }

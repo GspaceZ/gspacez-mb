@@ -204,7 +204,9 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
             maxLines: 2,
           ),
           Text(
-            item.title ?? "",
+            item.type == SearchType.post
+                ? "By ${item.title} (@${item.profileTag})"
+                : "@${item.title ?? ""}",
             maxLines: 3,
             style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
