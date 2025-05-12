@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:untitled/screen/crop_image_dialog.dart';
+
 import '../components/dialog_loading.dart';
 import '../main.dart';
 import '../model/content_squad_model.dart';
@@ -120,6 +121,9 @@ class SquadFormViewModel extends ChangeNotifier {
       throw Exception("Error: $e");
     } finally {
       LoadingDialog.hideLoadingDialog();
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 

@@ -301,134 +301,143 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
     final squad = viewModel.listSquadModel.firstWhere(
       (element) => element.tagName == item.id,
     );
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey.shade300,
-            width: 1,
-          ),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(
-              squad.avatarUrl ?? AppConstants.urlImageDefault,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.squadDetail,
+          arguments: squad.tagName,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey.shade300,
+              width: 1,
             ),
           ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                squad.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundImage: NetworkImage(
+                squad.avatarUrl ?? AppConstants.urlImageDefault,
               ),
-              Text(
-                "@${squad.tagName}",
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.indigo),
-                        color: Colors.grey.shade200),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.group,
-                          color: Colors.indigo,
-                          size: 12,
-                        ),
-                        Text(
-                          squad.totalMembers.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.indigo,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.indigo),
-                        color: Colors.grey.shade200),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.post_add,
-                          color: Colors.indigo,
-                          size: 12,
-                        ),
-                        Text(
-                          squad.totalPosts.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.indigo,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                    color: (squad.privacy.toUpperCase() == "PRIVATE")
-                        ? Colors.red
-                        : Colors.indigo),
-                color: Colors.white),
-            child: Row(
+            ),
+            const SizedBox(width: 8),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  (squad.privacy.toUpperCase() == "PRIVATE")
-                      ? Icons.lock
-                      : Icons.public,
-                  color: (squad.privacy.toUpperCase() == "PRIVATE")
-                      ? Colors.red
-                      : Colors.indigo,
-                  size: 12,
+                Text(
+                  squad.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
-                  squad.privacy.toUpperCase(),
-                  style: TextStyle(
+                  "@${squad.tagName}",
+                  style: const TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.indigo),
+                          color: Colors.grey.shade200),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.group,
+                            color: Colors.indigo,
+                            size: 12,
+                          ),
+                          Text(
+                            squad.totalMembers.toString(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.indigo),
+                          color: Colors.grey.shade200),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.post_add,
+                            color: Colors.indigo,
+                            size: 12,
+                          ),
+                          Text(
+                            squad.totalPosts.toString(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.indigo,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            const Spacer(),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: (squad.privacy.toUpperCase() == "PRIVATE")
+                          ? Colors.red
+                          : Colors.indigo),
+                  color: Colors.white),
+              child: Row(
+                children: [
+                  Icon(
+                    (squad.privacy.toUpperCase() == "PRIVATE")
+                        ? Icons.lock
+                        : Icons.public,
                     color: (squad.privacy.toUpperCase() == "PRIVATE")
                         ? Colors.red
                         : Colors.indigo,
+                    size: 12,
                   ),
-                ),
-              ],
+                  Text(
+                    squad.privacy.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: (squad.privacy.toUpperCase() == "PRIVATE")
+                          ? Colors.red
+                          : Colors.indigo,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

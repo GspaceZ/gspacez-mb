@@ -214,4 +214,56 @@ class SquadService {
       throw Exception('Failed to search squads');
     }
   }
+
+  Future<bool> approveSquadMember(String nameSquads, String profileId) async {
+    final response = await callApi(
+      "profile-service/squads/$nameSquads/approve-request",
+      "POST",
+      data: {
+        "profileIds": [profileId],
+      },
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return true;
+    } else {
+      throw Exception('Failed to approve squad member');
+    }
+  }
+
+  Future<bool> rejectSquadMember(String nameSquad, String profileId) async {
+    final response = await callApi(
+      "profile-service/squads/$nameSquad/reject-request",
+      "POST",
+      data: {
+        "profileIds": [profileId],
+      },
+      isToken: true,
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseMap =
+          jsonDecode(utf8.decode(response.bodyBytes));
+      final BaseResponseApi baseResponse =
+          BaseResponseApi.fromJson(responseMap);
+
+      if (baseResponse.code != 1000) {
+        throw Exception(baseResponse.message);
+      }
+
+      return true;
+    } else {
+      throw Exception('Failed to reject squad member');
+    }
+  }
 }
