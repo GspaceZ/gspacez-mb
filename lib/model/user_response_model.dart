@@ -22,8 +22,8 @@ class UserResponseModel {
     return UserResponseModel(
       id: json['id'],
       email: json['email'] as String? ?? "",
-      firstName: json['firstName'],
-      lastName: json['lastName'],
+      firstName: json['firstName'] as String? ?? "",
+      lastName: json['lastName'] as String? ?? "",
       noPassword: json['noPassword'],
       roles: (json['roles'] as List)
           .map((roleJson) => Role.fromJson(roleJson))

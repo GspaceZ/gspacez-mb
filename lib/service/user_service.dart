@@ -363,10 +363,11 @@ class UserService {
     }
   }
 
-  Future<List<UserResponseModel>> searchUser(String query, int size) async {
+  Future<List<UserResponseModel>> searchUser(
+      String query, int size, int page) async {
     try {
       final response = await callApi(
-        "identity/users/search?size=$size&page=0&searchText=$query",
+        "identity/users/search?size=$size&page=$page&searchText=$query",
         'GET',
         isToken: true,
       );

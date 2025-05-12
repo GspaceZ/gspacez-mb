@@ -67,6 +67,8 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
                                                 child: Text('No user found'),
                                               )
                                             : ListView.builder(
+                                                controller:
+                                                    viewModel.userController,
                                                 itemCount: viewModel
                                                     .searchResults.length,
                                                 itemBuilder: (context, index) {
@@ -83,6 +85,8 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
                                                 child: Text('No squads found'),
                                               )
                                             : ListView.builder(
+                                                controller:
+                                                    viewModel.squadController,
                                                 itemCount: viewModel
                                                     .searchSquad.length,
                                                 itemBuilder: (context, index) {
@@ -98,6 +102,8 @@ class _SearchViewState extends State<SearchView> with TickerProviderStateMixin {
                                                 child: Text('No posts found'),
                                               )
                                             : ListView.builder(
+                                                controller:
+                                                    viewModel.postController,
                                                 itemCount:
                                                     viewModel.searchPost.length,
                                                 itemBuilder: (context, index) {
