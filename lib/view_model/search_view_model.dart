@@ -11,10 +11,10 @@ class SearchViewModel extends ChangeNotifier {
   final TextEditingController searchController = TextEditingController();
   bool isLoading = false;
   bool isSearch = false;
-  List<SearchItem> searchResults = []; // search results used for profiles
+  List<SearchItem> searchResults = [];
   List<SearchItem> searchHistory = [];
-  List<SearchItem> searchSquad = []; // search results used for squads
-  List<SearchItem> searchPost = []; // search results used for groups
+  List<SearchItem> searchSquad = [];
+  List<SearchItem> searchPost = [];
   List<SearchItem> recommendedUserSearch = [];
   List<SearchItem> recommendedSquadSearch = [];
   List<SearchItem> recommendedPostSearch = [];
@@ -23,127 +23,153 @@ class SearchViewModel extends ChangeNotifier {
   List<SearchItem> postChangeSearch = [];
   List<SearchItem> squadChangeSearch = [];
   List<SearchItem> userChangeSearch = [];
+  final postController = ScrollController();
+  final squadController = ScrollController();
+  final userController = ScrollController();
+  bool hasMorePost = true;
+  bool hasMoreSquad = true;
+  bool hasMoreUser = true;
+  int pagePost = 0;
+  int pageSquad = 0;
+  int pageUser = 0;
 
   SearchViewModel() {
     _init();
+    _setupScrollListeners();
+    _setupSearchListener();
+  }
+
+  Future<void> _init() async {
+    searchHistory = SearchItemService.getAllSearchItems();
+    notifyListeners();
+  }
+
+  void _setupScrollListeners() {
+    postController.addListener(() {
+      if (postController.position.pixels >=
+          postController.position.maxScrollExtent - 100) {
+        if (hasMorePost) {
+          pagePost++;
+          searchPostFromApi(searchController.text);
+        }
+      }
+    });
+
+    squadController.addListener(() {
+      if (squadController.position.pixels >=
+          squadController.position.maxScrollExtent - 100) {
+        if (hasMoreSquad) {
+          pageSquad++;
+          searchSquadFromApi(searchController.text);
+        }
+      }
+    });
+
+    userController.addListener(() {
+      if (userController.position.pixels >=
+          userController.position.maxScrollExtent - 100) {
+        if (hasMoreUser) {
+          pageUser++;
+          searchProfile(searchController.text);
+        }
+      }
+    });
+  }
+
+  void _setupSearchListener() {
     searchController.addListener(() {
-      if (searchController.text.isNotEmpty) {
-        onSearchChanged(searchController.text);
+      final query = searchController.text;
+      if (query.isNotEmpty) {
+        onSearchChanged(query);
       } else {
         clearSearch();
       }
     });
   }
 
-  _init() async {
-    // Initialize any necessary data or state
-    searchHistory = SearchItemService.getAllSearchItems();
+  Future<void> searchAll(String query) async {
+    if (query.isEmpty) return;
+    _clearAllSearchData();
+    isSearch = true;
+    isLoading = true;
+    notifyListeners();
+    await Future.wait([
+      searchProfile(query),
+      searchSquadFromApi(query),
+      searchPostFromApi(query),
+    ]);
+    isLoading = false;
     notifyListeners();
   }
 
-  Future<void> searchAll(String query) async {
-    if (searchController.text.isNotEmpty) {
-      searchResults.clear();
-      searchSquad.clear();
-      searchPost.clear();
-      recommendedUserSearch.clear();
-      recommendedSquadSearch.clear();
-      recommendedPostSearch.clear();
-      listSquadModel.clear();
-      listPostModel.clear();
-      isSearch = true;
-      isLoading = true;
+  Future<void> searchProfile(String query) async {
+    final listUser = await UserService.instance.searchUser(query, 20, pageUser);
+    if (listUser.isEmpty) return;
+    final newItems = listUser.map((element) => SearchItem(
+          name: '${element.firstName} ${element.lastName}',
+          id: element.id,
+          imageUrl: element.avatarUrl,
+          type: SearchType.profile,
+          title: element.email,
+        ));
+    searchResults.addAll(newItems);
+    notifyListeners();
+  }
+
+  Future<void> searchPostFromApi(String query) async {
+    final result = await PostService.instance.searchPost(query, 20, pagePost);
+    if (result.isEmpty) {
+      hasMorePost = false;
+      return;
+    }
+    listPostModel.addAll(result);
+    final newItems = result.map((element) => SearchItem(
+          name: element.title ?? "",
+          id: element.id,
+          imageUrl: element.previewImage,
+          title: element.content.text,
+          type: SearchType.post,
+        ));
+    searchPost.addAll(newItems);
+    notifyListeners();
+  }
+
+  Future<void> searchSquadFromApi(String query) async {
+    final result =
+        await SquadService.instance.searchSquad(query, 20, pageSquad);
+    if (result.isEmpty) {
+      hasMoreSquad = false;
+      return;
+    }
+    listSquadModel.addAll(result);
+    final newItems = result.map((element) => SearchItem(
+          name: element.name,
+          id: element.tagName,
+          imageUrl: element.avatarUrl,
+          type: SearchType.squad,
+          title: element.tagName,
+        ));
+    searchSquad.addAll(newItems);
+    notifyListeners();
+  }
+
+  Future<void> onSearchChanged(String query) async {
+    if (query.isEmpty) {
+      clearSearch();
+      return;
+    }
+    if (!isSearch) {
+      await onRecommendedSearchChanged(query);
+    } else {
+      _clearAllSearchData();
       notifyListeners();
       await Future.wait([
         searchProfile(query),
         searchSquadFromApi(query),
         searchPostFromApi(query),
       ]);
-      isLoading = false;
       notifyListeners();
     }
-  }
-
-  Future<void> searchProfile(String query) async {
-    if (searchController.text.isNotEmpty) {
-      final listUser = await UserService.instance.searchUser(query, 20);
-      if (listUser.isNotEmpty) {
-        for (var element in listUser) {
-          final searchItem = SearchItem(
-              name: '${element.firstName} ${element.lastName}',
-              id: element.id,
-              imageUrl: element.avatarUrl,
-              type: SearchType.profile,
-              title: element.email);
-          searchResults.add(searchItem);
-          notifyListeners();
-        }
-      }
-    }
-  }
-
-  Future<void> searchPostFromApi(String query) async {
-    if (searchController.text.isNotEmpty) {
-      listPostModel = await PostService.instance.searchPost(query, 20);
-      if (listPostModel.isNotEmpty) {
-        for (var element in listPostModel) {
-          final searchItem = SearchItem(
-            name: element.title ?? "",
-            id: element.id,
-            imageUrl: element.previewImage,
-            title: element.content.text,
-            type: SearchType.post,
-          );
-          searchPost.add(searchItem);
-          notifyListeners();
-        }
-      }
-    }
-  }
-
-  Future<void> searchSquadFromApi(String query) async {
-    if (searchController.text.isNotEmpty) {
-      notifyListeners();
-      listSquadModel = await SquadService.instance.searchSquad(query, 20);
-      if (listSquadModel.isNotEmpty) {
-        for (var element in listSquadModel) {
-          final searchItem = SearchItem(
-              name: element.name,
-              id: element.tagName,
-              imageUrl: element.avatarUrl,
-              type: SearchType.squad,
-              title: element.tagName);
-          searchSquad.add(searchItem);
-        }
-      }
-    }
-  }
-
-  Future<void> onSearchChanged(String query) async {
-    if (query.isNotEmpty) {
-      if (!isSearch) {
-        onRecommendedSearchChanged(query);
-      } else {
-        searchResults.clear();
-        searchSquad.clear();
-        searchPost.clear();
-        recommendedUserSearch.clear();
-        recommendedSquadSearch.clear();
-        recommendedPostSearch.clear();
-        listSquadModel.clear();
-        listPostModel.clear();
-        notifyListeners();
-        await Future.wait([
-          searchProfile(query),
-          searchSquadFromApi(query),
-          searchPostFromApi(query),
-        ]);
-        notifyListeners();
-      }
-    } else {
-      clearSearch();
-    }
-    notifyListeners();
   }
 
   Future<void> onRecommendedSearchChanged(String query) async {
@@ -160,12 +186,26 @@ class SearchViewModel extends ChangeNotifier {
 
   void clearSearch() {
     searchController.clear();
+    isSearch = false;
+    _clearAllSearchData();
+    notifyListeners();
+  }
+
+  void _clearAllSearchData() {
     recommendedUserSearch.clear();
     recommendedSquadSearch.clear();
     recommendedPostSearch.clear();
-    isSearch = false;
     searchResults.clear();
-    notifyListeners();
+    searchPost.clear();
+    searchSquad.clear();
+    listPostModel.clear();
+    listSquadModel.clear();
+    pageUser = 0;
+    pagePost = 0;
+    pageSquad = 0;
+    hasMoreUser = true;
+    hasMorePost = true;
+    hasMoreSquad = true;
   }
 
   void removeFromSearchHistory(SearchItem item) {
@@ -189,54 +229,42 @@ class SearchViewModel extends ChangeNotifier {
   }
 
   Future<void> _fetchPostChangeSearch(String query) async {
-    final listPost = await PostService.instance.searchPost(query, 2);
-    if (listPost.isNotEmpty) {
-      for (var element in listPost) {
-        final searchItem = SearchItem(
+    final listPost = await PostService.instance.searchPost(query, 2, 0);
+    final newItems = listPost.map((element) => SearchItem(
           name: element.title ?? element.profileName,
           id: element.id,
           title: element.content.text,
           imageUrl: element.avatarUrl,
           type: SearchType.post,
-        );
-        recommendedPostSearch.add(searchItem);
-      }
-    }
+        ));
+    recommendedPostSearch.addAll(newItems);
   }
 
   Future<void> _fetchSquadChangeSearch(String query) async {
-    final listSquad = await SquadService.instance.searchSquad(query, 2);
-    if (listSquad.isNotEmpty) {
-      for (var element in listSquad) {
-        final searchItem = SearchItem(
+    final listSquad = await SquadService.instance.searchSquad(query, 2, 0);
+    final newItems = listSquad.map((element) => SearchItem(
           name: element.name,
           id: element.tagName,
           title: element.tagName,
           imageUrl: element.avatarUrl,
           type: SearchType.squad,
-        );
-        recommendedSquadSearch.add(searchItem);
-      }
-    }
+        ));
+    recommendedSquadSearch.addAll(newItems);
   }
 
   Future<void> _fetchUserChangeSearch(String query) async {
-    final listUser = await UserService.instance.searchUser(query, 2);
-    if (listUser.isNotEmpty) {
-      for (var element in listUser) {
-        final searchItem = SearchItem(
-            name: '${element.firstName} ${element.lastName}',
-            id: element.id,
-            imageUrl: element.avatarUrl,
-            type: SearchType.profile,
-            title: element.email);
-        recommendedUserSearch.add(searchItem);
-      }
-    }
+    final listUser = await UserService.instance.searchUser(query, 2, 0);
+    final newItems = listUser.map((element) => SearchItem(
+          name: '${element.firstName} ${element.lastName}',
+          id: element.id,
+          imageUrl: element.avatarUrl,
+          type: SearchType.profile,
+          title: element.email,
+        ));
+    recommendedUserSearch.addAll(newItems);
   }
 
   Future<PostModelResponse> getPostById(String postId) async {
-    final res = await PostService.instance.getPostDetailById(postId);
-    return res;
+    return await PostService.instance.getPostDetailById(postId);
   }
 }

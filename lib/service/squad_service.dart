@@ -190,9 +190,10 @@ class SquadService {
     }
   }
 
-  Future<List<SquadResponse>> searchSquad(String query, int size) async {
+  Future<List<SquadResponse>> searchSquad(
+      String query, int size, int page) async {
     final response = await callApi(
-      "profile-service/squads/search?size=$size&page=0&searchText=$query",
+      "profile-service/squads/search?size=$size&page=$page&searchText=$query",
       "GET",
       isToken: true,
     );
