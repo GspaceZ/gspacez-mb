@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
 import 'package:untitled/data/local/local_storage.dart';
@@ -151,6 +152,12 @@ class _CommonPostState extends State<CommonPost> {
                   ),
                   _buildTitle(),
                   if (widget.post.hashTags != null) _buildHashTags(),
+                  if (widget.post.previewImage != null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child:
+                          BaseImageNetwork(imageUrl: widget.post.previewImage!),
+                    ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Container(
@@ -498,21 +505,99 @@ class _CommonPostState extends State<CommonPost> {
   }
 
   _buildHashTags() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey.shade100,
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(
+                    widget.post.squad.avatarUrl,
+                    errorListener: (_) {
+                      Log.error('Error loading image ${widget.post.avatarUrl}');
+                    },
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  widget.post.squad.name,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          _buildListHashTag()
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListHashTag() {
     final List<String> hashTags = widget.post.hashTags ?? [];
+    const int maxVisible = 2;
+
+    final List<Widget> chips = [];
+
+    for (int i = 0; i < hashTags.length && i < maxVisible; i++) {
+      chips.add(
+        Chip(
+          padding: const EdgeInsets.all(0.0),
+          backgroundColor: Colors.grey.shade200,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              color: Colors.indigo,
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          label: Text("#${hashTags[i]}",
+              style: const TextStyle(
+                color: Colors.indigo,
+                fontSize: 14,
+              )),
+        ),
+      );
+    }
+    if (hashTags.length > maxVisible) {
+      chips.add(
+        Chip(
+          padding: const EdgeInsets.all(0.0),
+          backgroundColor: Colors.grey.shade300,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(
+              color: Colors.indigo,
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          label: Text("+${hashTags.length - maxVisible}",
+              style: const TextStyle(
+                color: Colors.indigo,
+                fontSize: 14,
+              )),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 8.0,
-        children: hashTags
-            .map((e) => Chip(
-                  backgroundColor: Colors.grey.shade200,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  label: Text("#$e"),
-                ))
-            .toList(),
+        children: chips,
       ),
     );
   }
@@ -525,6 +610,7 @@ class _CommonPostState extends State<CommonPost> {
         style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
+          color: Colors.indigo,
         ),
       ),
     );
