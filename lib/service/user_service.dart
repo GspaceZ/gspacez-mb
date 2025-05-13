@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
@@ -6,9 +7,9 @@ import 'package:untitled/model/feedback_response.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
-
 import '../model/notification_model.dart';
 import '../model/post_model_response.dart';
+import '../model/ai_chat_response.dart';
 
 class UserService {
   // Private constructor
@@ -19,6 +20,9 @@ class UserService {
 
   // Static getter for the instance
   static UserService get instance => _instance;
+  
+  // UUID generator
+  final Uuid _uuid = const Uuid();
 
   Future<Map<String, dynamic>> updateProfile(String firstName, String lastName,
       String country, String dob, String description) async {
@@ -473,6 +477,96 @@ class UserService {
       } else {
         Log.debug(response.body);
         throw Exception('Failed to delete my feedback');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<List<AIChatResponse>> getAllChat() async {
+    try {
+      final response = await callApi(
+        "profile-service/google-gemini/chat/all",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+        final List<AIChatResponse> allChats = baseResponse.result
+            .map((item) => AIChatResponse.fromJson(item))
+            .toList()
+            .cast<AIChatResponse>();
+        return allChats;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get all chats');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<AIChatResponse> chatAI(String content) async {
+    final sessionId = _uuid.v4();
+
+    try {
+      final response = await callApi(
+        "profile-service/google-gemini/chat",
+        'POST',
+        isToken: true,
+        data: {
+          'sessionId': sessionId,
+          'content': content,
+        },
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+        final result = AIChatResponse.fromJson(baseResponse.result);
+        return result;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to chat with AI');
+      }
+    } catch (error) {
+      Log.debug('Error: $error');
+      rethrow;
+    }
+  }
+
+  Future<AIChatResponse> getHistoryChat(String id) async {
+    try {
+      final response = await callApi(
+        "profile-service/google-gemini/chat/$id",
+        'GET',
+        isToken: true,
+      );
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseMap =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        final BaseResponseApi baseResponse =
+            BaseResponseApi.fromJson(responseMap);
+        if (baseResponse.code != 1000 && baseResponse.code != 200) {
+          throw Exception(baseResponse.message);
+        }
+        final result = AIChatResponse.fromJson(baseResponse.result);
+        return result;
+      } else {
+        Log.debug(response.body);
+        throw Exception('Failed to get history chat');
       }
     } catch (error) {
       Log.debug('Error: $error');
