@@ -129,7 +129,10 @@ class ChatAIView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.auto_awesome_outlined),
+          Icon(
+            Icons.auto_awesome_outlined,
+            color: Colors.indigo,
+          ),
           SizedBox(height: 10),
           Text(
             "Enter prompt to start a conversation",

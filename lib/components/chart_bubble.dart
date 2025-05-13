@@ -55,13 +55,12 @@ class _ChatBubbleState extends State<ChatBubble> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
         mainAxisAlignment:
-        widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            widget.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!widget.isUser)
             CircleAvatar(backgroundImage: NetworkImage(widget.avatar)),
           if (!widget.isUser) const SizedBox(width: 8),
-
           if (widget.isUser && !isEditing)
             Padding(
               padding: const EdgeInsets.only(top: 10, right: 4),
@@ -80,7 +79,6 @@ class _ChatBubbleState extends State<ChatBubble> {
                 constraints: const BoxConstraints(),
               ),
             ),
-
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -89,18 +87,13 @@ class _ChatBubbleState extends State<ChatBubble> {
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
-                  bottomLeft:
-                  widget.isUser ? const Radius.circular(16) : const Radius.circular(4),
-                  bottomRight:
-                  widget.isUser ? const Radius.circular(4) : const Radius.circular(16),
+                  bottomLeft: widget.isUser
+                      ? const Radius.circular(16)
+                      : const Radius.circular(4),
+                  bottomRight: widget.isUser
+                      ? const Radius.circular(4)
+                      : const Radius.circular(16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 5,
-                    offset: const Offset(2, 2),
-                  )
-                ],
               ),
               child: Column(
                 crossAxisAlignment: widget.isUser
@@ -124,7 +117,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Color(0xFFced4da),
+                                color: Colors.grey,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -141,9 +134,12 @@ class _ChatBubbleState extends State<ChatBubble> {
                           children: [
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                backgroundColor: const Color(0xFFFFEEF0),
-                                side: BorderSide.none,
+                                foregroundColor: Colors.blueAccent,
+                                backgroundColor: Colors.white,
+                                side: const BorderSide(
+                                  color: Colors.blueAccent,
+                                  width: 0.5,
+                                ),
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 8),
                                 textStyle: const TextStyle(
@@ -162,7 +158,7 @@ class _ChatBubbleState extends State<ChatBubble> {
                             const SizedBox(width: 12),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF4263eb),
+                                backgroundColor: Colors.blueAccent,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 14, vertical: 8),
@@ -190,11 +186,9 @@ class _ChatBubbleState extends State<ChatBubble> {
               ),
             ),
           ),
-
           if (widget.isUser) const SizedBox(width: 8),
           if (widget.isUser)
             CircleAvatar(backgroundImage: NetworkImage(widget.avatar)),
-
           if (!widget.isUser && !isEditing)
             Padding(
               padding: const EdgeInsets.only(top: 10, right: 4),

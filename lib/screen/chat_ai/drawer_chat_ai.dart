@@ -25,7 +25,7 @@ class DrawerChatAi extends StatelessWidget {
                 const Text(
                   "Chat History",
                   style: TextStyle(
-                      color: Colors.indigoAccent,
+                      color: Colors.indigo,
                       fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
@@ -38,7 +38,7 @@ class DrawerChatAi extends StatelessWidget {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.indigo.shade50,
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 30),
+                        vertical: 10, horizontal: 40),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -47,10 +47,10 @@ class DrawerChatAi extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add, color: Colors.indigoAccent),
+                      Icon(Icons.add, color: Colors.indigo),
                       Text(
                         "New Chat",
-                        style: TextStyle(color: Colors.indigoAccent),
+                        style: TextStyle(color: Colors.indigo),
                       ),
                     ],
                   ),
@@ -67,19 +67,25 @@ class DrawerChatAi extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.grey,
+                      color: Colors.indigoAccent,
                       width: 0.5,
                     ),
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
                   ),
-                  child: Text(chat.userController.message[0],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      )),
+                  child: Text(
+                    chat.nameChatSession,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigoAccent,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 onTap: () {
-                  viewModel.selectedChatHistory(chat.id);
+                  viewModel.fetchHistoryChatById(chat.id);
                   Navigator.of(context).pop();
                 },
               ),

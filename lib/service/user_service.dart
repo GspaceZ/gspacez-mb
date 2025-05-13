@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:uuid/uuid.dart';
 
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
@@ -7,9 +6,10 @@ import 'package:untitled/model/feedback_response.dart';
 import 'package:untitled/model/profile_response.dart';
 import 'package:untitled/model/streak_response.dart';
 import 'package:untitled/service/config_api/config_api.dart';
+
+import '../model/ai_chat_response.dart';
 import '../model/notification_model.dart';
 import '../model/post_model_response.dart';
-import '../model/ai_chat_response.dart';
 
 class UserService {
   // Private constructor
@@ -20,9 +20,9 @@ class UserService {
 
   // Static getter for the instance
   static UserService get instance => _instance;
-  
+
   // UUID generator
-  final Uuid _uuid = const Uuid();
+  // final Uuid _uuid = const Uuid();
 
   Future<Map<String, dynamic>> updateProfile(String firstName, String lastName,
       String country, String dob, String description) async {
@@ -514,8 +514,8 @@ class UserService {
     }
   }
 
-  Future<AIChatResponse> chatAI(String content) async {
-    final sessionId = _uuid.v4();
+  Future<AIChatResponse> chatAI(String content, String sessionId) async {
+    // final sessionId = _uuid.v4();
 
     try {
       final response = await callApi(
