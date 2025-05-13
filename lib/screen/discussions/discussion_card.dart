@@ -47,15 +47,15 @@ class DiscussionCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF3E0),
+                          color: const Color.fromRGBO(253, 126, 20, 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           'VOTE',
                           style: TextStyle(
                             fontSize: 10,
-                            color: Color(0xFFFB8C00),
-                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFFD7E14),
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
