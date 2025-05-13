@@ -4,11 +4,13 @@ import 'package:untitled/main.dart';
 import 'package:untitled/model/post_model_response.dart';
 import 'package:untitled/router/app_router.dart';
 import 'package:untitled/view_model/profile_view_model.dart';
+
 import '../../components/common_post_simple.dart';
 import '../../constants/appconstants.dart';
 
 class ProfileView extends StatefulWidget {
   final String? profileTag;
+
   const ProfileView({super.key, this.profileTag});
 
   @override
@@ -185,7 +187,8 @@ class _ProfileViewState extends State<ProfileView>
     const maxDisplay = 10;
     final squads = viewModel.involvedSquads;
     final showMore = squads.length > maxDisplay;
-    final displayedSquads = showMore ? squads.take(maxDisplay - 1).toList() : squads;
+    final displayedSquads =
+        showMore ? squads.take(maxDisplay - 1).toList() : squads;
     final hiddenSquadsCount = squads.length - displayedSquads.length;
 
     return Padding(
@@ -208,9 +211,16 @@ class _ProfileViewState extends State<ProfileView>
           children: [
             const Padding(
               padding: EdgeInsets.all(10),
-              child: Text(
-                'Involved Squads',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.grid_view, color: Colors.indigo),
+                  SizedBox(width: 10),
+                  Text(
+                    'Involved Squads',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
               ),
             ),
             const Divider(),
@@ -225,44 +235,46 @@ class _ProfileViewState extends State<ProfileView>
               )
             else
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Wrap(
                   alignment: WrapAlignment.start,
                   spacing: 16,
                   runSpacing: 16,
                   children: [
                     ...displayedSquads.map((squad) => GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppRoutes.squadDetail,
-                          arguments: squad.tagName,
-                        );
-                      },
-                      onLongPress: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(squad.name),
-                            duration: const Duration(seconds: 2),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.squadDetail,
+                              arguments: squad.tagName,
+                            );
+                          },
+                          onLongPress: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(squad.name),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 24,
+                            backgroundImage: NetworkImage(
+                              squad.avatarUrl.isNotEmpty
+                                  ? squad.avatarUrl
+                                  : AppConstants.urlImageDefault,
+                            ),
                           ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 24,
-                        backgroundImage: NetworkImage(
-                          squad.avatarUrl.isNotEmpty
-                              ? squad.avatarUrl
-                              : AppConstants.urlImageDefault,
-                        ),
-                      ),
-                    )),
+                        )),
                     if (showMore)
                       CircleAvatar(
                         radius: 24,
                         backgroundColor: Colors.grey.shade300,
                         child: Text(
                           '+$hiddenSquadsCount',
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
                         ),
                       ),
                   ],
@@ -331,48 +343,55 @@ class _ProfileViewState extends State<ProfileView>
           children: [
             const Padding(
               padding: EdgeInsets.all(10),
-              child: Text(
-                'Social Accounts',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.share, color: Colors.indigo),
+                  SizedBox(width: 10),
+                  Text(
+                    'Social Accounts',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ],
               ),
             ),
             const Divider(),
             (viewModel.socialMedias.isEmpty)
                 ? const Padding(
-              padding: EdgeInsets.all(20),
-              child: Text(
-                  'Add other accounts to your profile to manage them easily.',
-                  style: TextStyle(color: Colors.grey)),
-            )
+                    padding: EdgeInsets.all(20),
+                    child: Text(
+                        'Add other accounts to your profile to manage them easily.',
+                        style: TextStyle(color: Colors.grey)),
+                  )
                 : SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSocialButton(
-                      text: 'Connect Twitter',
-                      iconPath: 'assets/images/twitter.png',
-                      backgroundColor: const Color(0xFFE8F5FE),
-                      textColor: const Color(0xFF228BE6),
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildSocialButton(
+                            text: 'Connect Twitter',
+                            iconPath: 'assets/images/twitter.png',
+                            backgroundColor: const Color(0xFFE8F5FE),
+                            textColor: const Color(0xFF228BE6),
+                          ),
+                          _buildSocialButton(
+                            text: 'Connect LinkedIn',
+                            iconPath: 'assets/images/linkedin.png',
+                            backgroundColor: const Color(0xFFE6F0FA),
+                            textColor: const Color(0xFF4C6EF5),
+                          ),
+                          _buildSocialButton(
+                            text: 'Connect GitHub',
+                            iconPath: 'assets/images/github.png',
+                            backgroundColor: const Color(0xFFF2F2F2),
+                            textColor: const Color(0xFF886E96),
+                          ),
+                        ],
+                      ),
                     ),
-                    _buildSocialButton(
-                      text: 'Connect LinkedIn',
-                      iconPath: 'assets/images/linkedin.png',
-                      backgroundColor: const Color(0xFFE6F0FA),
-                      textColor: const Color(0xFF4C6EF5),
-                    ),
-                    _buildSocialButton(
-                      text: 'Connect GitHub',
-                      iconPath: 'assets/images/github.png',
-                      backgroundColor: const Color(0xFFF2F2F2),
-                      textColor: const Color(0xFF886E96),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
           ],
         ),
       ),

@@ -113,8 +113,8 @@ class ChatAIView extends StatelessWidget {
                                 ),
                         ),
                       ),
-                      _buildChatInputField(
-                          viewModel.controller, viewModel.sendMessage),
+                      _buildChatInputField(viewModel.controller,
+                          viewModel.sendMessage, viewModel),
                       const SizedBox(height: 10),
                     ],
                   ),
@@ -148,8 +148,8 @@ class ChatAIView extends StatelessWidget {
     );
   }
 
-  Widget _buildChatInputField(
-      TextEditingController controller, Function sendMessage) {
+  Widget _buildChatInputField(TextEditingController controller,
+      Function sendMessage, ChatAIViewModel viewModel) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -173,7 +173,10 @@ class ChatAIView extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: controller,
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(
+                    color: (viewModel.isLoadingRegenerate)
+                        ? Colors.grey
+                        : Colors.black),
                 decoration: const InputDecoration(
                   hintText: "Ask AI something...",
                   hintStyle: TextStyle(color: Colors.black45),
@@ -181,6 +184,7 @@ class ChatAIView extends StatelessWidget {
                 ),
                 textInputAction: TextInputAction.send,
                 onSubmitted: (value) {
+                  if (viewModel.isLoadingRegenerate) return;
                   if (value.trim().isNotEmpty) {
                     sendMessage();
                   }
@@ -188,8 +192,12 @@ class ChatAIView extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.send_rounded, color: Color(0xFF3f51b5)),
+              icon: Icon(Icons.send_rounded,
+                  color: (viewModel.isLoadingRegenerate)
+                      ? Colors.grey
+                      : const Color(0xFF3f51b5)),
               onPressed: () {
+                if (viewModel.isLoadingRegenerate) return;
                 sendMessage();
               },
             ),
