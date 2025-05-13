@@ -10,6 +10,7 @@ class ChatAIViewModel extends ChangeNotifier {
   final ChatAiService chatAiService = ChatAiService();
   late ChatAIModel userController;
   late ChatAIModel botController;
+  final List<ChatController> historyChat = [];
   bool isLoading = true;
 
   ChatAIViewModel() {
@@ -17,7 +18,8 @@ class ChatAIViewModel extends ChangeNotifier {
   }
 
   _init() async {
-    final avatar = await LocalStorage.instance.userUrlAvatar ?? AppConstants.urlImageDefault;
+    final avatar = await LocalStorage.instance.userUrlAvatar ??
+        AppConstants.urlImageDefault;
     final username = await LocalStorage.instance.userName ?? "User";
 
     userController = ChatAIModel(
@@ -37,6 +39,7 @@ class ChatAIViewModel extends ChangeNotifier {
     );
     isLoading = false;
     notifyListeners();
+    fetchHistoryChat();
   }
 
   Future<void> sendMessage() async {
@@ -64,7 +67,8 @@ class ChatAIViewModel extends ChangeNotifier {
       botController.message[index] = "Regenerating answer...";
       notifyListeners();
 
-      final response = await chatAiService.sendMessage(userController.message[index]);
+      final response =
+          await chatAiService.sendMessage(userController.message[index]);
       botController.message[index] = response;
       notifyListeners();
       _scrollToBottom();
@@ -100,4 +104,84 @@ class ChatAIViewModel extends ChangeNotifier {
     notifyListeners();
     _scrollToBottom();
   }
+
+  fetchHistoryChat() {
+    // TODO: mock history chat
+    final mockUserController1 = ChatAIModel(
+      message: ["Hello", "How are you?"],
+      role: Role.user,
+      name: "User",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFF1F3F5),
+    );
+    final mockBotController1 = ChatAIModel(
+      message: ["Hi", "I'm fine, thank you!"],
+      role: Role.bot,
+      name: "Bot",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFDBE4FF),
+    );
+    final mockUserController2 = ChatAIModel(
+      message: ["What is your name?", "What can you do?"],
+      role: Role.user,
+      name: "User",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFF1F3F5),
+    );
+    final mockBotController2 = ChatAIModel(
+      message: ["I'm a chatbot", "I can chat with you"],
+      role: Role.bot,
+      name: "Bot",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFDBE4FF),
+    );
+    final mockUserController3 = ChatAIModel(
+      message: ["What is your name?", "What can you do?"],
+      role: Role.user,
+      name: "User",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFF1F3F5),
+    );
+    final mockBotController3 = ChatAIModel(
+      message: ["I'm a chatbot", "I can chat with you"],
+      role: Role.bot,
+      name: "Bot",
+      avatar: AppConstants.urlImageDefault,
+      color: const Color(0xFFDBE4FF),
+    );
+    historyChat.add(ChatController(
+      id: 1,
+      userController: mockUserController1,
+      botController: mockBotController1,
+    ));
+    historyChat.add(ChatController(
+      id: 2,
+      userController: mockUserController2,
+      botController: mockBotController2,
+    ));
+    historyChat.add(ChatController(
+      id: 3,
+      userController: mockUserController3,
+      botController: mockBotController3,
+    ));
+  }
+
+  selectedChatHistory(int id) {
+    final selectedChat = historyChat.firstWhere((chat) => chat.id == id);
+    userController = selectedChat.userController;
+    botController = selectedChat.botController;
+    notifyListeners();
+  }
+}
+
+class ChatController {
+  final int id;
+  final ChatAIModel userController;
+  final ChatAIModel botController;
+
+  ChatController({
+    required this.id,
+    required this.userController,
+    required this.botController,
+  });
 }
