@@ -3,6 +3,8 @@ import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/chat_ai_model.dart';
 import 'package:untitled/service/chat_ai_service.dart';
+import 'package:untitled/service/user_service.dart';
+import 'package:uuid/uuid.dart';
 
 class ChatAIViewModel extends ChangeNotifier {
   final TextEditingController controller = TextEditingController();
@@ -11,6 +13,8 @@ class ChatAIViewModel extends ChangeNotifier {
   late ChatAIModel userController;
   late ChatAIModel botController;
   final List<ChatController> historyChat = [];
+  final Uuid _uuid = const Uuid();
+  String sessionId = "";
   bool isLoading = true;
 
   ChatAIViewModel() {
@@ -21,6 +25,7 @@ class ChatAIViewModel extends ChangeNotifier {
     final avatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
     final username = await LocalStorage.instance.userName ?? "User";
+    sessionId = _uuid.v4();
 
     userController = ChatAIModel(
       message: [],
@@ -48,9 +53,9 @@ class ChatAIViewModel extends ChangeNotifier {
     userController.message.add(text);
     botController.message.add("Waiting...");
     notifyListeners();
-    final response = await chatAiService.sendMessage(text);
+    final response = await UserService.instance.chatAI(text, sessionId);
     botController.message.removeLast();
-    botController.message.add(response);
+    botController.message.add(response.content ?? "");
     notifyListeners();
     controller.clear();
     _scrollToBottom();
@@ -59,6 +64,7 @@ class ChatAIViewModel extends ChangeNotifier {
   void newChat() {
     userController.message.clear();
     botController.message.clear();
+    sessionId = _uuid.v4();
     notifyListeners();
   }
 
@@ -67,9 +73,9 @@ class ChatAIViewModel extends ChangeNotifier {
       botController.message[index] = "Regenerating answer...";
       notifyListeners();
 
-      final response =
-          await chatAiService.sendMessage(userController.message[index]);
-      botController.message[index] = response;
+      final response = await UserService.instance
+          .chatAI(userController.message[index], sessionId);
+      botController.message[index] = response.content ?? "";
       notifyListeners();
       _scrollToBottom();
     }
@@ -99,89 +105,45 @@ class ChatAIViewModel extends ChangeNotifier {
     }
     notifyListeners();
 
-    final response = await chatAiService.sendMessage(newMessage);
-    botController.message[index] = response;
+    final response = await UserService.instance.chatAI(newMessage, sessionId);
+    botController.message[index] = response.content ?? "";
     notifyListeners();
     _scrollToBottom();
   }
 
-  fetchHistoryChat() {
-    // TODO: mock history chat
-    final mockUserController1 = ChatAIModel(
-      message: ["Hello", "How are you?"],
-      role: Role.user,
-      name: "User",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFF1F3F5),
-    );
-    final mockBotController1 = ChatAIModel(
-      message: ["Hi", "I'm fine, thank you!"],
-      role: Role.bot,
-      name: "Bot",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFDBE4FF),
-    );
-    final mockUserController2 = ChatAIModel(
-      message: ["What is your name?", "What can you do?"],
-      role: Role.user,
-      name: "User",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFF1F3F5),
-    );
-    final mockBotController2 = ChatAIModel(
-      message: ["I'm a chatbot", "I can chat with you"],
-      role: Role.bot,
-      name: "Bot",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFDBE4FF),
-    );
-    final mockUserController3 = ChatAIModel(
-      message: ["What is your name?", "What can you do?"],
-      role: Role.user,
-      name: "User",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFF1F3F5),
-    );
-    final mockBotController3 = ChatAIModel(
-      message: ["I'm a chatbot", "I can chat with you"],
-      role: Role.bot,
-      name: "Bot",
-      avatar: AppConstants.urlImageDefault,
-      color: const Color(0xFFDBE4FF),
-    );
-    historyChat.add(ChatController(
-      id: 1,
-      userController: mockUserController1,
-      botController: mockBotController1,
-    ));
-    historyChat.add(ChatController(
-      id: 2,
-      userController: mockUserController2,
-      botController: mockBotController2,
-    ));
-    historyChat.add(ChatController(
-      id: 3,
-      userController: mockUserController3,
-      botController: mockBotController3,
-    ));
+  fetchHistoryChat() async {
+    final response = await UserService.instance.getAllChat();
+    for (var chat in response) {
+      final chatController = ChatController(
+        id: chat.sessionId,
+        nameChatSession: chat.nameChatSession,
+      );
+      historyChat.add(chatController);
+    }
   }
 
-  selectedChatHistory(int id) {
-    final selectedChat = historyChat.firstWhere((chat) => chat.id == id);
-    userController = selectedChat.userController;
-    botController = selectedChat.botController;
+  fetchHistoryChatById(String id) async {
+    final response = await UserService.instance.getHistoryChat(id);
+    userController.message.clear();
+    botController.message.clear();
+    for (var chat in response.messages!) {
+      if (chat.role == "user") {
+        userController.message.add(chat.message);
+      } else {
+        botController.message.add(chat.message);
+      }
+    }
+    sessionId = id;
     notifyListeners();
   }
 }
 
 class ChatController {
-  final int id;
-  final ChatAIModel userController;
-  final ChatAIModel botController;
+  final String id;
+  final String nameChatSession;
 
   ChatController({
     required this.id,
-    required this.userController,
-    required this.botController,
+    required this.nameChatSession,
   });
 }
