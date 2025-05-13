@@ -16,6 +16,7 @@ class ChatAIViewModel extends ChangeNotifier {
   final Uuid _uuid = const Uuid();
   String sessionId = "";
   bool isLoading = true;
+  bool isLoadingRegenerate = false;
 
   ChatAIViewModel() {
     _init();
@@ -39,7 +40,7 @@ class ChatAIViewModel extends ChangeNotifier {
       message: [],
       role: Role.bot,
       name: "Bot",
-      avatar: AppConstants.urlImageDefault,
+      avatar: AppConstants.urlImageBot,
       color: const Color(0xFFDBE4FF),
     );
     isLoading = false;
@@ -52,10 +53,12 @@ class ChatAIViewModel extends ChangeNotifier {
     if (text.isEmpty) return;
     userController.message.add(text);
     botController.message.add("Waiting...");
+    isLoadingRegenerate = true;
     notifyListeners();
     final response = await UserService.instance.chatAI(text, sessionId);
     botController.message.removeLast();
     botController.message.add(response.content ?? "");
+    isLoadingRegenerate = false;
     notifyListeners();
     controller.clear();
     _scrollToBottom();
@@ -71,11 +74,13 @@ class ChatAIViewModel extends ChangeNotifier {
   Future<void> regenerateBotResponse(int index) async {
     if (index < botController.message.length) {
       botController.message[index] = "Regenerating answer...";
+      isLoadingRegenerate = true;
       notifyListeners();
 
       final response = await UserService.instance
           .chatAI(userController.message[index], sessionId);
       botController.message[index] = response.content ?? "";
+      isLoadingRegenerate = false;
       notifyListeners();
       _scrollToBottom();
     }
@@ -103,10 +108,12 @@ class ChatAIViewModel extends ChangeNotifier {
     } else {
       botController.message.add("Regenerating answer...");
     }
+    isLoadingRegenerate = true;
     notifyListeners();
 
     final response = await UserService.instance.chatAI(newMessage, sessionId);
     botController.message[index] = response.content ?? "";
+    isLoadingRegenerate = false;
     notifyListeners();
     _scrollToBottom();
   }
