@@ -67,8 +67,10 @@ class PostModelResponse {
       hashTags: List<String>.from(json['hashTags'] ?? []),
       privacy: json['privacy'],
       type: json['type'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: DateTime.parse(
+          json['createdAt'] as String? ?? DateTime.now().toString()),
+      updatedAt: DateTime.parse(
+          json['updatedAt'] as String? ?? DateTime.now().toString()),
       title: json['title'],
       previewImage: json['previewImage'],
       totalLike: json['totalLike'],
