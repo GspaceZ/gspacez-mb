@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'dart:typed_data';
+
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:crop_your_image/crop_your_image.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:untitled/service/cloudinary_service.dart';
 
 class CropImageDialog extends StatefulWidget {
   final Function(String) voidCallback;
+
   const CropImageDialog({super.key, required this.voidCallback});
 
   @override
@@ -145,7 +147,7 @@ class _CropSimplePageState extends State<CropImageDialog> {
                               children: [
                                 ElevatedButton(
                                   onPressed: _pickImage,
-                                  child: const Text('Choose Another Image'),
+                                  child: const Text('Choose Image'),
                                 ),
                                 const SizedBox(width: 16),
                                 ElevatedButton(
@@ -163,7 +165,7 @@ class _CropSimplePageState extends State<CropImageDialog> {
                                     });
                                     _cropController.crop();
                                   },
-                                  child: const Text('Save Image'),
+                                  child: const Text('Save'),
                                 ),
                               ],
                             ),

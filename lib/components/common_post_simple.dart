@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/comment_response.dart';
@@ -28,7 +30,6 @@ class CommonPostSimple extends StatefulWidget {
 
 class _CommonPostState extends State<CommonPostSimple> {
   bool _isHide = false;
-  bool _isBookmark = false;
 
   Future<List<CommentResponse>> getComment(PostModelResponse post) async {
     final response = await PostService.instance.getCommentById(post.id);
@@ -48,7 +49,7 @@ class _CommonPostState extends State<CommonPostSimple> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -217,13 +218,22 @@ class _CommonPostState extends State<CommonPostSimple> {
             ),
           ),
           IconButton(
-            onPressed: () {
-              _isBookmark = !_isBookmark;
-              setState(() {});
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(
+                  text:
+                      "https://www.gspacez.blog/post/cefb4dba-d0a1-469d-a962-aa0fc6421701${post.id}"));
+              Fluttertoast.showToast(
+                  msg: "Copied to clipboard",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
             },
-            icon: Icon(
-              _isBookmark ? Icons.bookmark : Icons.bookmark_border,
-              color: _isBookmark ? Colors.green : Colors.black,
+            icon: const Icon(
+              Icons.link,
+              color: Colors.black,
             ),
           ),
         ],

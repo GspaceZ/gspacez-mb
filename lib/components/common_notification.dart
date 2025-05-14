@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:untitled/model/notification_model.dart';
+import 'package:untitled/router/app_router.dart';
+import 'package:untitled/service/post_service.dart';
 import 'package:untitled/utils/format_time.dart';
 
 class CommonNotification extends StatelessWidget {
@@ -47,7 +49,18 @@ class CommonNotification extends StatelessWidget {
     final avatarUrl = sender.profileImageUrl ?? "";
 
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        // Handle tap action
+        if (entity.postId == null) {
+          return;
+        }
+        final postModel =
+            await PostService.instance.getPostDetailById(entity.postId!);
+        if (context.mounted) {
+          Navigator.pushNamed(context, AppRoutes.postDetail,
+              arguments: postModel);
+        }
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(

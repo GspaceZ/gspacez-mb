@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/components/common_comment.dart';
 import 'package:untitled/components/image_row_view.dart';
@@ -34,7 +36,6 @@ class _CommonPostState extends State<CommonPost> {
   VideoPlayerController? _controller;
   bool _showFullText = false;
   bool _isHide = false;
-  bool _isBookmark = false;
   bool _isShowComment = false;
 
   Future<List<CommentResponse>> getComment(PostModelResponse post) async {
@@ -280,13 +281,22 @@ class _CommonPostState extends State<CommonPost> {
             ),
           ),
           IconButton(
-            onPressed: () {
-              _isBookmark = !_isBookmark;
-              setState(() {});
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(
+                  text:
+                      "https://www.gspacez.blog/post/cefb4dba-d0a1-469d-a962-aa0fc6421701${post.id}"));
+              Fluttertoast.showToast(
+                  msg: "Copied to clipboard",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
             },
-            icon: Icon(
-              _isBookmark ? Icons.bookmark : Icons.bookmark_border,
-              color: _isBookmark ? Colors.green : Colors.black,
+            icon: const Icon(
+              Icons.link,
+              color: Colors.black,
             ),
           ),
         ],
