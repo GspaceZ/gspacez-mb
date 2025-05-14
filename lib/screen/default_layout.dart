@@ -66,7 +66,7 @@ class _DefaultLayoutState extends State<DefaultLayout>
   @override
   void dispose() {
     _hideBottomBarAnimationController.dispose();
-    eventBus.disposeAll();
+    eventBus.disposeKey(AppConstants.keyNotification);
     super.dispose();
   }
 

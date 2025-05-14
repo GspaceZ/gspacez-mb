@@ -63,6 +63,7 @@ class HomeViewModel extends ChangeNotifier {
   @override
   void dispose() {
     scrollController.dispose();
+    KeyedEventBus().disposeKey(AppConstants.keyCreatePost);
     super.dispose();
   }
 
