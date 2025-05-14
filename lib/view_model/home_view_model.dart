@@ -3,6 +3,7 @@ import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/comment_response.dart';
 import 'package:untitled/model/post_model_response.dart';
+import 'package:untitled/service/event_bus_service.dart';
 import 'package:untitled/service/post_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
@@ -66,12 +67,19 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
+
   bool get hasMore => _hasMore;
 
   _init() async {
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
     notifyListeners();
+    KeyedEventBus()
+        .listener<PostModelResponse>(AppConstants.keyCreatePost)
+        .listen((data) {
+      posts.insert(0, data);
+      notifyListeners();
+    });
   }
 
   Future<List<CommentResponse>> getComment(PostModelResponse post) async {

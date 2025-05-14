@@ -215,7 +215,6 @@ class _DefaultLayoutState extends State<DefaultLayout>
         backgroundColor: Colors.white,
         hideAnimationController: _hideBottomBarAnimationController,
         onTap: (index) => setState(() {
-          // eventBus.sink(AppConstants.keyNotification, 1);
           _selectedIndex = index;
           isNotificationBadge = false; // Reset notification badge
         }),
@@ -240,7 +239,8 @@ class _DefaultLayoutState extends State<DefaultLayout>
 
   Future<void> createPost(PostModelRequest postModelRequest) async {
     try {
-      await PostService.instance.createPost(postModelRequest);
+      final response = await PostService.instance.createPost(postModelRequest);
+      eventBus.sink(AppConstants.keyCreatePost, response);
     } catch (e) {
       throw Exception("Failed to create post: $e");
     }
