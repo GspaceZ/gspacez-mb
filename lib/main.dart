@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -13,6 +13,7 @@ import 'package:untitled/screen/auth/introduce.dart';
 import 'package:untitled/screen/default_layout.dart';
 import 'package:untitled/screen/layout_landing.dart';
 import 'package:untitled/service/notification_service.dart';
+
 import 'provider/language_provider.dart';
 
 void main() async {
@@ -58,6 +59,8 @@ void main() async {
 }
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 
 class MyApp extends StatefulWidget {
   final FlutterI18nDelegate i18nDelegate;
@@ -76,6 +79,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           navigatorKey: navigatorKey,
+          navigatorObservers: [routeObserver],
           initialRoute: widget.isAuth ? AppRoutes.home : AppRoutes.signIn,
           onGenerateRoute: AppRoutes.generateRoute,
           home: (widget.isAuth)

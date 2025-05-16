@@ -13,15 +13,49 @@ import '../../router/app_router.dart';
 import '../../service/user_service.dart';
 import '../../view_model/squad_detail_view_model.dart';
 
-class SquadDetailView extends StatelessWidget {
+class SquadDetailView extends StatefulWidget {
   final String tagName;
 
   const SquadDetailView({super.key, required this.tagName});
 
   @override
+  State<SquadDetailView> createState() => _SquadDetailViewState();
+}
+
+class _SquadDetailViewState extends State<SquadDetailView> with RouteAware {
+  late SquadDetailViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = SquadDetailViewModel(widget.tagName);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    // Refresh data when returning to this screen
+    if (mounted) {
+      viewModel.initialize();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => SquadDetailViewModel(tagName),
+    return ChangeNotifierProvider.value(
+      value: viewModel,
       child: Consumer<SquadDetailViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
