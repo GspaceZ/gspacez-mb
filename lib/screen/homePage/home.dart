@@ -12,6 +12,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
+// lib/screen/homePage/home.dart
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
@@ -20,32 +21,49 @@ class _HomeState extends State<Home> {
       child: Consumer<HomeViewModel>(
         builder: (context, homeViewModel, child) {
           return RefreshIndicator(
-            onRefresh: homeViewModel.fetchPost,
-            child: ListView.builder(
+            onRefresh: () => homeViewModel.fetchPost(isRefresh: true),
+            child: CustomScrollView(
               controller: homeViewModel.scrollController,
               physics: const BouncingScrollPhysics(),
-              itemCount: homeViewModel.posts.length +
-                  1 + // thêm 1 cho search bar
-                  (homeViewModel.isLoading && homeViewModel.posts.isNotEmpty
-                      ? 1
-                      : 0),
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return _buildWidgetSearch();
-                }
-
-                final postIndex = index - 1;
-
-                if (postIndex < homeViewModel.posts.length) {
-                  final post = homeViewModel.posts[postIndex];
-                  return CommonPostSimple(post: post);
-                } else {
-                  return const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: PostSkeleton(),
-                  );
-                }
-              },
+              slivers: [
+                SliverToBoxAdapter(
+                  child: _buildWidgetSearch(),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final post = homeViewModel.posts[index];
+                      return CommonPostSimple(post: post);
+                    },
+                    childCount: homeViewModel.posts.length,
+                  ),
+                ),
+                if (homeViewModel.isLoading)
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) => const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: PostSkeleton(),
+                      ),
+                      childCount: 3,
+                    ),
+                  ),
+                if (!homeViewModel.hasMore && homeViewModel.posts.isNotEmpty)
+                  const SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text(
+                          'No more posts',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           );
         },
