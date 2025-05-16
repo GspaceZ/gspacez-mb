@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:tuple/tuple.dart';
 import 'package:untitled/extensions/log.dart';
 import 'package:untitled/model/base_response_api.dart';
 import 'package:untitled/model/feedback_response.dart';
@@ -167,7 +168,7 @@ class UserService {
     }
   }
 
-  Future<List<PostModelResponse>> getPostsByProfile(
+  Future<Tuple2<List<PostModelResponse>, int>> getPostsByProfile(
       String profileTag, int pageNum, int pageSize) async {
     final response = await callApi(
       "post-service/posts/own-post/$profileTag?pageNum=$pageNum&pageSize=$pageSize",
@@ -186,13 +187,13 @@ class UserService {
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();
-      return posts;
+      return Tuple2(posts, baseResponse.result['totalElements']);
     } else {
       throw Exception('Failed to get posts by profile');
     }
   }
 
-  Future<List<PostModelResponse>> getLikedPostsByProfile(
+  Future<Tuple2<List<PostModelResponse>, int>> getLikedPostsByProfile(
       String profileId, int size, int page) async {
     final response = await callApi(
       "post-service/posts/liked/by/$profileId?size=$size&page=$page",
@@ -211,7 +212,7 @@ class UserService {
           .map((post) => PostModelResponse.fromJson(post))
           .toList()
           .cast<PostModelResponse>();
-      return posts;
+      return Tuple2(posts, baseResponse.result['totalElements']);
     } else {
       throw Exception('Failed to get liked posts by profile');
     }
