@@ -26,7 +26,8 @@ class NotificationViewModel extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    profileTag = await LocalStorage.instance.userTag ?? '';
+    /// TODO: use profileId
+    profileTag = await LocalStorage.instance.userId ?? '';
     urlAvatar = await LocalStorage.instance.userUrlAvatar ??
         AppConstants.urlImageDefault;
     Log.info("WebSocket connecting with profileId: $profileTag");

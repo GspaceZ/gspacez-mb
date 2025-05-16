@@ -12,28 +12,68 @@ class LayoutLanding extends StatefulWidget {
 class _LayoutLandingState extends State<LayoutLanding>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Alignment> _animation;
+  late Animation<Alignment> _alignmentAnimation;
+  late Animation<double> _colorAnimation;
+
+  // Định nghĩa các màu chính
+  final List<Color> primaryColors = [
+    const Color(0xFF6C5DD3), // tím đậm
+    const Color(0xFF38BDF8), // xanh dương nhạt
+    const Color(0xFF9333EA), // tím neon
+    const Color(0xFF3B82F6), // xanh dương đậm
+  ];
+
+  List<Color> _getGradientColors(double value) {
+    // Tính toán index của màu hiện tại và màu tiếp theo
+    int colorCount = primaryColors.length;
+    double scaledValue = value * (colorCount - 1);
+    int currentIndex = scaledValue.floor();
+    int nextIndex = (currentIndex + 1) % colorCount;
+    double t = scaledValue - currentIndex;
+
+    // Tạo gradient với 3 màu
+    Color startColor = Color.lerp(primaryColors[currentIndex], primaryColors[nextIndex], t)!;
+    Color middleColor = Color.lerp(
+      primaryColors[(currentIndex + 1) % colorCount],
+      primaryColors[(nextIndex + 1) % colorCount],
+      t,
+    )!;
+    Color endColor = Color.lerp(
+      primaryColors[(currentIndex + 2) % colorCount],
+      primaryColors[(nextIndex + 2) % colorCount],
+      t,
+    )!;
+
+    return [startColor, middleColor, endColor];
+  }
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 15),
+      duration: const Duration(seconds: 6),
       vsync: this,
     )..repeat(reverse: true);
 
-    _animation = TweenSequence<Alignment>([
+    _alignmentAnimation = TweenSequence<Alignment>([
       TweenSequenceItem(
-          tween: Tween(
-              begin: const Alignment(-1.0, 0.0),
-              end: const Alignment(1.0, 0.0)),
-          weight: 50),
-      TweenSequenceItem(
-          tween: Tween(
-              begin: const Alignment(1.0, 0.0),
-              end: const Alignment(-1.0, 0.0)),
-          weight: 50),
-    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+        tween: AlignmentTween(
+          begin: const Alignment(-1.0, -0.5),
+          end: const Alignment(1.0, 0.5),
+        ),
+        weight: 1,
+      ),
+    ]).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOutSine,
+      ),
+    );
+
+    _colorAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOutSine,
+    );
   }
 
   @override
@@ -42,30 +82,23 @@ class _LayoutLandingState extends State<LayoutLanding>
     super.dispose();
   }
 
-  /// TODO: CHECK LATER
-  final List<Color> colors = [
-    const Color(0xFF6C5DD3), // tím đậm
-    const Color(0xFFAC6EFF), // tím sáng
-    const Color(0xFF38BDF8), // xanh dương nhạt
-    const Color(0xFF9333EA), // tím neon
-  ];
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: AnimatedBuilder(
-        animation: _animation,
+        animation: _controller,
         builder: (context, child) {
+          final colors = _getGradientColors(_colorAnimation.value);
           return Container(
             height: screenHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: colors,
-                begin: _animation.value,
+                begin: _alignmentAnimation.value,
                 end: Alignment.bottomRight,
-                stops: const [0.0, 0.33, 0.66, 1.0],
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
             child: SingleChildScrollView(

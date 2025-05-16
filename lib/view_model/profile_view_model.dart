@@ -17,20 +17,26 @@ class ProfileViewModel extends ChangeNotifier {
   String dateOfBirth = '';
   String country = '';
   String profileTag = '';
-
+  String totalPost = "--";
+  String totalSquad = "--";
+  String totalUpvote = "--";
   List<SocialMedia> socialMedias = [];
   final List<PostModelResponse> listProfilePosts = [];
   final List<PostModelResponse> listLikedPosts = [];
   final List<SquadModel> involvedSquads = [];
 
-  int _pageNum = 0;
+  int _postsPageNum = 0;
+  int _likedPostsPageNum = 0;
   final int _pageSize = 5;
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _hasMoreProfilePosts = true;
   bool _hasMoreLikedPosts = true;
-  final ScrollController scrollController = ScrollController();
+  bool _isLoadingMorePosts = false;
+  bool _isLoadingMoreLikedPosts = false;
+  final ScrollController mainScrollController = ScrollController();
+  final ScrollController postsScrollController = ScrollController();
 
-  int _currentTabIndex = 0; // defaul tab: posts
+  int _currentTabIndex = 0;
 
   void updateCurrentTab(int index) {
     _currentTabIndex = index;
@@ -39,112 +45,204 @@ class ProfileViewModel extends ChangeNotifier {
 
   ProfileViewModel({String? profileTag}) {
     _profileTag = profileTag;
-    scrollController.addListener(_onScroll);
+    postsScrollController.addListener(_onPostsScroll);
     _init();
   }
 
-  _init() async {
-    await _getUserInfo();
-    await _fetchData();
-  }
-
-  Future<void> _getUserInfo() async {
-    final profile = _profileTag == null
-        ? await UserService.instance.getMe()
-        : await UserService.instance.getProfile(_profileTag!);
-
-    profileId = profile.id;
-    profileTag = profile.profileTag;
-    avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
-    userName = "${profile.firstName} ${profile.lastName}".trim();
-    dateOfBirth = profile.dob ?? '';
-    country = profile.country ?? '';
-    socialMedias = profile.socialMedias;
-    notifyListeners();
-  }
-
-  Future<void> _fetchData() async {
-    final List<SquadModel> joinedSquads =
-        await SquadService.instance.getJoinedSquads(profileTag);
-    involvedSquads.clear();
-    involvedSquads.addAll(joinedSquads);
-    notifyListeners();
-    Future.wait([
-      fetchProfilePosts(isRefresh: true),
-      fetchLikedPosts(isRefresh: true),
-    ]);
-  }
-
-  Future<void> fetchProfilePosts({bool isRefresh = false}) async {
-    if (_isLoading || !_hasMoreProfilePosts) return;
-
+  Future<void> refreshAll() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      if (isRefresh) {
-        _pageNum = 0;
-        listProfilePosts.clear();
-        _hasMoreProfilePosts = true;
+      await _getUserInfo();
+      if (profileId.isNotEmpty && profileTag.isNotEmpty) {
+        await _fetchData();
       }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
+  Future<void> _init() async {
+    try {
+      await _getUserInfo();
+      if (profileId.isNotEmpty && profileTag.isNotEmpty) {
+        await _fetchData();
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _getUserInfo() async {
+    try {
+      final profile = _profileTag == null
+          ? await UserService.instance.getMe()
+          : await UserService.instance.getProfile(_profileTag!);
+
+      profileId = profile.id;
+      profileTag = profile.profileTag;
+      avatarUrl = profile.avatarUrl ?? AppConstants.urlImageDefault;
+      userName = "${profile.firstName} ${profile.lastName}".trim();
+      dateOfBirth = profile.dob ?? '';
+      country = profile.country ?? '';
+      socialMedias = profile.socialMedias;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching user info: $e');
+    }
+  }
+
+  Future<void> _fetchData() async {
+    if (profileId.isEmpty || profileTag.isEmpty) {
+      debugPrint('Cannot fetch data: profileId or profileTag is empty');
+      return;
+    }
+
+    try {
+      // Fetch squads
+      final List<SquadModel> joinedSquads =
+          await SquadService.instance.getJoinedSquads(profileTag);
+      involvedSquads.clear();
+      totalSquad = joinedSquads.length.toString();
+      involvedSquads.addAll(joinedSquads);
+
+      // Reset paging data
+      _postsPageNum = 0;
+      _likedPostsPageNum = 0;
+      _hasMoreProfilePosts = true;
+      _hasMoreLikedPosts = true;
+      listProfilePosts.clear();
+      listLikedPosts.clear();
+
+      // Fetch initial posts and liked posts
+      await Future.wait([
+        _fetchInitialProfilePosts(),
+        _fetchInitialLikedPosts(),
+      ]);
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
+  }
+
+  Future<void> _fetchInitialProfilePosts() async {
+    try {
       final response = await UserService.instance
-          .getPostsByProfile(profileTag, _pageNum, _pageSize);
+          .getPostsByProfile(profileTag, 0, _pageSize);
+      totalPost = response.item2.toString();
 
-      if (response.isNotEmpty) {
-        listProfilePosts.addAll(response);
-        _pageNum++;
+      if (response.item1.isNotEmpty) {
+        listProfilePosts.addAll(response.item1);
+        _postsPageNum = 1;
       }
 
-      if (response.length < _pageSize) {
+      if (response.item1.length < _pageSize) {
+        _hasMoreProfilePosts = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching initial profile posts: $e');
+    }
+  }
+
+  Future<void> _fetchInitialLikedPosts() async {
+    try {
+      final response = await UserService.instance
+          .getLikedPostsByProfile(profileId, _pageSize, 0);
+      totalUpvote = response.item2.toString();
+
+      if (response.item1.isNotEmpty) {
+        listLikedPosts.addAll(response.item1);
+        _likedPostsPageNum = 1;
+      }
+
+      if (response.item1.length < _pageSize) {
+        _hasMoreLikedPosts = false;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching initial liked posts: $e');
+    }
+  }
+
+  Future<void> fetchProfilePosts({bool isRefresh = false}) async {
+    if (_isLoadingMorePosts || !_hasMoreProfilePosts || profileTag.isEmpty) return;
+
+    _isLoadingMorePosts = true;
+    if (isRefresh) {
+      _isLoading = true;
+      _postsPageNum = 0;
+      listProfilePosts.clear();
+      _hasMoreProfilePosts = true;
+    }
+    notifyListeners();
+
+    try {
+      final response = await UserService.instance
+          .getPostsByProfile(profileTag, _postsPageNum, _pageSize);
+      totalPost = response.item2.toString();
+
+      if (response.item1.isNotEmpty) {
+        listProfilePosts.addAll(response.item1);
+        _postsPageNum++;
+      }
+
+      if (response.item1.length < _pageSize) {
         _hasMoreProfilePosts = false;
       }
     } catch (e) {
-      throw Exception("Failed to fetch profile posts: $e");
+      debugPrint("Failed to fetch profile posts: $e");
     } finally {
+      _isLoadingMorePosts = false;
       _isLoading = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchLikedPosts({bool isRefresh = false}) async {
-    if (_isLoading || !_hasMoreLikedPosts) return;
+    if (_isLoadingMoreLikedPosts || !_hasMoreLikedPosts || profileId.isEmpty) return;
 
-    _isLoading = true;
+    _isLoadingMoreLikedPosts = true;
+    if (isRefresh) {
+      _isLoading = true;
+      _likedPostsPageNum = 0;
+      listLikedPosts.clear();
+      _hasMoreLikedPosts = true;
+    }
     notifyListeners();
 
     try {
-      if (isRefresh) {
-        _pageNum = 0;
-        listLikedPosts.clear();
-        _hasMoreLikedPosts = true;
-      }
-
       final response = await UserService.instance
-          .getLikedPostsByProfile(profileId, _pageSize, _pageNum);
+          .getLikedPostsByProfile(profileId, _pageSize, _likedPostsPageNum);
+      totalUpvote = response.item2.toString();
 
-      if (response.isNotEmpty) {
-        listLikedPosts.addAll(response);
-        _pageNum++;
+      if (response.item1.isNotEmpty) {
+        listLikedPosts.addAll(response.item1);
+        _likedPostsPageNum++;
       }
 
-      if (response.length < _pageSize) {
+      if (response.item1.length < _pageSize) {
         _hasMoreLikedPosts = false;
       }
     } catch (e) {
-      throw Exception("Failed to fetch liked posts: $e");
+      debugPrint("Failed to fetch liked posts: $e");
     } finally {
+      _isLoadingMoreLikedPosts = false;
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  void _onScroll() {
-    if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200) {
-      if (_currentTabIndex == 0) {
+  void _onPostsScroll() {
+    if (postsScrollController.position.pixels >=
+        postsScrollController.position.maxScrollExtent - 200) {
+      if (_currentTabIndex == 1) {
+        // Posts tab
         fetchProfilePosts();
-      } else if (_currentTabIndex == 1) {
+      } else if (_currentTabIndex == 2) {
+        // Upvoted tab
         fetchLikedPosts();
       }
     }
@@ -152,7 +250,8 @@ class ProfileViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    scrollController.dispose();
+    mainScrollController.dispose();
+    postsScrollController.dispose();
     super.dispose();
   }
 
