@@ -22,13 +22,14 @@ class AdminSquad {
 
   factory AdminSquad.fromJson(Map<String, dynamic> json) {
     return AdminSquad(
-      id: json['id'] as String,
-      profileId: json['profileId'] as String,
-      profileName: json['profileName'] as String,
-      squadId: json['squadId'] as String,
-      joinStatus: json['joinStatus'] as String,
-      role: json['role'] as String,
-      joinedAt: DateTime.parse(json['joinedAt']),
+      id: json['id'] as String? ?? '',
+      profileId: json['profileId'] as String? ?? '',
+      profileName: json['profileName'] as String? ?? '',
+      squadId: json['squadId'] as String? ?? '',
+      joinStatus: json['joinStatus'] as String? ?? '',
+      role: json['role'] as String? ?? '',
+      joinedAt: DateTime.parse(
+          json['joinedAt'] as String? ?? DateTime.now().toString()),
     );
   }
 

@@ -201,6 +201,9 @@ class ChatAIView extends StatelessWidget {
                 sendMessage();
               },
             ),
+            IconButton(
+                onPressed: viewModel.pickAndUploadImage,
+                icon: const Icon(Icons.image, color: Colors.grey)),
           ],
         ),
       ),

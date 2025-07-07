@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:untitled/constants/appconstants.dart';
 import 'package:untitled/data/local/local_storage.dart';
 import 'package:untitled/model/chat_ai_model.dart';
 import 'package:untitled/service/chat_ai_service.dart';
+import 'package:untitled/service/cloudinary_service.dart';
 import 'package:untitled/service/user_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,6 +16,7 @@ class ChatAIViewModel extends ChangeNotifier {
   late ChatAIModel botController;
   final List<ChatController> historyChat = [];
   final Uuid _uuid = const Uuid();
+  String urlImage = "";
   String sessionId = "";
   bool isLoading = true;
   bool isLoadingRegenerate = false;
@@ -55,9 +58,10 @@ class ChatAIViewModel extends ChangeNotifier {
     botController.message.add("Waiting...");
     isLoadingRegenerate = true;
     notifyListeners();
-    final response = await UserService.instance.chatAI(text, sessionId);
+    //final response = await UserService.instance.chatAI(text, sessionId);
+    final response = await chatAiService.sendMessage(text, urlImage: urlImage);
     botController.message.removeLast();
-    botController.message.add(response.content ?? "");
+    botController.message.add(response);
     isLoadingRegenerate = false;
     notifyListeners();
     controller.clear();
@@ -69,6 +73,15 @@ class ChatAIViewModel extends ChangeNotifier {
     botController.message.clear();
     sessionId = _uuid.v4();
     notifyListeners();
+  }
+
+  Future<String> pickAndUploadImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null) return "";
+    urlImage = await CloudinaryService.instance.uploadImage(pickedFile.path);
+    return urlImage;
   }
 
   Future<void> regenerateBotResponse(int index) async {
