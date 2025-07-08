@@ -17,7 +17,7 @@ class ChatAiService {
   Future<String> sendMessage(String message, {String? urlImage}) async {
     if (urlImage != null && urlImage.isNotEmpty) {
       // If an image URL is provided, include it in the message
-      message += "hãy xem ảnh sau là loại đá nào: $urlImage";
+      message += "Hãy đọc ảnh từ url sau: $urlImage";
     }
     try {
       var chat = model.startChat();

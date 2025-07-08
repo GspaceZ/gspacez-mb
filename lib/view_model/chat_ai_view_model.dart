@@ -81,6 +81,7 @@ class ChatAIViewModel extends ChangeNotifier {
 
     if (pickedFile == null) return "";
     urlImage = await CloudinaryService.instance.uploadImage(pickedFile.path);
+    notifyListeners();
     return urlImage;
   }
 

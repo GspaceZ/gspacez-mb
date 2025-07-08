@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/components/base_image_network.dart';
 import 'package:untitled/components/chart_bubble.dart';
 import 'package:untitled/screen/chat_ai/drawer_chat_ai.dart';
 import 'package:untitled/view_model/chat_ai_view_model.dart';
@@ -166,44 +167,50 @@ class ChatAIView extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
+        child: Column(
           children: [
-            const Icon(Icons.search, color: Colors.grey),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                controller: controller,
-                style: TextStyle(
-                    color: (viewModel.isLoadingRegenerate)
-                        ? Colors.grey
-                        : Colors.black),
-                decoration: const InputDecoration(
-                  hintText: "Ask AI something...",
-                  hintStyle: TextStyle(color: Colors.black45),
-                  border: InputBorder.none,
+            Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    style: TextStyle(
+                        color: (viewModel.isLoadingRegenerate)
+                            ? Colors.grey
+                            : Colors.black),
+                    decoration: const InputDecoration(
+                      hintText: "Ask AI something...",
+                      hintStyle: TextStyle(color: Colors.black45),
+                      border: InputBorder.none,
+                    ),
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: (value) {
+                      if (viewModel.isLoadingRegenerate) return;
+                      if (value.trim().isNotEmpty) {
+                        sendMessage();
+                      }
+                    },
+                  ),
                 ),
-                textInputAction: TextInputAction.send,
-                onSubmitted: (value) {
-                  if (viewModel.isLoadingRegenerate) return;
-                  if (value.trim().isNotEmpty) {
+                IconButton(
+                  icon: Icon(Icons.send_rounded,
+                      color: (viewModel.isLoadingRegenerate)
+                          ? Colors.grey
+                          : const Color(0xFF3f51b5)),
+                  onPressed: () {
+                    if (viewModel.isLoadingRegenerate) return;
                     sendMessage();
-                  }
-                },
-              ),
+                  },
+                ),
+                IconButton(
+                    onPressed: viewModel.pickAndUploadImage,
+                    icon: const Icon(Icons.image, color: Colors.black)),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.send_rounded,
-                  color: (viewModel.isLoadingRegenerate)
-                      ? Colors.grey
-                      : const Color(0xFF3f51b5)),
-              onPressed: () {
-                if (viewModel.isLoadingRegenerate) return;
-                sendMessage();
-              },
-            ),
-            IconButton(
-                onPressed: viewModel.pickAndUploadImage,
-                icon: const Icon(Icons.image, color: Colors.grey)),
+            if (viewModel.urlImage.isNotEmpty)
+              BaseImageNetwork(imageUrl: viewModel.urlImage, height: 100),
           ],
         ),
       ),
